@@ -2,22 +2,20 @@ version: "3.8"
 
 services:
   wg-easy:
+    image: ghcr.io/wg-easy/wg-easy:latest
+    container_name: wg-easy
     environment:
       # ⚠️ Change the server's hostname (clients will connect to):
       - WG_HOST=${WG_EASY__WG_HOST}
-
       # ⚠️ Change the Web UI Password:
       - PASSWORD=${WG_EASY__PASSWORD}
-
       # 💡 This is the Pi-Hole Container's IP Address
       - WG_DEFAULT_DNS=10.8.1.3
       #- WG_DEFAULT_DNS=1.1.1.1,1.0.0.1,8.8.8.8,8.8.4.4
       - WG_DEFAULT_ADDRESS=10.8.0.x
       # traffic stats
       - UI_TRAFFIC_STATS=true
-      - UI_CHART_TYPE=1
-    image: ghcr.io/wg-easy/wg-easy:nightly
-    container_name: wg-easy
+      - UI_CHART_TYPE=2
     volumes:
       - './wg-easy-vol:/etc/wireguard'
     ports:
@@ -35,7 +33,7 @@ services:
         ipv4_address: 10.8.1.2
 
   pihole:
-    image: pihole/pihole
+    image: pihole/pihole:latest
     container_name: pihole
     environment:
       # ⚠️ Change the Web UI Password:
@@ -54,7 +52,7 @@ services:
         ipv4_address: 10.8.1.3
 
   cloudflared-dns:
-    image: cloudflare/cloudflared
+    image: cloudflare/cloudflared:latest
     container_name: cloudflared-dns-tunnel
     restart: unless-stopped
     command: proxy-dns
