@@ -5,4 +5,4 @@
 !.gitignore
 !docker-compose.yml
 !LICENSE
-!caddy
+!Caddyfile
