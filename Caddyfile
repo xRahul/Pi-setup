@@ -1,5 +1,5 @@
 http://pihole.home {
-    reverse_proxy * 10.8.1.3:5353
+    reverse_proxy * 10.8.1.3:80
 }
 
 http://wgpi.home {
