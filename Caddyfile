@@ -10,3 +10,7 @@ http://wgslx.in {
 http://cloudflarednsslx.in {
     reverse_proxy * 10.8.1.4:43697
 }
+
+http://immichslx.in {
+    reverse_proxy * 10.8.1.6:3001
+}
