@@ -2,7 +2,7 @@ services:
   wg-easy:
     image: ghcr.io/wg-easy/wg-easy:latest
     container_name: wg-easy
-    restart: unless-stopped
+    restart: always
     environment:
       # ⚠️ Change the server's hostname (clients will connect to):
       - WG_HOST=${WG_EASY__WG_HOST}
@@ -33,7 +33,7 @@ services:
   pihole:
     image: pihole/pihole:latest
     container_name: pihole
-    restart: unless-stopped
+    restart: always
     environment:
       # ⚠️ Change the Web UI Password:
       - WEBPASSWORD=${PIHOLE__WEBPASSWORD}
@@ -52,7 +52,7 @@ services:
   cloudflared-dns:
     image: cloudflare/cloudflared:latest
     container_name: cloudflared-dns-tunnel
-    restart: unless-stopped
+    restart: always
     command: proxy-dns
     environment:
       TUNNEL_DNS_UPSTREAM: "https://1.0.0.1/dns-query,https://1.1.1.1/dns-query"
@@ -73,7 +73,7 @@ services:
   caddy:
     image: caddy:latest
     container_name: caddy-web-server
-    restart: unless-stopped
+    restart: always
     cap_add:
       - NET_ADMIN
     ports:
@@ -94,7 +94,7 @@ services:
   immich-server:
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     container_name: immich_server
-    restart: unless-stopped
+    restart: always
     command: ['start.sh', 'immich']
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
@@ -113,7 +113,7 @@ services:
   immich-microservices:
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     container_name: immich_microservices
-    restart: unless-stopped
+    restart: always
     # extends: # uncomment this section for hardware acceleration - see https://immich.app/docs/features/hardware-transcoding
     #   file: ./immich/hwaccel.transcoding.yml
     #   service: cpu # set to one of [nvenc, quicksync, rkmpp, vaapi, vaapi-wsl] for accelerated transcoding
@@ -132,7 +132,7 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    restart: unless-stopped
+    restart: always
     # For hardware acceleration, add one of -[armnn, cuda, openvino] to the image tag.
     # Example tag: ${IMMICH_VERSION:-release}-cuda
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
@@ -150,7 +150,7 @@ services:
   immich_redis:
     image: registry.hub.docker.com/library/redis:6.2-alpine@sha256:84882e87b54734154586e5f8abd4dce69fe7311315e2fc6d67c29614c8de2672
     container_name: immich_redis
-    restart: unless-stopped
+    restart: always
     hostname: redis
     networks:
       wg-easy:
@@ -159,7 +159,7 @@ services:
   immich_database:
     image: registry.hub.docker.com/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
     container_name: immich_postgres
-    restart: unless-stopped
+    restart: always
     hostname: database
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
