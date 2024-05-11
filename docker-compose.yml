@@ -277,6 +277,9 @@ services:
       # - "/example/family:/photoprism/originals/family" # *Additional* media folders can be mounted like this
       # - "~/Import:/photoprism/import"                  # *Optional* base folder from which files can be imported to originals
       - "./photoprism_storage:/photoprism/storage"                  # *Writable* storage folder for cache, database, and sidecar files (DO NOT REMOVE)
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.11
 
   mariadb:
     image: arm64v8/mariadb:11 # ARM64 IMAGE ONLY, DOES NOT WORK ON ARMv7, AMD or Intel
@@ -297,6 +300,9 @@ services:
       MARIADB_USER: ${DB_USERNAME}
       MARIADB_PASSWORD: ${DB_PASSWORD}
       MARIADB_ROOT_PASSWORD: "insecure"
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.12
 
 
 
