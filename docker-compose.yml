@@ -79,6 +79,8 @@ services:
     restart: always
     cap_add:
       - NET_ADMIN
+    environment:
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
     ports:
       - "80:80"
       # - "443:443"
