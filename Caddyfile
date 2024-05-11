@@ -14,3 +14,10 @@ http://cloudflarednsslx.in {
 http://immichslx.in {
     reverse_proxy * 10.8.1.6:3001
 }
+
+http://immich.rahulja.in {
+    reverse_proxy * 10.8.1.6:3001
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
