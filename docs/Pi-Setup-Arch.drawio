@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2024-05-17T17:05:10.323Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0" etag="n8N4COxVxSJ_Ql0n7h5e" version="24.4.4" type="device">
+<mxfile host="app.diagrams.net" modified="2024-05-17T17:30:57.471Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0" etag="_hHXIjh1pcrhOqlAVshj" version="24.4.4" type="device">
   <diagram name="Page-1" id="HqvDpQdU1ir6_2IFUhJ9">
     <mxGraphModel dx="799" dy="467" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -24,15 +24,15 @@
         <mxCell id="L44XlMVKgie9fulfK0dv-3" value="Internet&lt;br&gt;&lt;br&gt;DDNS" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="601.4300000000001" y="270" width="60" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="L44XlMVKgie9fulfK0dv-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;" edge="1" parent="1" source="L44XlMVKgie9fulfK0dv-4" target="L44XlMVKgie9fulfK0dv-17">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="L44XlMVKgie9fulfK0dv-18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="352" y="315" as="sourcePoint" />
+            <mxPoint x="352" y="460" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
-        <mxCell id="L44XlMVKgie9fulfK0dv-4" value="&lt;div&gt;Router&lt;/div&gt;" style="image;html=1;image=img/lib/clip_art/networking/Wireless_Router_128x128.png" vertex="1" parent="1">
-          <mxGeometry x="310" y="235" width="80" height="80" as="geometry" />
-        </mxCell>
-        <mxCell id="L44XlMVKgie9fulfK0dv-5" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="L44XlMVKgie9fulfK0dv-4" target="L44XlMVKgie9fulfK0dv-2">
+        <mxCell id="L44XlMVKgie9fulfK0dv-5" value="" style="endArrow=classic;startArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="L44XlMVKgie9fulfK0dv-2">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="390" y="280" as="sourcePoint" />
+            <mxPoint x="392" y="275" as="sourcePoint" />
             <mxPoint x="440" y="230" as="targetPoint" />
           </mxGeometry>
         </mxCell>
@@ -54,21 +54,26 @@
         <mxCell id="L44XlMVKgie9fulfK0dv-15" value="Exposed port&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;Wireguard&lt;/span&gt;&lt;div style=&quot;white-space: pre;&quot;&gt;&lt;span style=&quot;&quot;&gt;51820/udp&lt;/span&gt;&lt;/div&gt;&lt;br&gt;DDNS Setup" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=default;labelBackgroundColor=default;labelBorderColor=none;textShadow=0;" vertex="1" parent="1">
           <mxGeometry x="394" y="274" width="90" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="L44XlMVKgie9fulfK0dv-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;" edge="1" parent="1" source="L44XlMVKgie9fulfK0dv-17" target="L44XlMVKgie9fulfK0dv-23">
+        <mxCell id="L44XlMVKgie9fulfK0dv-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;startArrow=classic;startFill=1;" edge="1" parent="1" target="L44XlMVKgie9fulfK0dv-23">
           <mxGeometry relative="1" as="geometry">
+            <mxPoint x="350" y="540" as="sourcePoint" />
             <Array as="points">
               <mxPoint x="350" y="607" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="L44XlMVKgie9fulfK0dv-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="1" source="L44XlMVKgie9fulfK0dv-17" target="L44XlMVKgie9fulfK0dv-22">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="L44XlMVKgie9fulfK0dv-17" value="" style="shape=image;html=1;verticalAlign=top;verticalLabelPosition=bottom;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn1.iconfinder.com/data/icons/fruit-136/64/Fruit_iconfree_Filled_Outline_raspberry-healthy-organic-food-fruit_icon-128.png" vertex="1" parent="1">
-          <mxGeometry x="306" y="460" width="88" height="88" as="geometry" />
+        <mxCell id="L44XlMVKgie9fulfK0dv-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="1" target="L44XlMVKgie9fulfK0dv-22">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="394" y="523" as="sourcePoint" />
+            <Array as="points">
+              <mxPoint x="394" y="524" />
+              <mxPoint x="500" y="524" />
+              <mxPoint x="500" y="506" />
+            </Array>
+          </mxGeometry>
         </mxCell>
         <mxCell id="L44XlMVKgie9fulfK0dv-19" value="Exposed ports&lt;br&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&lt;/span&gt;&lt;div style=&quot;white-space: pre;&quot;&gt;&lt;span style=&quot;&quot;&gt;22 (SSH)&lt;br&gt;51820 (Wireguard)&lt;br&gt;&lt;/span&gt;&lt;/div&gt;80 (http)&lt;br&gt;443 (https)" style="text;html=1;align=right;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=default;labelBackgroundColor=default;labelBorderColor=none;textShadow=0;" vertex="1" parent="1">
-          <mxGeometry x="240" y="374" width="104" height="76" as="geometry" />
+          <mxGeometry x="246" y="374" width="104" height="76" as="geometry" />
         </mxCell>
         <mxCell id="L44XlMVKgie9fulfK0dv-21" value="" style="image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/mscae/Docker.svg;" vertex="1" parent="1">
           <mxGeometry x="890" y="640" width="50" height="41" as="geometry" />
@@ -92,11 +97,10 @@
         <mxCell id="L44XlMVKgie9fulfK0dv-30" value="Port mapping&lt;br&gt;51820:51820/udp" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="362" y="511" width="110" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="L44XlMVKgie9fulfK0dv-31" value="Watchtower" style="shape=image;html=1;verticalAlign=bottom;verticalLabelPosition=top;labelBackgroundColor=#ffffff;imageAspect=0;aspect=fixed;image=https://cdn0.iconfinder.com/data/icons/maternity-and-pregnancy-2/512/91_Observatory_Tower_Watchtower-128.png;labelPosition=center;align=center;" vertex="1" parent="1">
-          <mxGeometry x="886" y="521" width="58" height="58" as="geometry" />
-        </mxCell>
-        <mxCell id="L44XlMVKgie9fulfK0dv-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=-0.098;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="L44XlMVKgie9fulfK0dv-31" target="L44XlMVKgie9fulfK0dv-21">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="L44XlMVKgie9fulfK0dv-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=-0.098;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="L44XlMVKgie9fulfK0dv-21">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="915" y="579" as="sourcePoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="L44XlMVKgie9fulfK0dv-40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="L44XlMVKgie9fulfK0dv-33" target="L44XlMVKgie9fulfK0dv-34">
           <mxGeometry relative="1" as="geometry" />
@@ -200,6 +204,15 @@
         </mxCell>
         <mxCell id="L44XlMVKgie9fulfK0dv-68" value="Internet traffic" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="583.72" y="360" width="54" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="L44XlMVKgie9fulfK0dv-69" value="Router" style="sketch=0;pointerEvents=1;shadow=0;dashed=0;html=1;strokeColor=none;fillColor=#505050;labelPosition=left;verticalLabelPosition=middle;verticalAlign=middle;outlineConnect=0;align=right;shape=mxgraph.office.devices.router;" vertex="1" parent="1">
+          <mxGeometry x="320" y="244" width="70" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="L44XlMVKgie9fulfK0dv-73" value="Watchtower" style="fontColor=#0066CC;verticalAlign=bottom;verticalLabelPosition=top;labelPosition=center;align=center;html=1;outlineConnect=0;fillColor=#CCCCCC;strokeColor=#6881B3;gradientColor=none;gradientDirection=north;strokeWidth=2;shape=mxgraph.networks.radio_tower;" vertex="1" parent="1">
+          <mxGeometry x="897.5" y="508.5" width="35" height="65" as="geometry" />
+        </mxCell>
+        <mxCell id="L44XlMVKgie9fulfK0dv-74" value="" style="shape=image;verticalLabelPosition=bottom;verticalAlign=top;imageAspect=0;image=https://elinux.org/images/c/cb/Raspberry_Pi_Logo.svg;" vertex="1" parent="1">
+          <mxGeometry x="325" y="461" width="60" height="74" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
