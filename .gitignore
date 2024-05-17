@@ -9,3 +9,4 @@
 !example.env
 !immich
 !caddy.Dockerfile
+!docs
