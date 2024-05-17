@@ -44,9 +44,9 @@ immich.pi.rahulja.in {
     }
 }
 
-photoprism.pi.rahulja.in {
-    reverse_proxy * 10.8.1.11:2342
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
-}
+# photoprism.pi.rahulja.in {
+#     reverse_proxy * 10.8.1.11:2342
+#      tls {
+#         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+#     }
+# }
