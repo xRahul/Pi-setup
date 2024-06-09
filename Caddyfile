@@ -58,9 +58,10 @@ nextcloud.pi.rahulja.in {
     }
 }
 
-nextcloudaio.pi.rahulja.in {
-    reverse_proxy * 10.8.1.13:8080
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+https://nextcloudaio.pi.rahulja.in:8443 {
+    reverse_proxy https://10.8.1.13:8080 {
+        transport http {
+            tls_insecure_skip_verify
+        }
     }
 }
