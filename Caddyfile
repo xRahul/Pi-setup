@@ -50,3 +50,10 @@ immich.pi.rahulja.in {
 #         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
 #     }
 # }
+
+watchtower.pi.rahulja.in {
+    reverse_proxy * 10.8.1.13:8080
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
