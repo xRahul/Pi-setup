@@ -64,3 +64,10 @@ navidrome.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+mikochi.pi.rahulja.in {
+    reverse_proxy * 10.8.1.15:8080
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
