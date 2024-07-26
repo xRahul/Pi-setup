@@ -51,9 +51,16 @@ immich.pi.rahulja.in {
 #     }
 # }
 
-http://watchtower.pi.rahulja.in {
+watchtower.pi.rahulja.in {
     reverse_proxy * 10.8.1.13:8080
-    # tls {
-    #     dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    # }
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
+
+navidrome.pi.rahulja.in {
+    reverse_proxy * 10.8.1.14:4533
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
 }

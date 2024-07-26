@@ -121,8 +121,10 @@ services:
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     container_name: immich_server
     platform: "linux/arm64"
+    user: 1000:1000 # should be owner of volumes
     restart: always
     command: ['start.sh', 'immich']
+    user: 1000:1000 # should be owner of volumes
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
@@ -140,6 +142,7 @@ services:
   immich-machine-learning:
     container_name: immich_machine_learning
     restart: always
+    user: 1000:1000 # should be owner of volumes
     # For hardware acceleration, add one of -[armnn, cuda, openvino] to the image tag.
     # Example tag: ${IMMICH_VERSION:-release}-cuda
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
@@ -171,6 +174,7 @@ services:
     image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
     platform: "linux/arm64"
     container_name: immich_postgres
+    user: 1000:1000 # should be owner of volumes
     restart: always
     hostname: database
     environment:
@@ -301,11 +305,36 @@ services:
 
 
 
+
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navidrome
+    user: 1000:1000 # should be owner of volumes
+    platform: "linux/arm64"
+    restart: always
+    environment:
+      ND_SCANSCHEDULE: 24h
+      ND_LOGLEVEL: warn
+      ND_SESSIONTIMEOUT: 24h
+      ND_BASEURL: ""
+      ND_LASTFM_ENABLED: ${LASTFM_ENABLED}
+      ND_LASTFM_APIKEY: ${LASTFM_APIKEY}
+      ND_LASTFM_SECRET: ${LASTFM_SECRET}
+    volumes:
+      - ${NAVIDROME_DATA_LOCATION}:/data
+      - ${NAVIDROME_MUSIC_LOCATION}:/music:ro
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.14
+
+
+
+
+
+# Booked 10.8.1.2 - 10.8.1.14
+
 networks:
   wg-easy:
     ipam:
       config:
         - subnet: 10.8.1.0/24
-
-
-# Booked 10.8.1.2 - 10.8.1.13
