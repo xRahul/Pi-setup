@@ -124,7 +124,6 @@ services:
     user: 1000:1000 # should be owner of volumes
     restart: always
     command: ['start.sh', 'immich']
-    user: 1000:1000 # should be owner of volumes
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
