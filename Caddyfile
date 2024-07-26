@@ -71,3 +71,10 @@ mikochi.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+jellyfin.pi.rahulja.in {
+    reverse_proxy * 10.8.1.16:8096
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}

@@ -348,7 +348,29 @@ services:
 
 
 
-# Booked 10.8.1.2 - 10.8.1.15
+
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    user: 1000:1000 # should be owner of volumes
+    platform: "linux/arm64"
+    volumes:
+      - ${JELLYFIN_CONFIG_LOCATION}:/config
+      - ${JELLYFIN_CACHE_LOCATION}:/cache
+      - type: bind
+        source: ${JELLYFIN_MEDIA_LOCATION}
+        target: /media
+    restart: always
+    # Optional - alternative address used for autodiscovery
+    environment:
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.pi.rahulja.in
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.16
+
+
+
+# Booked 10.8.1.2 - 10.8.1.16
 
 networks:
   wg-easy:
