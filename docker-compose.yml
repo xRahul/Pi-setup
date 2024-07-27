@@ -18,7 +18,8 @@ services:
 
   wg-easy:
     image: ghcr.io/wg-easy/wg-easy:latest
-    container_name: wg-easy
+    container_name: wg-
+    user: 1000:1000 # should be owner of volumes
     platform: "linux/arm64"
     restart: always
     environment:
@@ -51,6 +52,7 @@ services:
   pihole:
     image: pihole/pihole:latest
     container_name: pihole
+    user: 1000:1000 # should be owner of volumes
     platform: "linux/arm64"
     restart: always
     environment:
@@ -71,6 +73,7 @@ services:
   cloudflared-dns:
     image: cloudflare/cloudflared:latest
     container_name: cloudflared-dns-tunnel
+    user: 1000:1000 # should be owner of volumes
     platform: "linux/arm64"
     restart: always
     command: proxy-dns
@@ -94,6 +97,7 @@ services:
     image: slxpi/caddy-cloudflare
     container_name: caddy-cloudflare-web-server
     platform: "linux/arm64"
+    user: 1000:1000 # should be owner of volumes
     build:
       context: .
       dockerfile: caddy.Dockerfile
@@ -162,6 +166,7 @@ services:
     platform: "linux/arm64"
     container_name: immich_redis
     restart: always
+    user: 1000:1000 # should be owner of volumes
     healthcheck:
       test: redis-cli ping || exit 1
     hostname: redis
@@ -201,6 +206,7 @@ services:
   #   ## Use photoprism/photoprism:preview-arm64 for testing preview builds:
   #   image: photoprism/photoprism:arm64
   #   platform: "linux/arm64"
+  #   user: 1000:1000 # should be owner of volumes
   #   ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
   #   ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
   #   ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
@@ -283,6 +289,7 @@ services:
   #   ## If MariaDB gets stuck in a restart loop, this points to a memory or filesystem issue:
   #   ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
   #   restart: unless-stopped
+  #   user: 1000:1000 # should be owner of volumes
   #   stop_grace_period: 5s
   #   security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
   #     - seccomp:unconfined
