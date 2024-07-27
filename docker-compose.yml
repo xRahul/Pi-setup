@@ -379,7 +379,7 @@ services:
 
   archivebox:
     image: archivebox/archivebox:latest
-    container_name: jellyfin
+    container_name: archivebox
     user: 1000:1000 # should be owner of volumes
     platform: "linux/arm64"
     restart: always
