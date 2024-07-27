@@ -392,9 +392,9 @@ services:
         - PUBLIC_INDEX=True                 # set to False to prevent anonymous users from viewing snapshot list
         - PUBLIC_SNAPSHOTS=True             # set to False to prevent anonymous users from viewing snapshot content
         - PUBLIC_ADD_VIEW=False             # set to True to allow anonymous users to submit new URLs to archive
-        - SEARCH_BACKEND_ENGINE=sonic       # tells ArchiveBox to use sonic container below for fast full-text search
-        - SEARCH_BACKEND_HOST_NAME=sonic
-        - SEARCH_BACKEND_PASSWORD=${SONIC_SEARCH_BACKEND_PASSWORD}
+        - SEARCH_BACKEND_ENGINE=ripgrep       # tells ArchiveBox to use sonic container below for fast full-text search
+        # - SEARCH_BACKEND_HOST_NAME=sonic
+        # - SEARCH_BACKEND_PASSWORD=${SONIC_SEARCH_BACKEND_PASSWORD}
         # - PUID=911                        # set to your host user's UID & GID if you encounter permissions issues
         # - PGID=911                        # UID/GIDs <500 may clash with existing users and are not recommended
         # - MEDIA_MAX_SIZE=750m             # increase this filesize limit to allow archiving larger audio/video files
@@ -410,28 +410,28 @@ services:
 
 
 
-  sonic:
-    image: valeriansaliou/sonic:latest
-    container_name: sonic
-    hostname: sonic
-    user: 1000:1000 # should be owner of volumes
-    restart: always
-    build:
-      # custom build just auto-downloads archivebox's default sonic.cfg as a convenience
-      # not needed after first run / if you have already have ./etc/sonic.cfg present
-      dockerfile_inline: |
-        FROM quay.io/curl/curl:latest AS config_downloader
-        RUN curl -fsSL 'https://raw.githubusercontent.com/ArchiveBox/ArchiveBox/stable/etc/sonic.cfg' > /tmp/sonic.cfg
-        FROM valeriansaliou/sonic:latest
-        COPY --from=config_downloader /tmp/sonic.cfg /etc/sonic.cfg
-    environment:
-        - SEARCH_BACKEND_PASSWORD=${SONIC_SEARCH_BACKEND_PASSWORD}
-    volumes:
-        - ./sonic.cfg:/etc/sonic.cfg
-        - ${SONIC_DATA_LOCATION}:/var/lib/sonic/store
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.18
+  # sonic:
+  #   image: valeriansaliou/sonic:latest
+  #   container_name: sonic
+  #   hostname: sonic
+  #   user: 1000:1000 # should be owner of volumes
+  #   restart: always
+  #   build:
+  #     # custom build just auto-downloads archivebox's default sonic.cfg as a convenience
+  #     # not needed after first run / if you have already have ./etc/sonic.cfg present
+  #     dockerfile_inline: |
+  #       FROM quay.io/curl/curl:latest AS config_downloader
+  #       RUN curl -fsSL 'https://raw.githubusercontent.com/ArchiveBox/ArchiveBox/stable/etc/sonic.cfg' > /tmp/sonic.cfg
+  #       FROM valeriansaliou/sonic:latest
+  #       COPY --from=config_downloader /tmp/sonic.cfg /etc/sonic.cfg
+  #   environment:
+  #       - SEARCH_BACKEND_PASSWORD=${SONIC_SEARCH_BACKEND_PASSWORD}
+  #   volumes:
+  #       - ./sonic.cfg:/etc/sonic.cfg
+  #       - ${SONIC_DATA_LOCATION}:/var/lib/sonic/store
+  #   networks:
+  #     wg-easy:
+  #       ipv4_address: 10.8.1.18
 
 
 
