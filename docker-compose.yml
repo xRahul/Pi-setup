@@ -18,8 +18,7 @@ services:
 
   wg-easy:
     image: ghcr.io/wg-easy/wg-easy:latest
-    container_name: wg-
-    user: 1000:1000 # should be owner of volumes
+    container_name: wg-easy
     platform: "linux/arm64"
     restart: always
     environment:
