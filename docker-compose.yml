@@ -381,6 +381,7 @@ services:
     image: archivebox/archivebox:latest
     container_name: archivebox
     platform: "linux/arm64"
+    user: 1000:1000 # should be owner of volumes
     restart: always
     volumes:
       - ${ARCHIVEBOX_DATA_LOCATION}:/data
@@ -394,8 +395,8 @@ services:
         # - SEARCH_BACKEND_ENGINE=ripgrep       # tells ArchiveBox to use sonic container below for fast full-text search
         # - SEARCH_BACKEND_HOST_NAME=sonic
         # - SEARCH_BACKEND_PASSWORD=${SONIC_SEARCH_BACKEND_PASSWORD}
-        # - PUID=911                        # set to your host user's UID & GID if you encounter permissions issues
-        # - PGID=911                        # UID/GIDs <500 may clash with existing users and are not recommended
+        - PUID=1000                        # set to your host user's UID & GID if you encounter permissions issues
+        - PGID=1000                        # UID/GIDs <500 may clash with existing users and are not recommended
         # - MEDIA_MAX_SIZE=750m             # increase this filesize limit to allow archiving larger audio/video files
         # - TIMEOUT=60                      # increase this number to 120+ seconds if you see many slow downloads timing out
         # - CHECK_SSL_VALIDITY=True         # set to False to disable strict SSL checking (allows saving URLs w/ broken certs)
