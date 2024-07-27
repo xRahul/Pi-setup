@@ -356,7 +356,7 @@ services:
 
 
   jellyfin:
-    image: jellyfin/jellyfin
+    image: jellyfin/jellyfin:latest
     container_name: jellyfin
     user: 1000:1000 # should be owner of volumes
     platform: "linux/arm64"
