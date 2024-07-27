@@ -415,7 +415,7 @@ services:
     container_name: sonic
     hostname: sonic
     user: 1000:1000 # should be owner of volumes
-    platform: "linux/arm64"
+    platform: "linux/amd64" # arm64 not present
     restart: always
     environment:
         - SEARCH_BACKEND_PASSWORD=${SONIC_SEARCH_BACKEND_PASSWORD}
