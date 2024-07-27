@@ -377,36 +377,36 @@ services:
 
 
 
-  archivebox:
-    image: archivebox/archivebox:latest
-    container_name: archivebox
-    platform: "linux/arm64"
-    user: 1000:1000 # should be owner of volumes
-    restart: always
-    volumes:
-      - ${ARCHIVEBOX_DATA_LOCATION}:/data
-    environment:
-        - ADMIN_USERNAME=${ARCHIVEBOX_ADMIN_USERNAME}            # create an admin user on first run with the given user/pass combo
-        - ADMIN_PASSWORD=${ARCHIVEBOX_ADMIN_PASSWORD}
-        - ALLOWED_HOSTS=*                   # restrict this to only accept incoming traffic via specific domain name
-        - PUBLIC_INDEX=True                 # set to False to prevent anonymous users from viewing snapshot list
-        - PUBLIC_SNAPSHOTS=True             # set to False to prevent anonymous users from viewing snapshot content
-        - PUBLIC_ADD_VIEW=False             # set to True to allow anonymous users to submit new URLs to archive
-        # - SEARCH_BACKEND_ENGINE=ripgrep       # tells ArchiveBox to use sonic container below for fast full-text search
-        # - SEARCH_BACKEND_HOST_NAME=sonic
-        # - SEARCH_BACKEND_PASSWORD=${SONIC_SEARCH_BACKEND_PASSWORD}
-        - PUID=1000                        # set to your host user's UID & GID if you encounter permissions issues
-        - PGID=1000                        # UID/GIDs <500 may clash with existing users and are not recommended
-        # - MEDIA_MAX_SIZE=750m             # increase this filesize limit to allow archiving larger audio/video files
-        # - TIMEOUT=60                      # increase this number to 120+ seconds if you see many slow downloads timing out
-        # - CHECK_SSL_VALIDITY=True         # set to False to disable strict SSL checking (allows saving URLs w/ broken certs)
-        # - SAVE_ARCHIVE_DOT_ORG=True       # set to False to disable submitting all URLs to Archive.org when archiving
-        # ...
-        # add further configuration options from archivebox/config.py as needed (to apply them only to this container)
-        # or set using `docker compose run archivebox config --set SOME_KEY=someval` (to persist config across all containers)
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.17
+  # archivebox:
+  #   image: archivebox/archivebox:latest
+  #   container_name: archivebox
+  #   platform: "linux/arm64"
+  #   user: 1000:1000 # should be owner of volumes
+  #   restart: always
+  #   volumes:
+  #     - ${ARCHIVEBOX_DATA_LOCATION}:/data
+  #   environment:
+  #       - ADMIN_USERNAME=${ARCHIVEBOX_ADMIN_USERNAME}            # create an admin user on first run with the given user/pass combo
+  #       - ADMIN_PASSWORD=${ARCHIVEBOX_ADMIN_PASSWORD}
+  #       - ALLOWED_HOSTS=*                   # restrict this to only accept incoming traffic via specific domain name
+  #       - PUBLIC_INDEX=True                 # set to False to prevent anonymous users from viewing snapshot list
+  #       - PUBLIC_SNAPSHOTS=True             # set to False to prevent anonymous users from viewing snapshot content
+  #       - PUBLIC_ADD_VIEW=False             # set to True to allow anonymous users to submit new URLs to archive
+  #       # - SEARCH_BACKEND_ENGINE=ripgrep       # tells ArchiveBox to use sonic container below for fast full-text search
+  #       # - SEARCH_BACKEND_HOST_NAME=sonic
+  #       # - SEARCH_BACKEND_PASSWORD=${SONIC_SEARCH_BACKEND_PASSWORD}
+  #       - PUID=1000                        # set to your host user's UID & GID if you encounter permissions issues
+  #       - PGID=1000                        # UID/GIDs <500 may clash with existing users and are not recommended
+  #       # - MEDIA_MAX_SIZE=750m             # increase this filesize limit to allow archiving larger audio/video files
+  #       # - TIMEOUT=60                      # increase this number to 120+ seconds if you see many slow downloads timing out
+  #       # - CHECK_SSL_VALIDITY=True         # set to False to disable strict SSL checking (allows saving URLs w/ broken certs)
+  #       # - SAVE_ARCHIVE_DOT_ORG=True       # set to False to disable submitting all URLs to Archive.org when archiving
+  #       # ...
+  #       # add further configuration options from archivebox/config.py as needed (to apply them only to this container)
+  #       # or set using `docker compose run archivebox config --set SOME_KEY=someval` (to persist config across all containers)
+  #   networks:
+  #     wg-easy:
+  #       ipv4_address: 10.8.1.17
 
 
 
