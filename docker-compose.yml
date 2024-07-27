@@ -51,7 +51,6 @@ services:
   pihole:
     image: pihole/pihole:latest
     container_name: pihole
-    user: 1000:1000 # should be owner of volumes
     platform: "linux/arm64"
     restart: always
     environment:
