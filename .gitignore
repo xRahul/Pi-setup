@@ -10,3 +10,5 @@
 !immich
 !caddy.Dockerfile
 !docs
+!sonic.cfg
+!prometheus
