@@ -438,7 +438,7 @@ services:
   prometheus:
     image: prom/prometheus
     container_name: prometheus
-    host_name: prometheus
+    hostname: prometheus
     user: 1000:1000 # should be owner of volumes
     platform: "linux/arm64"
     command:
