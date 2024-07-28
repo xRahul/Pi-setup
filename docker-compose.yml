@@ -474,6 +474,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
     volumes:
       - ${GRAFANA_DATA_SOURCE}:/etc/grafana/provisioning/datasources
+      - ${GRAFANA_VAR_LIB}:/var/lib/grafana
     networks:
       wg-easy:
         ipv4_address: 10.8.1.20
