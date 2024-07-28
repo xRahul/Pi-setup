@@ -12,17 +12,29 @@ alerting:
 scrape_configs:
 - job_name: prometheus
   honor_timestamps: true
-  scrape_interval: 15s
-  scrape_timeout: 10s
   metrics_path: /metrics
   scheme: http
   static_configs:
   - targets:
     - localhost:9090
 - job_name: watchtower
-  scrape_interval: 60s
   metrics_path: /v1/metrics
   bearer_token: demotoken
   static_configs:
   - targets:
     - 'watchtower:8080'
+- job_name: immich_api
+  static_configs:
+    - targets: ['immichserver:8081']
+- job_name: immich_microservices
+  static_configs:
+    - targets: ['immichserver:8082']
+- job_name: 'pihole'
+  static_configs:
+    - targets: ['pihole:9617']
+- job_name: 'cloudflared_dns_tunnel'
+  static_configs:
+    - targets: ['cloudflareddnstunnel:43697']
+- job_name: 'caddy_cloudflare_web_server'
+  static_configs:
+    - targets: ['caddycloudflarewebserver:2019']

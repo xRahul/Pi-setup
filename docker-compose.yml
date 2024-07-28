@@ -49,9 +49,12 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.2
 
+
+
   pihole:
     image: pihole/pihole:latest
     container_name: pihole
+    hostname: pihole
     platform: "linux/arm64"
     restart: always
     environment:
@@ -72,6 +75,7 @@ services:
   cloudflared-dns:
     image: cloudflare/cloudflared:latest
     container_name: cloudflared-dns-tunnel
+    hostname: cloudflareddnstunnel
     user: 1000:1000 # should be owner of volumes
     platform: "linux/arm64"
     restart: always
@@ -95,6 +99,7 @@ services:
   caddy:
     image: slxpi/caddy-cloudflare
     container_name: caddy-cloudflare-web-server
+    hostname: caddycloudflarewebserver
     platform: "linux/arm64"
     user: 1000:1000 # should be owner of volumes
     build:
@@ -123,6 +128,7 @@ services:
   immich-server:
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     container_name: immich_server
+    hostname: immichserver
     platform: "linux/arm64"
     user: 1000:1000 # should be owner of volumes
     restart: always
@@ -143,6 +149,7 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
+    hostname: immichmachinelearning
     restart: always
     user: 1000:1000 # should be owner of volumes
     # For hardware acceleration, add one of -[armnn, cuda, openvino] to the image tag.
@@ -472,9 +479,35 @@ services:
 
 
 
+  pihole-exporter:
+    image: ekofr/pihole-exporter:latest
+    container_name: pihole-exporter
+    user: 1000:1000 # should be owner of volumes
+    platform: "linux/arm64"
+    restart: always
+    environment:
+      PIHOLE_HOSTNAME: pihole # Chage to PiHole's IP address or FQDN
+      PIHOLE_PASSWORD: ${PIHOLE__WEBPASSWORD} # Change to your PiHole's password
+      INTERVAL: 90s
+      PORT: 9617
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5k"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:9617/metrics"]
+      interval: 300s
+      retries: 5
+      timeout: 10s
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.21
 
 
-# Booked 10.8.1.2 - 10.8.1.20
+
+
+# Booked 10.8.1.2 - 10.8.1.21
 
 networks:
   wg-easy:
