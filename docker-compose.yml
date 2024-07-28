@@ -435,8 +435,45 @@ services:
 
 
 
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    host_name: prometheus
+    user: 1000:1000 # should be owner of volumes
+    platform: "linux/arm64"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    restart: always
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - ${PROMETHEUS_DATA_LOCATION}:/prometheus
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.19
 
-# Booked 10.8.1.2 - 10.8.1.18
+
+
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    user: 1000:1000 # should be owner of volumes
+    platform: "linux/arm64"
+    restart: always
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    volumes:
+      - ${GRAFANA_DATA_SOURCE}:/etc/grafana/provisioning/datasources
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.20
+
+
+
+
+
+# Booked 10.8.1.2 - 10.8.1.20
 
 networks:
   wg-easy:
