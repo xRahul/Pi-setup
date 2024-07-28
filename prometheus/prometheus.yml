@@ -20,9 +20,9 @@ scrape_configs:
   - targets:
     - localhost:9090
 - job_name: watchtower
-    scrape_interval: 60s
-    metrics_path: /v1/metrics
-    bearer_token: demotoken
-    static_configs:
-      - targets:
-        - 'watchtower:8080'
+  scrape_interval: 60s
+  metrics_path: /v1/metrics
+  bearer_token: demotoken
+  static_configs:
+  - targets:
+    - 'watchtower:8080'
