@@ -31,7 +31,7 @@ scrape_configs:
     - targets: ['immichserver:8082']
 - job_name: 'pihole'
   static_configs:
-    - targets: ['pihole:9617']
+    - targets: ['piholeexporter:9617']
 - job_name: 'cloudflared_dns_tunnel'
   static_configs:
     - targets: ['cloudflareddnstunnel:43697']

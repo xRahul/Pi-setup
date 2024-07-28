@@ -482,6 +482,7 @@ services:
   pihole-exporter:
     image: ekofr/pihole-exporter:latest
     container_name: pihole-exporter
+    hostname: piholeexporter
     user: 1000:1000 # should be owner of volumes
     platform: "linux/arm64"
     restart: always
