@@ -12,3 +12,4 @@
 !docs
 !sonic.cfg
 !prometheus
+!sonic.Dockerfile
