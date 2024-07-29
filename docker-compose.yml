@@ -318,26 +318,26 @@ services:
 
 
 
-  navidrome:
-    image: deluan/navidrome:latest
-    container_name: navidrome
-    user: 1000:1000 # should be owner of volumes
-    platform: "linux/arm64"
-    restart: always
-    environment:
-      ND_SCANSCHEDULE: 24h
-      ND_LOGLEVEL: warn
-      ND_SESSIONTIMEOUT: 24h
-      ND_BASEURL: ""
-      ND_LASTFM_ENABLED: ${LASTFM_ENABLED}
-      ND_LASTFM_APIKEY: ${LASTFM_APIKEY}
-      ND_LASTFM_SECRET: ${LASTFM_SECRET}
-    volumes:
-      - ${NAVIDROME_DATA_LOCATION}:/data
-      - ${NAVIDROME_MUSIC_LOCATION}:/music:ro
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.14
+  # navidrome:
+  #   image: deluan/navidrome:latest
+  #   container_name: navidrome
+  #   user: 1000:1000 # should be owner of volumes
+  #   platform: "linux/arm64"
+  #   restart: always
+  #   environment:
+  #     ND_SCANSCHEDULE: 24h
+  #     ND_LOGLEVEL: warn
+  #     ND_SESSIONTIMEOUT: 24h
+  #     ND_BASEURL: ""
+  #     ND_LASTFM_ENABLED: ${LASTFM_ENABLED}
+  #     ND_LASTFM_APIKEY: ${LASTFM_APIKEY}
+  #     ND_LASTFM_SECRET: ${LASTFM_SECRET}
+  #   volumes:
+  #     - ${NAVIDROME_DATA_LOCATION}:/data
+  #     - ${NAVIDROME_MUSIC_LOCATION}:/music:ro
+  #   networks:
+  #     wg-easy:
+  #       ipv4_address: 10.8.1.14
 
 
 
