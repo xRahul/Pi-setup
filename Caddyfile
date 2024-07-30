@@ -104,3 +104,10 @@ grafana.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+wallabag.pi.rahulja.in {
+    reverse_proxy * 10.8.1.22:80
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}

@@ -9,10 +9,11 @@ services:
     environment:
       WATCHTOWER_CLEANUP: "true"
       WATCHTOWER_POLL_INTERVAL: 7200 # checks for updates every two hours
-      WATCHTOWER_HTTP_API_METRICS: "true"
-      WATCHTOWER_HTTP_API_TOKEN: ${WATCHTOWER_HTTP_API_TOKEN}
+      # WATCHTOWER_HTTP_API_METRICS: "true"
+      # WATCHTOWER_HTTP_API_TOKEN: ${WATCHTOWER_HTTP_API_TOKEN}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro
     networks:
       wg-easy:
         ipv4_address: 10.8.1.13
@@ -401,7 +402,7 @@ services:
       - PUBLIC_INDEX=True                 # set to False to prevent anonymous users from viewing snapshot list
       - PUBLIC_SNAPSHOTS=True             # set to False to prevent anonymous users from viewing snapshot content
       - PUBLIC_ADD_VIEW=False             # set to True to allow anonymous users to submit new URLs to archive
-      # - SEARCH_BACKEND_ENGINE=sonic       # tells ArchiveBox to use sonic container below for fast full-text search
+      - SEARCH_BACKEND_ENGINE=ripgrep     # tells ArchiveBox to use sonic container below for fast full-text search
       # - SEARCH_BACKEND_HOST_NAME=sonic
       # - SEARCH_BACKEND_PASSWORD=${SONIC_SEARCH_BACKEND_PASSWORD}
       - PUID=1000                        # set to your host user's UID & GID if you encounter permissions issues
@@ -454,73 +455,129 @@ services:
 
 
 
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    hostname: prometheus
-    user: 1000:1000 # should be owner of volumes
+  # prometheus:
+  #   image: prom/prometheus
+  #   container_name: prometheus
+  #   hostname: prometheus
+  #   user: 1000:1000 # should be owner of volumes
+  #   platform: "linux/arm64"
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #   restart: always
+  #   volumes:
+  #     - ./prometheus:/etc/prometheus
+  #     - ${PROMETHEUS_DATA_LOCATION}:/prometheus
+  #   networks:
+  #     wg-easy:
+  #       ipv4_address: 10.8.1.19
+
+
+
+
+  # grafana:
+  #   image: grafana/grafana
+  #   container_name: grafana
+  #   user: 1000:1000 # should be owner of volumes
+  #   platform: "linux/arm64"
+  #   restart: always
+  #   environment:
+  #     - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USERNAME}
+  #     - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+  #   volumes:
+  #     - ${GRAFANA_DATA_SOURCE}:/etc/grafana/provisioning/datasources
+  #     - ${GRAFANA_VAR_LIB}:/var/lib/grafana
+  #   networks:
+  #     wg-easy:
+  #       ipv4_address: 10.8.1.20
+
+
+
+  # pihole-exporter:
+  #   image: ekofr/pihole-exporter:latest
+  #   container_name: pihole-exporter
+  #   hostname: piholeexporter
+  #   user: 1000:1000 # should be owner of volumes
+  #   platform: "linux/arm64"
+  #   restart: always
+  #   environment:
+  #     PIHOLE_HOSTNAME: pihole # Chage to PiHole's IP address or FQDN
+  #     PIHOLE_PASSWORD: ${PIHOLE__WEBPASSWORD} # Change to your PiHole's password
+  #     INTERVAL: 90s
+  #     PORT: 9617
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "5k"
+  #       max-file: "5"
+  #   healthcheck:
+  #     test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:9617/metrics"]
+  #     interval: 300s
+  #     retries: 5
+  #     timeout: 10s
+  #   networks:
+  #     wg-easy:
+  #       ipv4_address: 10.8.1.21
+
+
+
+  wallabag:
+    image: wallabag/wallabag:latest
+    container_name: wallabag
+    hostname: wallabag
     platform: "linux/arm64"
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    restart: always
-    volumes:
-      - ./prometheus:/etc/prometheus
-      - ${PROMETHEUS_DATA_LOCATION}:/prometheus
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.19
-
-
-
-
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    user: 1000:1000 # should be owner of volumes
-    platform: "linux/arm64"
+    #user: 1000:1000 # should be owner of volumes
     restart: always
     environment:
-      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USERNAME}
-      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      # - MYSQL_ROOT_PASSWORD=${WALLABAG_MYSQL_ROOT_PASSWORD}
+      # - SYMFONY__ENV__DATABASE_DRIVER=pdo_mysql
+      # - SYMFONY__ENV__DATABASE_HOST=wallabagdb
+      # - SYMFONY__ENV__DATABASE_PORT=3306
+      # - SYMFONY__ENV__DATABASE_NAME=wallabag
+      # - SYMFONY__ENV__DATABASE_USER=${WALLABAG_MYSQL_USER}
+      # - SYMFONY__ENV__DATABASE_PASSWORD=${WALLABAG_MYSQL_PASSWORD}
+      - SYMFONY__ENV__DATABASE_CHARSET=utf8mb4
+      - SYMFONY__ENV__DATABASE_TABLE_PREFIX="wallabag_"
+      # - SYMFONY__ENV__MAILER_DSN=smtp://127.0.0.1
+      - SYMFONY__ENV__FROM_EMAIL=wallabag@rahulja.in
+      - SYMFONY__ENV__DOMAIN_NAME=https://wallabag.pi.rahulja.in
+      - SYMFONY__ENV__SERVER_NAME="Wallabag - RJ"
+
+    ports:
+      - "80"
     volumes:
-      - ${GRAFANA_DATA_SOURCE}:/etc/grafana/provisioning/datasources
-      - ${GRAFANA_VAR_LIB}:/var/lib/grafana
+      - ${WALLABAG_DATA_LOCATION}:/var/www/wallabag/data
+      - ${WALLABAG_IMAGES_LOCATION}:/var/www/wallabag/web/assets/images
+    # healthcheck:
+    #   test: ["CMD", "wget" ,"--no-verbose", "--tries=1", "--spider", "http://localhost"]
+    #   interval: 1m
+    #   timeout: 3s
     networks:
       wg-easy:
-        ipv4_address: 10.8.1.20
+        ipv4_address: 10.8.1.22
+
+
+  # db:
+  #   image: mariadb
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=wallaroot
+  #   volumes:
+  #     - /opt/wallabag/data:/var/lib/mysql
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+  #     interval: 20s
+  #     timeout: 3s
+
+
+  # redis:
+  #   image: redis:alpine
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 20s
+  #     timeout: 3s
 
 
 
-  pihole-exporter:
-    image: ekofr/pihole-exporter:latest
-    container_name: pihole-exporter
-    hostname: piholeexporter
-    user: 1000:1000 # should be owner of volumes
-    platform: "linux/arm64"
-    restart: always
-    environment:
-      PIHOLE_HOSTNAME: pihole # Chage to PiHole's IP address or FQDN
-      PIHOLE_PASSWORD: ${PIHOLE__WEBPASSWORD} # Change to your PiHole's password
-      INTERVAL: 90s
-      PORT: 9617
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "5k"
-        max-file: "5"
-    healthcheck:
-      test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:9617/metrics"]
-      interval: 300s
-      retries: 5
-      timeout: 10s
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.21
-
-
-
-
-# Booked 10.8.1.2 - 10.8.1.21
+# Booked 10.8.1.2 - 10.8.1.22
 
 networks:
   wg-easy:
