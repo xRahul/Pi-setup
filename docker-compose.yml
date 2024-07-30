@@ -525,18 +525,18 @@ services:
     container_name: wallabag
     hostname: wallabag
     platform: "linux/arm64"
-    user: 1000:1000 # should be owner of volumes
+    # user: 1000:1000 # should be owner of volumes
     restart: always
     environment:
       # - MYSQL_ROOT_PASSWORD=${WALLABAG_MYSQL_ROOT_PASSWORD}
-      # - SYMFONY__ENV__DATABASE_DRIVER=pdo_mysql
-      # - SYMFONY__ENV__DATABASE_HOST=wallabagdb
+      - SYMFONY__ENV__DATABASE_DRIVER=pdo_sqlite
+      # - SYMFONY__ENV__DATABASE_HOST=127.0.0.1
       # - SYMFONY__ENV__DATABASE_PORT=3306
-      # - SYMFONY__ENV__DATABASE_NAME=wallabag
+      - SYMFONY__ENV__DATABASE_NAME=wallabag
       # - SYMFONY__ENV__DATABASE_USER=${WALLABAG_MYSQL_USER}
       # - SYMFONY__ENV__DATABASE_PASSWORD=${WALLABAG_MYSQL_PASSWORD}
-      - SYMFONY__ENV__DATABASE_CHARSET=utf8mb4
-      - SYMFONY__ENV__DATABASE_TABLE_PREFIX="wallabag_"
+      # - SYMFONY__ENV__DATABASE_CHARSET=utf8mb4
+      # - SYMFONY__ENV__DATABASE_TABLE_PREFIX="wallabag_"
       # - SYMFONY__ENV__MAILER_DSN=smtp://127.0.0.1
       - SYMFONY__ENV__FROM_EMAIL=wallabag@rahulja.in
       - SYMFONY__ENV__DOMAIN_NAME=https://wallabag.pi.rahulja.in
