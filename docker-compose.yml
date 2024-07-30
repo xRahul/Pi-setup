@@ -525,7 +525,7 @@ services:
     container_name: wallabag
     hostname: wallabag
     platform: "linux/arm64"
-    # user: 1000:1000 # should be owner of volumes
+    user: 1000:1000 # should be owner of volumes
     restart: always
     environment:
       # - MYSQL_ROOT_PASSWORD=${WALLABAG_MYSQL_ROOT_PASSWORD}
@@ -541,7 +541,8 @@ services:
       - SYMFONY__ENV__FROM_EMAIL=wallabag@rahulja.in
       - SYMFONY__ENV__DOMAIN_NAME=https://wallabag.pi.rahulja.in
       - SYMFONY__ENV__SERVER_NAME="Wallabag - RJ"
-
+      - PUID=1000                        # set to your host user's UID & GID if you encounter permissions issues
+      - PGID=1000                        # UID/GIDs <500 may clash with existing users and are not recommended
     # ports:
     #   - "80"
     volumes:
