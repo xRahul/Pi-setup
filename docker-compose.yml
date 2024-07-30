@@ -525,7 +525,7 @@ services:
     container_name: wallabag
     hostname: wallabag
     platform: "linux/arm64"
-    #user: 1000:1000 # should be owner of volumes
+    user: 1000:1000 # should be owner of volumes
     restart: always
     environment:
       # - MYSQL_ROOT_PASSWORD=${WALLABAG_MYSQL_ROOT_PASSWORD}
@@ -542,8 +542,8 @@ services:
       - SYMFONY__ENV__DOMAIN_NAME=https://wallabag.pi.rahulja.in
       - SYMFONY__ENV__SERVER_NAME="Wallabag - RJ"
 
-    ports:
-      - "80"
+    # ports:
+    #   - "80"
     volumes:
       - ${WALLABAG_DATA_LOCATION}:/var/www/wallabag/data
       - ${WALLABAG_IMAGES_LOCATION}:/var/www/wallabag/web/assets/images
