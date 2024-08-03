@@ -185,7 +185,7 @@ services:
     image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
     platform: "linux/arm64"
     container_name: immich_postgres
-    user: 1000:1000 # should be owner of volumes
+    # user: 1000:1000 # should be owner of volumes
     restart: always
     hostname: database
     environment:
