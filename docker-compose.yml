@@ -173,7 +173,7 @@ services:
     platform: "linux/arm64"
     container_name: immich_redis
     restart: always
-    user: 1000:1000 # should be owner of volumes
+    # user: 1000:1000 # should be owner of volumes
     healthcheck:
       test: redis-cli ping || exit 1
     hostname: redis
