@@ -594,7 +594,7 @@ services:
       VPN_TYPE: wireguard
       WIREGUARD_PRIVATE_KEY: ${SURFSHARK_WG_PRIVATE_KEY}
       WIREGUARD_ADDRESSES: 10.14.0.2/16
-      SERVER_COUNTRIES: Netherlands
+      SERVER_COUNTRIES: Switzerland
       # # OpenVPN
       # VPN_SERVICE_PROVIDER: nordvpn
       # VPN_TYPE: openvpn
