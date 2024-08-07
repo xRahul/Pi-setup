@@ -625,6 +625,8 @@ services:
       - PUID=1000
       - TZ=Etc/UTC
       # - DOCKER_MODS=linuxserver/mods:transmission-floodui
+      - USER=${TRANSMISSION_USERNAME}
+      - PASS=${TRANSMISSION_PASSWORD}
 
 
 
