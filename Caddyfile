@@ -111,3 +111,11 @@ wallabag.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+
+trans.pi.rahulja.in {
+    reverse_proxy * 10.8.1.23:9091
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}

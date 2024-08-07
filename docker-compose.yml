@@ -577,8 +577,59 @@ services:
   #     timeout: 3s
 
 
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    restart: always
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    volumes:
+      - ${GLUETUN_DATA_SOURCE}:/gluetun
+    environment:
+      TZ: ${GLUETUN_TZ}
+      # Wireguard
+      VPN_SERVICE_PROVIDER: surfshark
+      VPN_TYPE: wireguard
+      WIREGUARD_PRIVATE_KEY: ${SURFSHARK_WG_PRIVATE_KEY}
+      WIREGUARD_ADDRESSES: 10.14.0.2/16
+      SERVER_COUNTRIES: Netherlands
+      # # OpenVPN
+      # VPN_SERVICE_PROVIDER: nordvpn
+      # VPN_TYPE: openvpn
+      # OPENVPN_USER: $NORDVPN_USERNAME
+      # OPENVPN_USER: $NORDVPN_PASSWORD
+    # ports:
+    #   - 9091:9091
+    #   - 51413:51413/udp
+    #   - 51413:51413
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.23
 
-# Booked 10.8.1.2 - 10.8.1.22
+
+
+
+  transmission:
+    image: linuxserver/transmission
+    container_name: transmission
+    restart: always
+    network_mode: "service:gluetun"
+    volumes:
+      - ${TRANSMISSION_CONFIG_SOURCE}:/config
+      - ${TRANSMISSION_DOWNLOAD_SOURCE}:/downloads
+      - ${TRANSMISSION_WATCH_SOURCE}:/watch
+    environment:
+      - PGID=1000
+      - PUID=1000
+      - TZ=Etc/UTC
+      # - DOCKER_MODS=linuxserver/mods:transmission-floodui
+
+
+
+
+# Booked 10.8.1.2 - 10.8.1.23
 
 networks:
   wg-easy:
