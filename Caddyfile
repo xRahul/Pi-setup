@@ -119,3 +119,11 @@ trans.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+
+prowlarr.pi.rahulja.in {
+    reverse_proxy * 10.8.1.24:9696
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}

@@ -629,9 +629,24 @@ services:
       - PASS=${TRANSMISSION_PASSWORD}
 
 
+  prowlarr:
+    image: linuxserver/prowlarr
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - ${PROWLARR_CONFIG_SOURCE}:/config
+    restart: always
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.24
 
 
-# Booked 10.8.1.2 - 10.8.1.23
+
+
+# Booked 10.8.1.2 - 10.8.1.24
 
 networks:
   wg-easy:
