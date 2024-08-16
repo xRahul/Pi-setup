@@ -593,8 +593,8 @@ services:
       VPN_SERVICE_PROVIDER: surfshark
       VPN_TYPE: wireguard
       WIREGUARD_PRIVATE_KEY: ${SURFSHARK_WG_PRIVATE_KEY}
-      WIREGUARD_ADDRESSES: 10.14.0.2/16
-      SERVER_COUNTRIES: Switzerland
+      WIREGUARD_ADDRESSES: ${WIREGUARD_ADDRESSES}
+      SERVER_COUNTRIES: ${SURFSHARK_SERVER_COUNTRIES}
       # # OpenVPN
       # VPN_SERVICE_PROVIDER: nordvpn
       # VPN_TYPE: openvpn
@@ -639,14 +639,12 @@ services:
     volumes:
       - ${PROWLARR_CONFIG_SOURCE}:/config
     restart: always
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.24
+    network_mode: "service:gluetun"
 
 
 
 
-# Booked 10.8.1.2 - 10.8.1.24
+# Booked 10.8.1.2 - 10.8.1.23
 
 networks:
   wg-easy:
