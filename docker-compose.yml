@@ -632,30 +632,30 @@ services:
       - PASS=${TRANSMISSION_PASSWORD}
 
 
-  prowlarr:
-    image: linuxserver/prowlarr
-    container_name: prowlarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-    volumes:
-      - ${PROWLARR_CONFIG_SOURCE}:/config
-    restart: always
-    network_mode: "service:gluetun"
+  # prowlarr:
+  #   image: linuxserver/prowlarr
+  #   container_name: prowlarr
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #     - TZ=Etc/UTC
+  #   volumes:
+  #     - ${PROWLARR_CONFIG_SOURCE}:/config
+  #   restart: always
+  #   network_mode: "service:gluetun"
 
-  flaresolverr:
-    image: ghcr.io/flaresolverr/flaresolverr:latest
-    container_name: flaresolverr
-    environment:
-      - LOG_LEVEL=${FLARESOLVERR_LOG_LEVEL:-warn}
-      - LOG_HTML=${FLARESOLVERR_LOG_HTML:-false}
-      - CAPTCHA_SOLVER=${FLARESOLVERR_CAPTCHA_SOLVER:-none}
-      - TZ=Etc/UTC
-    # ports:
-    #   - "8191:8191"
-    restart: always
-    network_mode: "service:gluetun"
+  # flaresolverr:
+  #   image: ghcr.io/flaresolverr/flaresolverr:latest
+  #   container_name: flaresolverr
+  #   environment:
+  #     - LOG_LEVEL=${FLARESOLVERR_LOG_LEVEL:-warn}
+  #     - LOG_HTML=${FLARESOLVERR_LOG_HTML:-false}
+  #     - CAPTCHA_SOLVER=${FLARESOLVERR_CAPTCHA_SOLVER:-none}
+  #     - TZ=Etc/UTC
+  #   # ports:
+  #   #   - "8191:8191"
+  #   restart: always
+  #   network_mode: "service:gluetun"
 
 
 
