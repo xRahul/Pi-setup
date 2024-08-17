@@ -376,6 +376,9 @@ services:
       - type: bind
         source: ${JELLYFIN_MEDIA_LOCATION}
         target: /media
+      - type: bind
+        source: ${JELLYFIN_DOWNLOAD_LOCATION}
+        target: /download
     # Optional - alternative address used for autodiscovery
     environment:
       - JELLYFIN_PublishedServerUrl=https://jellyfin.pi.rahulja.in
