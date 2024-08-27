@@ -687,7 +687,7 @@ services:
       - PGID=1000
       - TZ=Asia/Singapore
       - VERSION=docker
-      # - PLEX_CLAIM= #optional
+      - PLEX_CLAIM= ${PLEX_CLAIM}
     volumes:
       - ${PLEX_CONFIG_LOCATION}:/config
       - type: bind
