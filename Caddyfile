@@ -143,3 +143,11 @@ plex.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+
+ntfy.pi.rahulja.in {
+    reverse_proxy * 10.8.1.26:80
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
