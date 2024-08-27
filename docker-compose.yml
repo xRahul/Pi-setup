@@ -710,10 +710,20 @@ services:
       - serve
     environment:
       - TZ=Asia/Singapore    # optional: set desired timezone
+      - NTFY_LISTEN_HTTP=:8000
+      - NTFY_CACHE_FILE=/var/lib/ntfy/cache.db
+      - NTFY_AUTH_FILE=/var/lib/ntfy/auth.db
+      - NTFY_AUTH_DEFAULT_ACCESS=deny-all
+      - NTFY_BEHIND_PROXY=true
+      - NTFY_ATTACHMENT_CACHE_DIR=/var/lib/ntfy/attachments
+      - NTFY_ENABLE_LOGIN=true
+      - NTFY_UPSTREAM_BASE_URL=https://ntfy.sh
+      - NTFY_BASE_URL=https://ntfy.pi.rahulja.in
     user: 1000:1000 # optional: replace with your own user/group or uid/gid
     volumes:
       - ${NTFY_CACHE}:/var/cache/ntfy
       - ${NTFY_ETC}:/etc/ntfy
+      - ${NTFY_DB}:/var/lib/ntfy/
     # ports:
     #   - 80:80
     # healthcheck: # optional: remember to adapt the host:port to your environment
