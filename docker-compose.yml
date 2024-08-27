@@ -660,7 +660,7 @@ services:
 
 
   flame:
-    image: pawelmalak/flame
+    image: pawelmalak/flame:multiarch
     container_name: flame
     restart: always
     volumes:
