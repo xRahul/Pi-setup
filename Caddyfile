@@ -127,3 +127,11 @@ prowlarr.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+
+flame.pi.rahulja.in {
+    reverse_proxy * 10.8.1.24:5005
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
