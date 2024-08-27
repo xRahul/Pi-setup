@@ -678,8 +678,31 @@ services:
         ipv4_address: 10.8.1.24
 
 
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    restart: always
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Asia/Singapore
+      - VERSION=docker
+      # - PLEX_CLAIM= #optional
+    volumes:
+      - ${PLEX_CONFIG_LOCATION}:/config
+      - type: bind
+        source: ${JELLYFIN_MEDIA_LOCATION}
+        target: /media
+      - type: bind
+        source: ${JELLYFIN_DOWNLOAD_LOCATION}
+        target: /download
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.25
 
-# Booked 10.8.1.2 - 10.8.1.24
+
+
+# Booked 10.8.1.2 - 10.8.1.25
 
 networks:
   wg-easy:
