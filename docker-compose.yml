@@ -162,7 +162,7 @@ services:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
       - /etc/localtime:/etc/localtime:ro
     env_file:
-      - .immich_env
+      - ./.immich_env
     # ports:
       # - 2283:3001
     depends_on:
@@ -186,7 +186,7 @@ services:
     volumes:
       - ${ML_MODEL_CACHE_LOCATION}:/cache
     env_file:
-      - .immich_env
+      - ./.immich_env
     networks:
       wg-easy:
         ipv4_address: 10.8.1.8
@@ -215,7 +215,7 @@ services:
       POSTGRES_DB: ${DB_DATABASE_NAME}
       POSTGRES_INITDB_ARGS: '--data-checksums'
     env_file:
-      - .immich_env
+      - ./.immich_env
     volumes:
       - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
     healthcheck:
