@@ -198,6 +198,8 @@ services:
     healthcheck:
       test: redis-cli ping || exit 1
     hostname: redis
+    env_file:
+      - .immich_env
     networks:
       wg-easy:
         ipv4_address: 10.8.1.9
@@ -213,6 +215,8 @@ services:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_DB: ${DB_DATABASE_NAME}
       POSTGRES_INITDB_ARGS: '--data-checksums'
+    env_file:
+      - .immich_env
     volumes:
       - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
     healthcheck:
