@@ -761,7 +761,28 @@ services:
         ipv4_address: 10.8.1.26
 
 
-# Booked 10.8.1.2 - 10.8.1.26
+
+  freshrss:
+    image: lscr.io/linuxserver/freshrss:latest
+    container_name: freshrss
+    restart: always
+    dns:
+      - 10.8.1.3
+      - 8.8.8.8
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${DEFAULT_TZ}
+    volumes:
+      - ${FRESHRSS_CONFIG_PATH}:/config
+    # ports:
+    #   - 80:80
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.27
+
+
+# Booked 10.8.1.2 - 10.8.1.27
 
 networks:
   wg-easy:
