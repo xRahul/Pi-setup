@@ -1,7 +1,0 @@
-# Ignore everything
-*
-
-# But not these files...
-!.gitignore
-!hwaccel.ml.yml
-!hwaccel.transcoding.yml
