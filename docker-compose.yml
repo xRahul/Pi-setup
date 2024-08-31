@@ -86,7 +86,7 @@ services:
     environment:
       # ⚠️ Change the Web UI Password:
       - WEBPASSWORD=${PIHOLE__WEBPASSWORD}
-      - TZ=${PIHOLE__TZ}
+      - TZ=${DEFAULT_TZ}
     volumes:
       - './pihole/etc-pihole:/etc/pihole'
       - './pihole/etc-dnsmasq.d:/etc/dnsmasq.d'
@@ -616,7 +616,7 @@ services:
     volumes:
       - ${GLUETUN_DATA_SOURCE}:/gluetun
     environment:
-      TZ: ${GLUETUN_TZ}
+      TZ: ${DEFAULT_TZ}
       # Wireguard
       VPN_SERVICE_PROVIDER: surfshark
       VPN_TYPE: wireguard
@@ -651,8 +651,9 @@ services:
     environment:
       - PGID=1000
       - PUID=1000
-      - TZ=Etc/UTC
+      - TZ=${DEFAULT_TZ}
       # - DOCKER_MODS=linuxserver/mods:transmission-floodui
+      - DOCKER_MODS=linuxserver/mods:transmission-transmissionic
       - USER=${TRANSMISSION_USERNAME}
       - PASS=${TRANSMISSION_PASSWORD}
 
@@ -663,7 +664,7 @@ services:
   #   environment:
   #     - PUID=1000
   #     - PGID=1000
-  #     - TZ=Etc/UTC
+  #     - TZ=${DEFAULT_TZ}
   #   volumes:
   #     - ${PROWLARR_CONFIG_SOURCE}:/config
   #   restart: always
@@ -676,7 +677,7 @@ services:
   #     - LOG_LEVEL=${FLARESOLVERR_LOG_LEVEL:-warn}
   #     - LOG_HTML=${FLARESOLVERR_LOG_HTML:-false}
   #     - CAPTCHA_SOLVER=${FLARESOLVERR_CAPTCHA_SOLVER:-none}
-  #     - TZ=Etc/UTC
+  #     - TZ=${DEFAULT_TZ}
   #   # ports:
   #   #   - "8191:8191"
   #   restart: always
@@ -710,7 +711,7 @@ services:
   #   environment:
   #     - PUID=1000
   #     - PGID=1000
-  #     - TZ=Asia/Singapore
+  #     - TZ=${DEFAULT_TZ}
   #     - VERSION=docker
   #     - PLEX_CLAIM= ${PLEX_CLAIM}
   #   volumes:
@@ -734,7 +735,7 @@ services:
     command:
       - serve
     environment:
-      - TZ=Asia/Singapore    # optional: set desired timezone
+      - TZ=${DEFAULT_TZ}    # optional: set desired timezone
       - NTFY_LISTEN_HTTP=:8000
       - NTFY_CACHE_FILE=/var/lib/ntfy/cache.db
       - NTFY_AUTH_FILE=/var/lib/ntfy/auth.db
