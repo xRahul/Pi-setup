@@ -669,18 +669,21 @@ services:
   #   restart: always
   #   network_mode: "service:gluetun"
 
-  # flaresolverr:
-  #   image: ghcr.io/flaresolverr/flaresolverr:latest
-  #   container_name: flaresolverr
-  #   environment:
-  #     - LOG_LEVEL=${FLARESOLVERR_LOG_LEVEL:-warn}
-  #     - LOG_HTML=${FLARESOLVERR_LOG_HTML:-false}
-  #     - CAPTCHA_SOLVER=${FLARESOLVERR_CAPTCHA_SOLVER:-none}
-  #     - TZ=${DEFAULT_TZ}
-  #   # ports:
-  #   #   - "8191:8191"
-  #   restart: always
-  #   network_mode: "service:gluetun"
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=${FLARESOLVERR_LOG_LEVEL:-warn}
+      - LOG_HTML=${FLARESOLVERR_LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${FLARESOLVERR_CAPTCHA_SOLVER:-none}
+      - TZ=${DEFAULT_TZ}
+    # ports:
+    #   - "8191:8191"
+    restart: always
+    # network_mode: "service:gluetun"
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.30
 
 
 
@@ -828,7 +831,7 @@ services:
 
 
 
-# Booked 10.8.1.2 - 10.8.1.29
+# Booked 10.8.1.2 - 10.8.1.30
 
 networks:
   wg-easy:
