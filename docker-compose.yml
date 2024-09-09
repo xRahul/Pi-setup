@@ -810,7 +810,7 @@ services:
     image: postgres:15-alpine
     container_name: miniflux-db
     restart: always
-    #user: 1000:1000
+    user: 1000:1000
     environment:
       - POSTGRES_USER=${MINIFLUX_DB_USER}
       - POSTGRES_PASSWORD=${MINIFLUX_DB_PASS}
@@ -818,6 +818,7 @@ services:
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - ${MINIFLUX_DB_DATA_PATH}:/var/lib/postgresql/data
+      - /etc/passwd:/etc/passwd:ro
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "$$MINIFLUX_DB_USER"]
       interval: 20s
