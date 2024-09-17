@@ -687,23 +687,23 @@ services:
 
 
 
-  flame:
-    image: pawelmalak/flame:multiarch
-    container_name: flame
-    restart: always
-    volumes:
-      - ${FLAME_DATA_SOURCE}:/app/data
-      - /var/run/docker.sock:/var/run/docker.sock # optional but required for Docker integration
-    # ports:
-    #   - 5005:5005
-    # secrets:
-    #   - password # optional but required for (1)
-    environment:
-      - PASSWORD=${FLAME_PASSWORD}
-      # - PASSWORD_FILE=/run/secrets/password # optional but required for (1)
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.24
+  # flame:
+  #   image: pawelmalak/flame:multiarch
+  #   container_name: flame
+  #   restart: always
+  #   volumes:
+  #     - ${FLAME_DATA_SOURCE}:/app/data
+  #     - /var/run/docker.sock:/var/run/docker.sock # optional but required for Docker integration
+  #   # ports:
+  #   #   - 5005:5005
+  #   # secrets:
+  #   #   - password # optional but required for (1)
+  #   environment:
+  #     - PASSWORD=${FLAME_PASSWORD}
+  #     # - PASSWORD_FILE=/run/secrets/password # optional but required for (1)
+  #   networks:
+  #     wg-easy:
+  #       ipv4_address: 10.8.1.24
 
 
   # plex:
