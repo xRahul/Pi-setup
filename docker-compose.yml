@@ -787,26 +787,26 @@ services:
 
 
 
-  # miniflux:
-  #   image: miniflux/miniflux:latest
-  #   container_name: miniflux
-  #   restart: always
-  #   # ports:
-  #   #   - "80:8080"
-  #   depends_on:
-  #     miniflux_db:
-  #       condition: service_healthy
-  #   environment:
-  #     - DATABASE_URL=${MINIFLUX_DB_URL}
-  #     - RUN_MIGRATIONS=1
-  #     - CREATE_ADMIN=1
-  #     - ADMIN_USERNAME=${MINIFLUX_ADMIN_USER}
-  #     - ADMIN_PASSWORD=${MINIFLUX_ADMIN_PASS}
-  #   healthcheck:
-  #     test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.28
+  miniflux:
+    image: miniflux/miniflux:latest
+    container_name: miniflux
+    restart: always
+    # ports:
+    #   - "80:8080"
+    # depends_on:
+    #   miniflux_db:
+    #     condition: service_healthy
+    environment:
+      - DATABASE_URL=${MINIFLUX_DB_URL}
+      - RUN_MIGRATIONS=1
+      - CREATE_ADMIN=1
+      - ADMIN_USERNAME=${MINIFLUX_ADMIN_USER}
+      - ADMIN_PASSWORD=${MINIFLUX_ADMIN_PASS}
+    healthcheck:
+      test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.28
 
 
   # miniflux_db:
