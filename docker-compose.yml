@@ -394,6 +394,10 @@ services:
     user: 1000:1000 # should be owner of volumes
     platform: "linux/arm64"
     restart: always
+    dns:
+      - 10.8.1.3
+      - 1.1.1.1
+      - 8.8.8.8
     volumes:
       - ${JELLYFIN_CONFIG_LOCATION}:/config
       - ${JELLYFIN_CACHE_LOCATION}:/cache
@@ -812,6 +816,10 @@ services:
     healthcheck:
       test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
       interval: 10m
+    dns:
+      - 10.8.1.3
+      - 1.1.1.1
+      - 8.8.8.8
     networks:
       wg-easy:
         ipv4_address: 10.8.1.28
@@ -853,6 +861,10 @@ services:
       SHIORI_DIR: /srv/shiori
       # SHIORI_DATABASE_URL: mysql://shiori:shiori@(mariadb)/shiori?charset=utf8mb4
       # SHIORI_DATABASE_URL: postgres://shiori:shiori@postgres/shiori?sslmode=disable
+    dns:
+      - 10.8.1.3
+      - 1.1.1.1
+      - 8.8.8.8
     networks:
       wg-easy:
         ipv4_address: 10.8.1.31
@@ -878,6 +890,10 @@ services:
       PAPERLESS_TIME_ZONE: ${DEFAULT_TZ}
       PAPERLESS_URL: ${PAPERLESS_NGX_URL}
       PAPERLESS_SECRET_KEY: ${PAPERLESS_NGX_SECRET_KEY}
+    dns:
+      - 10.8.1.3
+      - 1.1.1.1
+      - 8.8.8.8
     networks:
       wg-easy:
         ipv4_address: 10.8.1.32
@@ -895,6 +911,10 @@ services:
     # ports:
     #   - 9283:80
     restart: always
+    dns:
+      - 10.8.1.3
+      - 1.1.1.1
+      - 8.8.8.8
     networks:
       wg-easy:
         ipv4_address: 10.8.1.33
@@ -913,6 +933,10 @@ services:
     # ports:
     #   - 8080:80
     restart: always
+    dns:
+      - 10.8.1.3
+      - 1.1.1.1
+      - 8.8.8.8
     networks:
       wg-easy:
         ipv4_address: 10.8.1.34
