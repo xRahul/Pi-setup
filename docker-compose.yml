@@ -867,6 +867,9 @@ services:
       - ${PAPERLESS_NGX_CONSUME_PATH}:/usr/src/paperless/consume
     environment:
       PAPERLESS_REDIS: redis://redis:6379
+      PAPERLESS_TIME_ZONE: ${DEFAULT_TZ}
+      PAPERLESS_URL: ${PAPERLESS_NGX_URL}
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_NGX_SECRET_KEY}
     networks:
       wg-easy:
         ipv4_address: 10.8.1.32
