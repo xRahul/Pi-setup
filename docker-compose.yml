@@ -866,7 +866,7 @@ services:
       - ${PAPERLESS_NGX_EXPORT_PATH}:/usr/src/paperless/export
       - ${PAPERLESS_NGX_CONSUME_PATH}:/usr/src/paperless/consume
     environment:
-      PAPERLESS_REDIS: redis://broker:6379
+      PAPERLESS_REDIS: redis://redis:6379
     networks:
       wg-easy:
         ipv4_address: 10.8.1.32
@@ -875,7 +875,6 @@ services:
   grocy:
     image: lscr.io/linuxserver/grocy:latest
     container_name: grocy
-    user: 1000:1000
     environment:
       - PUID=1000
       - PGID=1000
