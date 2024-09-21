@@ -875,6 +875,7 @@ services:
   grocy:
     image: lscr.io/linuxserver/grocy:latest
     container_name: grocy
+    user: 1000:1000
     environment:
       - PUID=1000
       - PGID=1000
