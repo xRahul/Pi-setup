@@ -871,8 +871,24 @@ services:
         ipv4_address: 10.8.1.32
 
 
+  grocy:
+    image: lscr.io/linuxserver/grocy:latest
+    container_name: grocy
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${DEFAULT_TZ}
+    volumes:
+      - ${GROCY_CONFIG_PATH}:/config
+    # ports:
+    #   - 9283:80
+    restart: always
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.33
 
-# Booked 10.8.1.2 - 10.8.1.32
+
+# Booked 10.8.1.2 - 10.8.1.33
 
 networks:
   wg-easy:
