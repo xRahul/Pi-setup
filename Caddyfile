@@ -186,7 +186,7 @@ pngx.pi.rahulja.in {
 
 
 grocy.pi.rahulja.in {
-    reverse_proxy * 10.8.1.33:9283
+    reverse_proxy * 10.8.1.33:80
      tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
