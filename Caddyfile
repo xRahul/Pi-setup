@@ -175,3 +175,11 @@ shiori.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+
+pngx.pi.rahulja.in {
+    reverse_proxy * 10.8.1.32:8000
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}

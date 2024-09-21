@@ -850,7 +850,29 @@ services:
         ipv4_address: 10.8.1.31
 
 
-# Booked 10.8.1.2 - 10.8.1.31
+
+
+  paperless-ngx:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: always
+    depends_on:
+      - immich_redis
+    # ports:
+    #   - "8000:8000"
+    volumes:
+      - ${PAPERLESS_NGX_DATA_PATH}:/usr/src/paperless/data
+      - ${PAPERLESS_NGX_MEDIA_PATH}:/usr/src/paperless/media
+      - ${PAPERLESS_NGX_EXPORT_PATH}:/usr/src/paperless/export
+      - ${PAPERLESS_NGX_CONSUME_PATH}:/usr/src/paperless/consume
+    environment:
+      PAPERLESS_REDIS: redis://broker:6379
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.32
+
+
+
+# Booked 10.8.1.2 - 10.8.1.32
 
 networks:
   wg-easy:
