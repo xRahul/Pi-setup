@@ -368,21 +368,21 @@ services:
 
 
 
-  mikochi:
-    image: zer0tonin/mikochi:latest
-    container_name: mikochi
-    user: 1000:1000 # should be owner of volumes
-    platform: "linux/arm64"
-    restart: always
-    environment:
-      DATA_DIR: "/data"
-      USERNAME: ${MIKOCHI_USERNAME}
-      PASSWORD: ${MIKOCHI_PASSWORD}
-    volumes:
-      - ${MIKOCHI_DATA_LOCATION}:/data
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.15
+  # mikochi:
+  #   image: zer0tonin/mikochi:latest
+  #   container_name: mikochi
+  #   user: 1000:1000 # should be owner of volumes
+  #   platform: "linux/arm64"
+  #   restart: always
+  #   environment:
+  #     DATA_DIR: "/data"
+  #     USERNAME: ${MIKOCHI_USERNAME}
+  #     PASSWORD: ${MIKOCHI_PASSWORD}
+  #   volumes:
+  #     - ${MIKOCHI_DATA_LOCATION}:/data
+  #   networks:
+  #     wg-easy:
+  #       ipv4_address: 10.8.1.15
 
 
 
