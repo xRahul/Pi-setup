@@ -889,7 +889,25 @@ services:
         ipv4_address: 10.8.1.33
 
 
-# Booked 10.8.1.2 - 10.8.1.33
+  filebrowser:
+    image: filebrowser/filebrowser:s6
+    container_name: filebrowser
+    volumes:
+      - ${FILEBROWSER_ROOT_PATH}:/srv
+      - ${FILEBROWSER_DB_FILE_PATH}:/database/filebrowser.db
+      - ${FILEBROWSER_CONFIG_SETTING_FILE_PATH}:/config/settings.json
+    environment:
+      - PUID=1000
+      - PGID=1000
+    # ports:
+    #   - 8080:80
+    restart: always
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.34
+
+
+# Booked 10.8.1.2 - 10.8.1.34
 
 networks:
   wg-easy:
