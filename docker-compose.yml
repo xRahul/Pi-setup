@@ -802,8 +802,16 @@ services:
       - CREATE_ADMIN=1
       - ADMIN_USERNAME=${MINIFLUX_ADMIN_USER}
       - ADMIN_PASSWORD=${MINIFLUX_ADMIN_PASS}
+      - POLLING_FREQUENCY=120
+      - POLLING_SCHEDULER=entry_frequency
+      - SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL=1440
+      - SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL=120
+      - SCHEDULER_ROUND_ROBIN_MIN_INTERVAL=120
+      - WEBAUTHN=true
+      - BASE_URL=https://miniflux.pi.rahulja.in
     healthcheck:
       test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
+      interval: 10m
     networks:
       wg-easy:
         ipv4_address: 10.8.1.28
