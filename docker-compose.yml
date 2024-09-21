@@ -854,6 +854,7 @@ services:
 
   paperless-ngx:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless-ngx
     restart: always
     depends_on:
       - immich_redis
