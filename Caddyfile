@@ -207,3 +207,11 @@ homarr.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+
+dash.pi.rahulja.in {
+    reverse_proxy * 10.8.1.35:7575
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
