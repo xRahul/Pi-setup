@@ -908,6 +908,7 @@ services:
       - PUID=1000
       - PGID=1000
       - TZ=${DEFAULT_TZ}
+      - CURRENCY=SGD
     volumes:
       - ${GROCY_CONFIG_PATH}:/config
     # ports:
