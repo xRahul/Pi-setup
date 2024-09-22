@@ -813,6 +813,8 @@ services:
       - SCHEDULER_ROUND_ROBIN_MIN_INTERVAL=120
       - WEBAUTHN=true
       - BASE_URL=https://miniflux.pi.rahulja.in
+      - DATABASE_MIN_CONNS=0
+      - DATABASE_CONNECTION_LIFETIME=1
     healthcheck:
       test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
       interval: 10m
