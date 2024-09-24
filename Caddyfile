@@ -226,7 +226,7 @@ cyberchef.pi.rahulja.in {
 
 
 minio.pi.rahulja.in {
-    reverse_proxy * 10.8.1.37:9000
+    reverse_proxy * 10.8.1.37:35507
      tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
@@ -235,6 +235,14 @@ minio.pi.rahulja.in {
 
 resume.pi.rahulja.in {
     reverse_proxy * 10.8.1.39:3000
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
+
+
+languagetool.pi.rahulja.in {
+    reverse_proxy * 10.8.1.40:8010
      tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
