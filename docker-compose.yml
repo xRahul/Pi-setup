@@ -979,118 +979,118 @@ services:
   #       ipv4_address: 10.8.1.36
 
 
-  # resume
-  minio:
-    image: minio/minio
-    container_name: minio
-    restart: unless-stopped
-    command: server /data
-    # ports:
-    #   - "9000:9000"
-    volumes:
-      - ${MINIO_DATA_PATH}:/data
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-    dns:
-      - 10.8.1.3
-      - 1.1.1.1
-      - 8.8.8.8
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.37
+  # # resume
+  # minio:
+  #   image: minio/minio
+  #   container_name: minio
+  #   restart: unless-stopped
+  #   command: server /data
+  #   # ports:
+  #   #   - "9000:9000"
+  #   volumes:
+  #     - ${MINIO_DATA_PATH}:/data
+  #   environment:
+  #     MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+  #     MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+  #   dns:
+  #     - 10.8.1.3
+  #     - 1.1.1.1
+  #     - 8.8.8.8
+  #   networks:
+  #     wg-easy:
+  #       ipv4_address: 10.8.1.37
 
 
-  chrome:
-    image: ghcr.io/browserless/chromium:latest
-    container_name: chrome
-    restart: unless-stopped
-    environment:
-      TIMEOUT: 10000
-      CONCURRENT: 10
-      TOKEN: ${CHROME_TOKEN}
-      EXIT_ON_HEALTH_FAILURE: true
-      PRE_REQUEST_HEALTH_CHECK: true
-    dns:
-      - 10.8.1.3
-      - 1.1.1.1
-      - 8.8.8.8
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.38
+  # chrome:
+  #   image: ghcr.io/browserless/chromium:latest
+  #   container_name: chrome
+  #   restart: unless-stopped
+  #   environment:
+  #     TIMEOUT: 10000
+  #     CONCURRENT: 10
+  #     TOKEN: ${CHROME_TOKEN}
+  #     EXIT_ON_HEALTH_FAILURE: true
+  #     PRE_REQUEST_HEALTH_CHECK: true
+  #   dns:
+  #     - 10.8.1.3
+  #     - 1.1.1.1
+  #     - 8.8.8.8
+  #   networks:
+  #     wg-easy:
+  #       ipv4_address: 10.8.1.38
 
 
-  resume:
-    image: amruthpillai/reactive-resume:latest
-    container_name: resume
-    restart: unless-stopped
-    # ports:
-    #   - "3000:3000"
-    depends_on:
-      - minio
-      - chrome
-    environment:
-      # -- Environment Variables --
-      PORT: 3000
-      NODE_ENV: production
+  # resume:
+  #   image: amruthpillai/reactive-resume:latest
+  #   container_name: resume
+  #   restart: unless-stopped
+  #   # ports:
+  #   #   - "3000:3000"
+  #   depends_on:
+  #     - minio
+  #     - chrome
+  #   environment:
+  #     # -- Environment Variables --
+  #     PORT: 3000
+  #     NODE_ENV: production
 
-      # -- URLs --
-      PUBLIC_URL: https://resume.pi.rahulja.in
-      STORAGE_URL: https://minio.pi.rahulja.in/default
+  #     # -- URLs --
+  #     PUBLIC_URL: https://resume.pi.rahulja.in
+  #     STORAGE_URL: https://minio.pi.rahulja.in/default
 
-      # -- Printer (Chrome) --
-      CHROME_TOKEN: ${CHROME_TOKEN}
-      CHROME_URL: ws://chrome:3000
+  #     # -- Printer (Chrome) --
+  #     CHROME_TOKEN: ${CHROME_TOKEN}
+  #     CHROME_URL: ws://chrome:3000
 
-      # -- Database (Postgres) --
-      DATABASE_URL: ${RESUME_POSTGRES_DB_URL}
+  #     # -- Database (Postgres) --
+  #     DATABASE_URL: ${RESUME_POSTGRES_DB_URL}
 
-      # -- Auth --
-      ACCESS_TOKEN_SECRET: ${RESUME_ACCESS_TOKEN_SECRET}
-      REFRESH_TOKEN_SECRET: ${RESUME_REFRESH_TOKEN_SECRET}
+  #     # -- Auth --
+  #     ACCESS_TOKEN_SECRET: ${RESUME_ACCESS_TOKEN_SECRET}
+  #     REFRESH_TOKEN_SECRET: ${RESUME_REFRESH_TOKEN_SECRET}
 
-      # -- Emails --
-      MAIL_FROM: noreply@resume.pi.rhulja.in
-      # SMTP_URL: smtp://user:pass@smtp:587 # Optional
+  #     # -- Emails --
+  #     MAIL_FROM: noreply@resume.pi.rhulja.in
+  #     # SMTP_URL: smtp://user:pass@smtp:587 # Optional
 
-      # -- Storage (Minio) --
-      STORAGE_ENDPOINT: minio
-      STORAGE_PORT: 9000
-      STORAGE_REGION: ap-southeast-1 # Optional
-      STORAGE_BUCKET: default
-      STORAGE_ACCESS_KEY: ${MINIO_ROOT_USER}
-      STORAGE_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
-      STORAGE_USE_SSL: false
-      STORAGE_SKIP_BUCKET_CHECK: false
-    dns:
-      - 10.8.1.3
-      - 1.1.1.1
-      - 8.8.8.8
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.39
+  #     # -- Storage (Minio) --
+  #     STORAGE_ENDPOINT: minio
+  #     STORAGE_PORT: 9000
+  #     STORAGE_REGION: ap-southeast-1 # Optional
+  #     STORAGE_BUCKET: default
+  #     STORAGE_ACCESS_KEY: ${MINIO_ROOT_USER}
+  #     STORAGE_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+  #     STORAGE_USE_SSL: false
+  #     STORAGE_SKIP_BUCKET_CHECK: false
+  #   dns:
+  #     - 10.8.1.3
+  #     - 1.1.1.1
+  #     - 8.8.8.8
+  #   networks:
+  #     wg-easy:
+  #       ipv4_address: 10.8.1.39
 
 
 
-  languagetool:
-    image: erikvl87/languagetool
-    container_name: languagetool
-    # ports:
-    #   - 8010:8010                        # Using default port from the image
-    environment:
-      - langtool_languageModel=/ngrams   # OPTIONAL: Using ngrams data
-      - Java_Xms=512m                    # OPTIONAL: Setting a minimal Java heap size of 512 mib
-      - Java_Xmx=1g                      # OPTIONAL: Setting a maximum Java heap size of 1 Gib
-    volumes:
-      - ${LANGUAGETOOL_NGRAMS_DATA_PATH}:/ngrams     # OPTIONAL: The location of ngrams data on the local machine
-      # - /path/to/logback.xml:/LanguageTool/logback.xml:ro  # OPTIONAL: Overwrite the logging configuration
-    dns:
-      - 10.8.1.3
-      - 1.1.1.1
-      - 8.8.8.8
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.40
+  # languagetool:
+  #   image: erikvl87/languagetool
+  #   container_name: languagetool
+  #   # ports:
+  #   #   - 8010:8010                        # Using default port from the image
+  #   environment:
+  #     - langtool_languageModel=/ngrams   # OPTIONAL: Using ngrams data
+  #     - Java_Xms=512m                    # OPTIONAL: Setting a minimal Java heap size of 512 mib
+  #     - Java_Xmx=1g                      # OPTIONAL: Setting a maximum Java heap size of 1 Gib
+  #   volumes:
+  #     - ${LANGUAGETOOL_NGRAMS_DATA_PATH}:/ngrams     # OPTIONAL: The location of ngrams data on the local machine
+  #     # - /path/to/logback.xml:/LanguageTool/logback.xml:ro  # OPTIONAL: Overwrite the logging configuration
+  #   dns:
+  #     - 10.8.1.3
+  #     - 1.1.1.1
+  #     - 8.8.8.8
+  #   networks:
+  #     wg-easy:
+  #       ipv4_address: 10.8.1.40
 
 
 # Booked 10.8.1.2 - 10.8.1.40
