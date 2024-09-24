@@ -965,7 +965,21 @@ services:
         ipv4_address: 10.8.1.35
 
 
-# Booked 10.8.1.2 - 10.8.1.35
+  tracks:
+    image: tracksapp/tracks
+    container_name: tracks
+    restart: always
+    dns:
+      - 10.8.1.3
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.36
+
+
+
+# Booked 10.8.1.2 - 10.8.1.36
 
 networks:
   wg-easy:
