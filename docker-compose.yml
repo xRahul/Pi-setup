@@ -1096,6 +1096,7 @@ services:
   memos:
     image: neosmemo/memos:stable
     container_name: memos
+    restart: always
     volumes:
       - ${MEMOS_DATA_PATH}:/var/opt/memos
     # ports:
