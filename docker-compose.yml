@@ -1133,7 +1133,116 @@ services:
   #       ipv4_address: 10.8.1.42
 
 
-# Booked 10.8.1.2 - 10.8.1.42
+  firefly:
+    image: fireflyiii/core:latest
+    hostname: firefly
+    container_name: firefly
+    restart: always
+    volumes:
+      - ${FIREFLY_UPLOAD_PATH}:/var/www/html/storage/upload
+      - ${FIREFLY_DB_PATH}:/var/www/html/storage/database
+    environment:
+      # - APP_ENV=production
+      # - APP_DEBUG=false
+      # - DEFAULT_LANGUAGE=en_US
+      # - DEFAULT_LOCALE=equal
+      # - LOG_CHANNEL=stack
+      # - APP_LOG_LEVEL=notice
+      - SITE_OWNER=me@rahulja.in
+      - TRUSTED_PROXIES=**
+      - AUDIT_LOG_LEVEL=emergency
+      - DB_CONNECTION=sqlite
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ENABLE_EXCHANGE_RATES=true
+      - ENABLE_EXTERNAL_RATES=true
+      - APP_URL=https://firefly.pi.rahulja.in
+      # - REDIS_SCHEME=tcp
+      # - REDIS_DB="0"
+      # - REDIS_CACHE_DB="1"
+      # - COOKIE_PATH="/"
+      # - COOKIE_DOMAIN=
+      # - COOKIE_SECURE=false
+      # - COOKIE_SAMESITE=lax
+      # - MAIL_MAILER=log
+      # - MAIL_HOST=null
+      # - MAIL_PORT=2525
+      # - MAIL_FROM=changeme@example.com
+      # - MAIL_USERNAME=null
+      # - MAIL_PASSWORD=null
+      # - MAIL_ENCRYPTION=null
+      # - STATIC_CRON_TOKEN=
+      - APP_KEY=${FIREFLY_APP_KEY}
+      - TZ=${DEFAULT_TZ}
+
+    # ports:
+    #   - '80:8080'
+    depends_on:
+      - immich_redis
+    dns:
+      - 10.8.1.3
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.43
+
+  firefly-importer:
+    image: fireflyiii/data-importer:latest
+    hostname: firefly-importer
+    restart: always
+    container_name: firefly-importer
+    # networks:
+    #   - firefly_iii
+    # ports:
+    #   - '81:8080'
+    depends_on:
+      - firefly
+      - immich_redis
+    environment:
+      - FIREFLY_III_URL=http://firefly:8080
+      - VANITY_URL=https://firefly.pi.rahulja.in
+      - LOG_LEVEL=info
+      - TRUSTED_PROXIES=**
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - TZ=${DEFAULT_TZ}
+    dns:
+      - 10.8.1.3
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.44
+
+
+#   firefly-cron:
+#     #
+#     # To make this work, set STATIC_CRON_TOKEN in your .env file or as an environment variable and replace REPLACEME below
+#     # The STATIC_CRON_TOKEN must be *exactly* 32 characters long
+#     #
+#     image: alpine
+#     container_name: firefly-cron
+#     restart: always
+#     command: sh -c "echo \"0 3 * * * wget -qO- http://app:8080/api/v1/cron/REPLACEME;echo\" | crontab - && crond -f -L /dev/stdout"
+#     dns:
+#       - 10.8.1.3
+#       - 1.1.1.1
+#       - 8.8.8.8
+#     networks:
+#       wg-easy:
+#         ipv4_address: 10.8.1.45
+
+
+
+
+
+
+# # Booked 10.8.1.2 - 10.8.1.45
 
 networks:
   wg-easy:

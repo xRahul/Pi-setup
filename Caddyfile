@@ -263,3 +263,11 @@ linkding.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+
+firefly.pi.rahulja.in {
+    reverse_proxy * 10.8.1.43:8080
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
