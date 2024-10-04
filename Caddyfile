@@ -279,3 +279,11 @@ fireflyimporter.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+
+vikunja.pi.rahulja.in {
+    reverse_proxy * 10.8.1.46:3456
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
