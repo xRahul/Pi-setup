@@ -1267,7 +1267,49 @@ services:
 
 
 
-# # Booked 10.8.1.2 - 10.8.1.46
+  grampsweb: &grampsweb
+    image: ghcr.io/gramps-project/grampsweb:latest
+    container_name: grampsweb
+    restart: always
+    # ports:
+    #   - "80:5000"  # host:docker
+    environment:
+      GRAMPSWEB_TREE: "My Family Tree"  # will create a new tree if not exists
+      GRAMPSWEB_CELERY_CONFIG__broker_url: "redis://redis:6379/0"
+      GRAMPSWEB_CELERY_CONFIG__result_backend: "redis://redis:6379/0"
+      GRAMPSWEB_RATELIMIT_STORAGE_URI: redis://redis:6379/1
+    depends_on:
+      - immich_redis
+    volumes:
+      - ${GRAMPS_USERS}:/app/users  # persist user database
+      - ${GRAMPS_INDEX}:/app/indexdir  # persist search index
+      - ${GRAMPS_THUMB_CACHE}:/app/thumbnail_cache  # persist thumbnails
+      - ${GRAMPS_CACHE}:/app/cache  # persist export and report caches
+      - ${GRAMPS_SECRET}:/app/secret  # persist flask secret
+      - ${GRAMPS_DB}:/root/.gramps/grampsdb  # persist Gramps database
+      - ${GRAMPS_MEDIA}:/app/media  # persist media files
+      - ${GRAMPS_TMP}:/tmp
+    dns:
+      - 10.8.1.3
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.47
+
+  grampsweb_celery:
+    <<: *grampsweb  # YAML merge key copying the entire grampsweb service config
+    ports: []
+    container_name: grampsweb_celery
+    depends_on:
+      - immich_redis
+    command: celery -A gramps_webapi.celery worker --loglevel=INFO --concurrency=1
+
+
+
+
+
+# # Booked 10.8.1.2 - 10.8.1.47
 
 networks:
   wg-easy:
