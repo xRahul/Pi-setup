@@ -287,3 +287,11 @@ vikunja.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+
+gramps.pi.rahulja.in {
+    reverse_proxy * 10.8.1.47:5000
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
