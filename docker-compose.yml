@@ -1,47 +1,6 @@
 services:
 
-  # watchtower:
-  #   image: containrrr/watchtower:latest
-  #   container_name: watchtower
-  #   hostname: watchtower
-  #   platform: "linux/arm64"
-  #   restart: always
-  #   dns:
-  #     - 10.8.1.3
-  #     - 8.8.8.8
-  #   environment:
-  #     WATCHTOWER_CLEANUP: "true"
-  #     WATCHTOWER_POLL_INTERVAL: 7200 # checks for updates every two hours
-  #     WATCHTOWER_HTTP_API_METRICS: "true"
-  #     WATCHTOWER_HTTP_API_TOKEN: ${WATCHTOWER_HTTP_API_TOKEN}
-  #     WATCHTOWER_NOTIFICATION_REPORT: "true"
-  #     WATCHTOWER_NOTIFICATION_URL: ${WATCHTOWER_NOTIFICATION_URL}
-  #     WATCHTOWER_NOTIFICATION_TEMPLATE: |
-  #       {{- if .Report -}}
-  #         {{- with .Report -}}
-  #       {{len .Scanned}} Scanned, {{len .Updated}} Updated, {{len .Failed}} Failed
-  #             {{- range .Updated}}
-  #       - {{.Name}} ({{.ImageName}}): {{.CurrentImageID.ShortID}} updated to {{.LatestImageID.ShortID}}
-  #             {{- end -}}
-  #             {{- range .Fresh}}
-  #       - {{.Name}} ({{.ImageName}}): {{.State}}
-  #           {{- end -}}
-  #           {{- range .Skipped}}
-  #       - {{.Name}} ({{.ImageName}}): {{.State}}: {{.Error}}
-  #           {{- end -}}
-  #           {{- range .Failed}}
-  #       - {{.Name}} ({{.ImageName}}): {{.State}}: {{.Error}}
-  #           {{- end -}}
-  #         {{- end -}}
-  #       {{- else -}}
-  #         {{range .Entries -}}{{.Message}}{{"\n"}}{{- end -}}
-  #       {{- end -}}
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #     - /etc/localtime:/etc/localtime:ro
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.13
+
 
   wg-easy:
     image: ghcr.io/wg-easy/wg-easy:latest
@@ -99,6 +58,8 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.3
 
+
+
   cloudflared-dns:
     image: cloudflare/cloudflared:latest
     container_name: cloudflared-dns-tunnel
@@ -122,6 +83,8 @@ services:
     networks:
       wg-easy:
         ipv4_address: 10.8.1.4
+
+
 
   caddy:
     image: slxpi/caddy-cloudflare
@@ -164,6 +127,8 @@ services:
       - /etc/localtime:/etc/localtime:ro
     env_file:
       - ./.immich_env
+    healthcheck:
+      disable: false
     # ports:
       # - 2283:3001
     depends_on:
@@ -172,6 +137,8 @@ services:
     networks:
       wg-easy:
         ipv4_address: 10.8.1.6
+
+
 
   immich-machine-learning:
     container_name: immich_machine_learning
@@ -188,12 +155,16 @@ services:
       - ${ML_MODEL_CACHE_LOCATION}:/cache
     env_file:
       - ./.immich_env
+    healthcheck:
+      disable: false
     networks:
       wg-easy:
         ipv4_address: 10.8.1.8
 
+
+
   immich_redis:
-    image: docker.io/redis:6.2-alpine@sha256:2d1463258f2764328496376f5d965f20c6a67f66ea2b06dc42af351f75248792
+    image: docker.io/redis:6.2-alpine@sha256:2ba50e1ac3a0ea17b736ce9db2b0a9f6f8b85d4c27d5f5accc6a416d8f42c6d5
     container_name: immich_redis
     restart: always
     healthcheck:
@@ -204,6 +175,8 @@ services:
     networks:
       wg-easy:
         ipv4_address: 10.8.1.9
+
+
 
   immich_database:
     image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
@@ -224,166 +197,25 @@ services:
       interval: 5m
       start_interval: 30s
       start_period: 5m
-    command: ["postgres", "-c", "shared_preload_libraries=vectors.so", "-c", 'search_path="$$user", public, vectors', "-c", "logging_collector=on", "-c", "max_wal_size=2GB", "-c", "shared_buffers=512MB", "-c", "wal_compression=on"]
+    command:
+      [
+        'postgres',
+        '-c',
+        'shared_preload_libraries=vectors.so',
+        '-c',
+        'search_path="$$user", public, vectors',
+        '-c',
+        'logging_collector=on',
+        '-c',
+        'max_wal_size=2GB',
+        '-c',
+        'shared_buffers=512MB',
+        '-c',
+        'wal_compression=on',
+      ]
     networks:
       wg-easy:
         ipv4_address: 10.8.1.10
-
-
-
-
-
-  # photoprism:
-  #   ## Use photoprism/photoprism:preview-arm64 for testing preview builds:
-  #   image: photoprism/photoprism:arm64
-  #   platform: "linux/arm64"
-  #   user: 1000:1000 # should be owner of volumes
-  #   ## Don't enable automatic restarts until PhotoPrism has been properly configured and tested!
-  #   ## If the service gets stuck in a restart loop, this points to a memory, filesystem, network, or database issue:
-  #   ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
-  #   # restart: unless-stopped
-  #   stop_grace_period: 10s
-  #   depends_on:
-  #     - mariadb
-  #   security_opt:
-  #     - seccomp:unconfined
-  #     - apparmor:unconfined
-  #   ## Server port mapping in the format "Host:Container". To use a different port, change the host port on
-  #   ## the left-hand side and keep the container port, e.g. "80:2342" (for HTTP) or "443:2342 (for HTTPS):
-  #   # ports:
-  #   #   - "2342:2342"
-  #   ## Before you start the service, please check the following config options (and change them as needed):
-  #   ## https://docs.photoprism.app/getting-started/config-options/
-  #   environment:
-  #     PHOTOPRISM_ADMIN_USER: ${PHOTOPRISM_ADMIN_USER}                 # admin login username
-  #     PHOTOPRISM_ADMIN_PASSWORD: ${PHOTOPRISM_ADMIN_PASSWORD}          # initial admin password (8-72 characters)
-  #     PHOTOPRISM_AUTH_MODE: "password"               # authentication mode (public, password)
-  #     PHOTOPRISM_SITE_URL: "https://photoprism.pi.rahulja.in/"  # server URL in the format "http(s)://domain.name(:port)/(path)"
-  #     PHOTOPRISM_DISABLE_TLS: "true"                # disables HTTPS/TLS even if the site URL starts with https:// and a certificate is available
-  #     PHOTOPRISM_DEFAULT_TLS: "false"                 # defaults to a self-signed HTTPS/TLS certificate if no other certificate is available
-  #     PHOTOPRISM_ORIGINALS_LIMIT: 5000               # file size limit for originals in MB (increase for high-res video)
-  #     PHOTOPRISM_HTTP_COMPRESSION: "gzip"            # improves transfer speed and bandwidth utilization (none or gzip)
-  #     PHOTOPRISM_WORKERS: 2                          # limits the number of indexing workers to reduce system load
-  #     PHOTOPRISM_LOG_LEVEL: "warning"                   # log level: trace, debug, info, warning, error, fatal, or panic
-  #     PHOTOPRISM_READONLY: "false"                   # do not modify originals directory (reduced functionality)
-  #     PHOTOPRISM_EXPERIMENTAL: "true"               # enables experimental features
-  #     PHOTOPRISM_DISABLE_CHOWN: "false"              # disables updating storage permissions via chmod and chown on startup
-  #     PHOTOPRISM_DISABLE_WEBDAV: "false"             # disables built-in WebDAV server
-  #     PHOTOPRISM_DISABLE_SETTINGS: "false"           # disables Settings in Web UI
-  #     PHOTOPRISM_DISABLE_TENSORFLOW: "false"         # disables all features depending on TensorFlow
-  #     PHOTOPRISM_DISABLE_FACES: "false"              # disables face detection and recognition (requires TensorFlow)
-  #     PHOTOPRISM_DISABLE_CLASSIFICATION: "false"     # disables image classification (requires TensorFlow)
-  #     PHOTOPRISM_DISABLE_VECTORS: "false"            # disables vector graphics support
-  #     PHOTOPRISM_DISABLE_RAW: "false"                # disables indexing and conversion of RAW images
-  #     PHOTOPRISM_RAW_PRESETS: "false"                # enables applying user presets when converting RAW images (reduces performance)
-  #     PHOTOPRISM_JPEG_QUALITY: 85                    # a higher value increases the quality and file size of JPEG images and thumbnails (25-100)
-  #     PHOTOPRISM_DETECT_NSFW: "false"                # automatically flags photos as private that MAY be offensive (requires TensorFlow)
-  #     PHOTOPRISM_UPLOAD_NSFW: "true"                 # allow uploads that MAY be offensive
-  #     # PHOTOPRISM_DATABASE_DRIVER: "sqlite"         # SQLite is an embedded database that doesn't require a server
-  #     PHOTOPRISM_DATABASE_DRIVER: "mysql"            # use MariaDB 10.5+ or MySQL 8+ instead of SQLite for improved performance
-  #     PHOTOPRISM_DATABASE_SERVER: "mariadb:3306"     # MariaDB or MySQL database server (hostname:port)
-  #     PHOTOPRISM_DATABASE_NAME: ${DB_DATABASE_NAME}         # MariaDB or MySQL database schema name
-  #     PHOTOPRISM_DATABASE_USER: ${DB_USERNAME}         # MariaDB or MySQL database user name
-  #     PHOTOPRISM_DATABASE_PASSWORD: ${DB_PASSWORD}       # MariaDB or MySQL database user password
-  #     PHOTOPRISM_SITE_CAPTION: "AI-Powered Photos App"
-  #     PHOTOPRISM_SITE_DESCRIPTION: ""                # meta site description
-  #     PHOTOPRISM_SITE_AUTHOR: "Rahul Jain"                     # meta site author
-  #     ## Video Transcoding (https://docs.photoprism.app/getting-started/advanced/transcoding/):
-  #     # PHOTOPRISM_FFMPEG_ENCODER: "software"        # H.264/AVC encoder (software, intel, nvidia, apple, raspberry, or vaapi)
-  #     # PHOTOPRISM_FFMPEG_SIZE: "1920"               # video size limit in pixels (720-7680) (default: 3840)
-  #     # PHOTOPRISM_FFMPEG_BITRATE: "32"              # video bitrate limit in Mbit/s (default: 50)
-  #     ## Run/install on first startup (options: update, gpu, tensorflow, davfs, clean):
-  #     # PHOTOPRISM_INIT: "update clean"
-  #     ## Run as a non-root user after initialization (supported: 0, 33, 50-99, 500-600, and 900-1200):
-  #     # PHOTOPRISM_UID: 1000
-  #     # PHOTOPRISM_GID: 1000
-  #     # PHOTOPRISM_UMASK: 0000
-  #   ## Share hardware devices with FFmpeg and TensorFlow (optional):
-  #   ## See: https://www.raspberrypi.com/documentation/accessories/camera.html#driver-differences-when-using-libcamera-or-the-legacy-stack
-  #   # devices:
-  #   #  - "/dev/video11:/dev/video11" # Video4Linux Video Encode Device (h264_v4l2m2m)
-  #   working_dir: "/photoprism" # do not change or remove
-  #   ## Storage Folders: "~" is a shortcut for your home directory, "." for the current directory
-  #   volumes:
-  #     # "/host/folder:/photoprism/folder"                # Example
-  #     - ${PHOTOPRISM_UPLOAD_LOCATION}:/photoprism/originals               # Original media files (DO NOT REMOVE)
-  #     # - "/example/family:/photoprism/originals/family" # *Additional* media folders can be mounted like this
-  #     # - "~/Import:/photoprism/import"                  # *Optional* base folder from which files can be imported to originals
-  #     - "./photoprism_storage:/photoprism/storage"                  # *Writable* storage folder for cache, database, and sidecar files (DO NOT REMOVE)
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.11
-
-  # mariadb:
-  #   image: arm64v8/mariadb:11 # ARM64 IMAGE ONLY, DOES NOT WORK ON ARMv7, AMD or Intel
-  #   platform: "linux/arm64"
-  #   ## If MariaDB gets stuck in a restart loop, this points to a memory or filesystem issue:
-  #   ## https://docs.photoprism.app/getting-started/troubleshooting/#fatal-server-errors
-  #   restart: unless-stopped
-  #   user: 1000:1000 # should be owner of volumes
-  #   stop_grace_period: 5s
-  #   security_opt: # see https://github.com/MariaDB/mariadb-docker/issues/434#issuecomment-1136151239
-  #     - seccomp:unconfined
-  #     - apparmor:unconfined
-  #   command: --innodb-buffer-pool-size=256M --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=120
-  #   volumes:
-  #     - "./mariadb_database:/var/lib/mysql" # DO NOT REMOVE
-  #   environment:
-  #     MARIADB_AUTO_UPGRADE: "1"
-  #     MARIADB_INITDB_SKIP_TZINFO: "1"
-  #     MARIADB_DATABASE: ${DB_DATABASE_NAME}
-  #     MARIADB_USER: ${DB_USERNAME}
-  #     MARIADB_PASSWORD: ${DB_PASSWORD}
-  #     MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.12
-
-
-
-
-
-  # navidrome:
-  #   image: deluan/navidrome:latest
-  #   container_name: navidrome
-  #   user: 1000:1000 # should be owner of volumes
-  #   platform: "linux/arm64"
-  #   restart: always
-  #   environment:
-  #     ND_SCANSCHEDULE: 24h
-  #     ND_LOGLEVEL: warn
-  #     ND_SESSIONTIMEOUT: 24h
-  #     ND_BASEURL: ""
-  #     ND_LASTFM_ENABLED: ${LASTFM_ENABLED}
-  #     ND_LASTFM_APIKEY: ${LASTFM_APIKEY}
-  #     ND_LASTFM_SECRET: ${LASTFM_SECRET}
-  #   volumes:
-  #     - ${NAVIDROME_DATA_LOCATION}:/data
-  #     - ${NAVIDROME_MUSIC_LOCATION}:/music:ro
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.14
-
-
-
-
-
-  # mikochi:
-  #   image: zer0tonin/mikochi:latest
-  #   container_name: mikochi
-  #   user: 1000:1000 # should be owner of volumes
-  #   platform: "linux/arm64"
-  #   restart: always
-  #   environment:
-  #     DATA_DIR: "/data"
-  #     USERNAME: ${MIKOCHI_USERNAME}
-  #     PASSWORD: ${MIKOCHI_PASSWORD}
-  #   volumes:
-  #     - ${MIKOCHI_DATA_LOCATION}:/data
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.15
-
 
 
 
@@ -414,198 +246,6 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.16
 
-
-
-
-
-  # archivebox:
-  #   image: archivebox/archivebox:latest
-  #   container_name: archivebox
-  #   platform: "linux/arm64"
-  #   # user: 1000:1000 # should be owner of volumes
-  #   restart: always
-  #   volumes:
-  #     - ${ARCHIVEBOX_DATA_LOCATION}:/data
-  #   environment:
-  #     - ADMIN_USERNAME=${ARCHIVEBOX_ADMIN_USERNAME}            # create an admin user on first run with the given user/pass combo
-  #     - ADMIN_PASSWORD=${ARCHIVEBOX_ADMIN_PASSWORD}
-  #     - ALLOWED_HOSTS=*                   # restrict this to only accept incoming traffic via specific domain name
-  #     - PUBLIC_INDEX=True                 # set to False to prevent anonymous users from viewing snapshot list
-  #     - PUBLIC_SNAPSHOTS=True             # set to False to prevent anonymous users from viewing snapshot content
-  #     - PUBLIC_ADD_VIEW=False             # set to True to allow anonymous users to submit new URLs to archive
-  #     - SEARCH_BACKEND_ENGINE=ripgrep     # tells ArchiveBox to use sonic container below for fast full-text search
-  #     # - SEARCH_BACKEND_HOST_NAME=sonic
-  #     # - SEARCH_BACKEND_PASSWORD=${SONIC_SEARCH_BACKEND_PASSWORD}
-  #     - PUID=1000                        # set to your host user's UID & GID if you encounter permissions issues
-  #     - PGID=1000                        # UID/GIDs <500 may clash with existing users and are not recommended
-  #     # - MEDIA_MAX_SIZE=750m             # increase this filesize limit to allow archiving larger audio/video files
-  #     # - TIMEOUT=60                      # increase this number to 120+ seconds if you see many slow downloads timing out
-  #     # - CHECK_SSL_VALIDITY=True         # set to False to disable strict SSL checking (allows saving URLs w/ broken certs)
-  #     # - SAVE_ARCHIVE_DOT_ORG=True       # set to False to disable submitting all URLs to Archive.org when archiving
-  #     # ...
-  #     # add further configuration options from archivebox/config.py as needed (to apply them only to this container)
-  #     # or set using `docker compose run archivebox config --set SOME_KEY=someval` (to persist config across all containers)
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.17
-
-
-
-  # archivebox_scheduler:
-  #   image: archivebox/archivebox:latest
-  #   command: schedule --foreground --update --every=day
-  #   environment:
-  #     - TIMEOUT=120                       # use a higher timeout than the main container to give slow tasks more time when retrying
-  #     # - PUID=502                        # set to your host user's UID & GID if you encounter permissions issues
-  #     # - PGID=20
-  #   volumes:
-  #     - ${ARCHIVEBOX_DATA_LOCATION}:/data
-  #   # cpus: 2                               # uncomment / edit these values to limit scheduler container resource consumption
-  #   # mem_limit: 2048m
-  #   # restart: always
-
-
-  # sonic:
-  #   image: slxpi/valeriansaliou-sonic
-  #   container_name: sonic
-  #   hostname: sonic
-  #   platform: "linux/arm64"
-  #   user: 1000:1000 # should be owner of volumes
-  #   build:
-  #     context: .
-  #     dockerfile: sonic.Dockerfile
-  #   restart: always
-  #   environment:
-  #       - SEARCH_BACKEND_PASSWORD=${SONIC_SEARCH_BACKEND_PASSWORD}
-  #   volumes:
-  #       - ./sonic.cfg:/etc/sonic.cfg
-  #       - ${SONIC_DATA_LOCATION}:/var/lib/sonic/store
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.18
-
-
-
-  # prometheus:
-  #   image: prom/prometheus
-  #   container_name: prometheus
-  #   hostname: prometheus
-  #   user: 1000:1000 # should be owner of volumes
-  #   platform: "linux/arm64"
-  #   command:
-  #     - '--config.file=/etc/prometheus/prometheus.yml'
-  #   restart: always
-  #   volumes:
-  #     - ./prometheus:/etc/prometheus
-  #     - ${PROMETHEUS_DATA_LOCATION}:/prometheus
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.19
-
-
-
-
-  # grafana:
-  #   image: grafana/grafana
-  #   container_name: grafana
-  #   user: 1000:1000 # should be owner of volumes
-  #   platform: "linux/arm64"
-  #   restart: always
-  #   environment:
-  #     - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USERNAME}
-  #     - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
-  #   volumes:
-  #     - ${GRAFANA_DATA_SOURCE}:/etc/grafana/provisioning/datasources
-  #     - ${GRAFANA_VAR_LIB}:/var/lib/grafana
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.20
-
-
-
-  # pihole-exporter:
-  #   image: ekofr/pihole-exporter:latest
-  #   container_name: pihole-exporter
-  #   hostname: piholeexporter
-  #   user: 1000:1000 # should be owner of volumes
-  #   platform: "linux/arm64"
-  #   restart: always
-  #   environment:
-  #     PIHOLE_HOSTNAME: pihole # Chage to PiHole's IP address or FQDN
-  #     PIHOLE_PASSWORD: ${PIHOLE__WEBPASSWORD} # Change to your PiHole's password
-  #     INTERVAL: 90s
-  #     PORT: 9617
-  #   logging:
-  #     driver: "json-file"
-  #     options:
-  #       max-size: "5k"
-  #       max-file: "5"
-  #   healthcheck:
-  #     test: ["CMD", "wget", "--tries=1", "--spider", "http://localhost:9617/metrics"]
-  #     interval: 300s
-  #     retries: 5
-  #     timeout: 10s
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.21
-
-
-
-  # wallabag:
-  #   image: wallabag/wallabag:latest
-  #   container_name: wallabag
-  #   hostname: wallabag
-  #   platform: "linux/arm64"
-  #   user: 1000:1000 # should be owner of volumes
-  #   restart: always
-  #   environment:
-  #     # - MYSQL_ROOT_PASSWORD=${WALLABAG_MYSQL_ROOT_PASSWORD}
-  #     - SYMFONY__ENV__DATABASE_DRIVER=pdo_sqlite
-  #     # - SYMFONY__ENV__DATABASE_HOST=127.0.0.1
-  #     # - SYMFONY__ENV__DATABASE_PORT=3306
-  #     - SYMFONY__ENV__DATABASE_NAME=wallabag
-  #     # - SYMFONY__ENV__DATABASE_USER=${WALLABAG_MYSQL_USER}
-  #     # - SYMFONY__ENV__DATABASE_PASSWORD=${WALLABAG_MYSQL_PASSWORD}
-  #     # - SYMFONY__ENV__DATABASE_CHARSET=utf8mb4
-  #     # - SYMFONY__ENV__DATABASE_TABLE_PREFIX="wallabag_"
-  #     # - SYMFONY__ENV__MAILER_DSN=smtp://127.0.0.1
-  #     - SYMFONY__ENV__FROM_EMAIL=wallabag@rahulja.in
-  #     - SYMFONY__ENV__DOMAIN_NAME=https://wallabag.pi.rahulja.in
-  #     - SYMFONY__ENV__SERVER_NAME="Wallabag - RJ"
-  #     # - PUID=1000                        # set to your host user's UID & GID if you encounter permissions issues
-  #     # - PGID=1000                        # UID/GIDs <500 may clash with existing users and are not recommended
-  #   # ports:
-  #   #   - "80"
-  #   volumes:
-  #     - ${WALLABAG_DATA_LOCATION}:/var/www/wallabag/data
-  #     - ${WALLABAG_IMAGES_LOCATION}:/var/www/wallabag/web/assets/images
-  #   # healthcheck:
-  #   #   test: ["CMD", "wget" ,"--no-verbose", "--tries=1", "--spider", "http://localhost"]
-  #   #   interval: 1m
-  #   #   timeout: 3s
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.22
-
-
-  # db:
-  #   image: mariadb
-  #   environment:
-  #     - MYSQL_ROOT_PASSWORD=wallaroot
-  #   volumes:
-  #     - /opt/wallabag/data:/var/lib/mysql
-  #   healthcheck:
-  #     test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
-  #     interval: 20s
-  #     timeout: 3s
-
-
-  # redis:
-  #   image: redis:alpine
-  #   healthcheck:
-  #     test: ["CMD", "redis-cli", "ping"]
-  #     interval: 20s
-  #     timeout: 3s
 
 
   gluetun:
@@ -641,7 +281,6 @@ services:
 
 
 
-
   transmission:
     image: linuxserver/transmission
     container_name: transmission
@@ -659,135 +298,6 @@ services:
       - DOCKER_MODS=linuxserver/mods:transmission-transmissionic
       - USER=${TRANSMISSION_USERNAME}
       - PASS=${TRANSMISSION_PASSWORD}
-
-
-  # prowlarr:
-  #   image: linuxserver/prowlarr
-  #   container_name: prowlarr
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=${DEFAULT_TZ}
-  #   volumes:
-  #     - ${PROWLARR_CONFIG_SOURCE}:/config
-  #   restart: always
-  #   network_mode: "service:gluetun"
-
-  # flaresolverr:
-  #   image: ghcr.io/flaresolverr/flaresolverr:latest
-  #   container_name: flaresolverr
-  #   environment:
-  #     - LOG_LEVEL=${FLARESOLVERR_LOG_LEVEL:-warn}
-  #     - LOG_HTML=${FLARESOLVERR_LOG_HTML:-false}
-  #     - CAPTCHA_SOLVER=${FLARESOLVERR_CAPTCHA_SOLVER:-none}
-  #     - TZ=${DEFAULT_TZ}
-  #   # ports:
-  #   #   - "8191:8191"
-  #   restart: always
-  #   # network_mode: "service:gluetun"
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.30
-
-
-
-  # flame:
-  #   image: pawelmalak/flame:multiarch
-  #   container_name: flame
-  #   restart: always
-  #   volumes:
-  #     - ${FLAME_DATA_SOURCE}:/app/data
-  #     - /var/run/docker.sock:/var/run/docker.sock # optional but required for Docker integration
-  #   # ports:
-  #   #   - 5005:5005
-  #   # secrets:
-  #   #   - password # optional but required for (1)
-  #   environment:
-  #     - PASSWORD=${FLAME_PASSWORD}
-  #     # - PASSWORD_FILE=/run/secrets/password # optional but required for (1)
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.24
-
-
-  # plex:
-  #   image: lscr.io/linuxserver/plex:latest
-  #   container_name: plex
-  #   restart: always
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=${DEFAULT_TZ}
-  #     - VERSION=docker
-  #     - PLEX_CLAIM= ${PLEX_CLAIM}
-  #   volumes:
-  #     - ${PLEX_CONFIG_LOCATION}:/config
-  #     - type: bind
-  #       source: ${JELLYFIN_MEDIA_LOCATION}
-  #       target: /media
-  #     - type: bind
-  #       source: ${JELLYFIN_DOWNLOAD_LOCATION}
-  #       target: /download
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.25
-
-
-
-  # ntfy:
-  #   image: binwiederhier/ntfy
-  #   container_name: ntfy
-  #   restart: always
-  #   command:
-  #     - serve
-  #   environment:
-  #     - TZ=${DEFAULT_TZ}    # optional: set desired timezone
-  #     - NTFY_LISTEN_HTTP=:8000
-  #     - NTFY_CACHE_FILE=/var/lib/ntfy/cache.db
-  #     - NTFY_AUTH_FILE=/var/lib/ntfy/auth.db
-  #     - NTFY_AUTH_DEFAULT_ACCESS=deny-all
-  #     - NTFY_BEHIND_PROXY=true
-  #     - NTFY_ATTACHMENT_CACHE_DIR=/var/lib/ntfy/attachments
-  #     - NTFY_ENABLE_LOGIN=true
-  #     - NTFY_UPSTREAM_BASE_URL=https://ntfy.sh
-  #     - NTFY_BASE_URL=https://ntfy.pi.rahulja.in
-  #   user: 1000:1000 # optional: replace with your own user/group or uid/gid
-  #   volumes:
-  #     - ${NTFY_CACHE}:/var/cache/ntfy
-  #     - ${NTFY_ETC}:/etc/ntfy
-  #     - ${NTFY_DB}:/var/lib/ntfy/
-  #   # ports:
-  #   #   - 80:80
-  #   # healthcheck: # optional: remember to adapt the host:port to your environment
-  #   #     test: ["CMD-SHELL", "wget -q --tries=1 http://localhost:80/v1/health -O - | grep -Eo '\"healthy\"\\s*:\\s*true' || exit 1"]
-  #   #     interval: 60s
-  #   #     timeout: 10s
-  #   #     retries: 3
-  #   #     start_period: 40s
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.26
-
-
-
-  # freshrss:
-  #   image: lscr.io/linuxserver/freshrss:latest
-  #   container_name: freshrss
-  #   restart: always
-  #   dns:
-  #     - 10.8.1.3
-  #     - 8.8.8.8
-  #   environment:
-  #     - PUID=1000
-  #     - PGID=1000
-  #     - TZ=${DEFAULT_TZ}
-  #   volumes:
-  #     - ${FRESHRSS_CONFIG_PATH}:/config
-  #   # ports:
-  #   #   - 80:80
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.27
 
 
 
@@ -829,26 +339,6 @@ services:
         ipv4_address: 10.8.1.28
 
 
-  # miniflux_db:
-  #   image: postgres:15-alpine
-  #   container_name: miniflux-db
-  #   restart: always
-  #   user: 1000:1000
-  #   environment:
-  #     - POSTGRES_USER=${MINIFLUX_DB_USER}
-  #     - POSTGRES_PASSWORD=${MINIFLUX_DB_PASS}
-  #     - POSTGRES_DB=${MINIFLUX_DB_NAME}
-  #     - PGDATA=/var/lib/postgresql/data/pgdata
-  #   volumes:
-  #     - ${MINIFLUX_DB_DATA_PATH}:/var/lib/postgresql/data
-  #   healthcheck:
-  #     test: ["CMD", "pg_isready", "-U", "$$MINIFLUX_DB_USER"]
-  #     interval: 20s
-  #     start_period: 30s
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.29
-
 
   shiori:
     image: ghcr.io/go-shiori/shiori
@@ -872,7 +362,6 @@ services:
     networks:
       wg-easy:
         ipv4_address: 10.8.1.31
-
 
 
 
@@ -903,27 +392,6 @@ services:
         ipv4_address: 10.8.1.32
 
 
-  grocy:
-    image: lscr.io/linuxserver/grocy:latest
-    container_name: grocy
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=${DEFAULT_TZ}
-      - CURRENCY=SGD
-    volumes:
-      - ${GROCY_CONFIG_PATH}:/config
-    # ports:
-    #   - 9283:80
-    restart: always
-    dns:
-      - 10.8.1.3
-      - 1.1.1.1
-      - 8.8.8.8
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.33
-
 
   filebrowser:
     image: filebrowser/filebrowser:s6
@@ -947,6 +415,7 @@ services:
         ipv4_address: 10.8.1.34
 
 
+
   homarr:
     image: ghcr.io/ajnart/homarr:latest
     container_name: homarr
@@ -967,133 +436,6 @@ services:
         ipv4_address: 10.8.1.35
 
 
-  # Waiting for platform support
-  # cyberchef:
-  #   image: ghcr.io/gchq/cyberchef:latest
-  #   container_name: cyberchef
-  #   restart: always
-  #   dns:
-  #     - 10.8.1.3
-  #     - 1.1.1.1
-  #     - 8.8.8.8
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.36
-
-
-  # # resume
-  # minio:
-  #   image: minio/minio
-  #   container_name: minio
-  #   restart: unless-stopped
-  #   command: server /data
-  #   # ports:
-  #   #   - "9000:9000"
-  #   volumes:
-  #     - ${MINIO_DATA_PATH}:/data
-  #   environment:
-  #     MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-  #     MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-  #   dns:
-  #     - 10.8.1.3
-  #     - 1.1.1.1
-  #     - 8.8.8.8
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.37
-
-
-  # chrome:
-  #   image: ghcr.io/browserless/chromium:latest
-  #   container_name: chrome
-  #   restart: unless-stopped
-  #   environment:
-  #     TIMEOUT: 10000
-  #     CONCURRENT: 10
-  #     TOKEN: ${CHROME_TOKEN}
-  #     EXIT_ON_HEALTH_FAILURE: true
-  #     PRE_REQUEST_HEALTH_CHECK: true
-  #   dns:
-  #     - 10.8.1.3
-  #     - 1.1.1.1
-  #     - 8.8.8.8
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.38
-
-
-  # resume:
-  #   image: amruthpillai/reactive-resume:latest
-  #   container_name: resume
-  #   restart: unless-stopped
-  #   # ports:
-  #   #   - "3000:3000"
-  #   depends_on:
-  #     - minio
-  #     - chrome
-  #   environment:
-  #     # -- Environment Variables --
-  #     PORT: 3000
-  #     NODE_ENV: production
-
-  #     # -- URLs --
-  #     PUBLIC_URL: https://resume.pi.rahulja.in
-  #     STORAGE_URL: https://minio.pi.rahulja.in/default
-
-  #     # -- Printer (Chrome) --
-  #     CHROME_TOKEN: ${CHROME_TOKEN}
-  #     CHROME_URL: ws://chrome:3000
-
-  #     # -- Database (Postgres) --
-  #     DATABASE_URL: ${RESUME_POSTGRES_DB_URL}
-
-  #     # -- Auth --
-  #     ACCESS_TOKEN_SECRET: ${RESUME_ACCESS_TOKEN_SECRET}
-  #     REFRESH_TOKEN_SECRET: ${RESUME_REFRESH_TOKEN_SECRET}
-
-  #     # -- Emails --
-  #     MAIL_FROM: noreply@resume.pi.rhulja.in
-  #     # SMTP_URL: smtp://user:pass@smtp:587 # Optional
-
-  #     # -- Storage (Minio) --
-  #     STORAGE_ENDPOINT: minio
-  #     STORAGE_PORT: 9000
-  #     STORAGE_REGION: ap-southeast-1 # Optional
-  #     STORAGE_BUCKET: default
-  #     STORAGE_ACCESS_KEY: ${MINIO_ROOT_USER}
-  #     STORAGE_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
-  #     STORAGE_USE_SSL: false
-  #     STORAGE_SKIP_BUCKET_CHECK: false
-  #   dns:
-  #     - 10.8.1.3
-  #     - 1.1.1.1
-  #     - 8.8.8.8
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.39
-
-
-
-  # languagetool:
-  #   image: erikvl87/languagetool
-  #   container_name: languagetool
-  #   # ports:
-  #   #   - 8010:8010                        # Using default port from the image
-  #   environment:
-  #     - langtool_languageModel=/ngrams   # OPTIONAL: Using ngrams data
-  #     - Java_Xms=512m                    # OPTIONAL: Setting a minimal Java heap size of 512 mib
-  #     - Java_Xmx=1g                      # OPTIONAL: Setting a maximum Java heap size of 1 Gib
-  #   volumes:
-  #     - ${LANGUAGETOOL_NGRAMS_DATA_PATH}:/ngrams     # OPTIONAL: The location of ngrams data on the local machine
-  #     # - /path/to/logback.xml:/LanguageTool/logback.xml:ro  # OPTIONAL: Overwrite the logging configuration
-  #   dns:
-  #     - 10.8.1.3
-  #     - 1.1.1.1
-  #     - 8.8.8.8
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.40
-
 
   memos:
     image: neosmemo/memos:stable
@@ -1111,28 +453,6 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.41
 
-
-  # linkding:
-  #   image: sissbruecker/linkding:latest
-  #   container_name: linkding
-  #   restart: always
-  #   user: "1000:1000"
-  #   # ports:
-  #   #   - "${LD_HOST_PORT:-9090}:9090"
-  #   volumes:
-  #     - "${LINKDING_DATA_PATH}:/etc/linkding/data"
-  #   environment:
-  #     - LD_CONTAINER_NAME=linkding
-  #     - LD_SUPERUSER_NAME=${LINKDING_SUPERUSER_USERNAME}
-  #     - LD_SUPERUSER_PASSWORD=${LINKDING_SUPERUSER_PASSWORD}
-  #     - LD_LOG_X_FORWARDED_FOR=true
-  #   dns:
-  #     - 10.8.1.3
-  #     - 1.1.1.1
-  #     - 8.8.8.8
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.42
 
 
   firefly:
@@ -1191,6 +511,8 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.43
 
+
+
   firefly-importer:
     image: fireflyiii/data-importer:latest
     hostname: firefly-importer
@@ -1222,23 +544,6 @@ services:
         ipv4_address: 10.8.1.44
 
 
-#   firefly-cron:
-#     #
-#     # To make this work, set STATIC_CRON_TOKEN in your .env file or as an environment variable and replace REPLACEME below
-#     # The STATIC_CRON_TOKEN must be *exactly* 32 characters long
-#     #
-#     image: alpine
-#     container_name: firefly-cron
-#     restart: always
-#     command: sh -c "echo \"0 3 * * * wget -qO- http://app:8080/api/v1/cron/REPLACEME;echo\" | crontab - && crond -f -L /dev/stdout"
-#     dns:
-#       - 10.8.1.3
-#       - 1.1.1.1
-#       - 8.8.8.8
-#     networks:
-#       wg-easy:
-#         ipv4_address: 10.8.1.45
-
 
   vikunja:
     image: vikunja/vikunja
@@ -1247,7 +552,7 @@ services:
       VIKUNJA_SERVICE_JWTSECRET: ${VIKUNJA_JWTSECRET}
       VIKUNJA_SERVICE_PUBLICURL: https://vikunja.pi.rahulja.in/
       # Note the default path is /app/vikunja/vikunja.db.
-      # This config variable moves it to a different folder so you can use a volume and 
+      # This config variable moves it to a different folder so you can use a volume and
       # store the database file outside the container so state is persisted even if the container is destroyed.
       VIKUNJA_DATABASE_PATH: /db/vikunja.db
     # ports:
@@ -1266,50 +571,7 @@ services:
 
 
 
-
-  # grampsweb: &grampsweb
-  #   image: ghcr.io/gramps-project/grampsweb:latest
-  #   container_name: grampsweb
-  #   restart: always
-  #   # ports:
-  #   #   - "80:5000"  # host:docker
-  #   environment:
-  #     GRAMPSWEB_TREE: "My Family Tree"  # will create a new tree if not exists
-  #     GRAMPSWEB_CELERY_CONFIG__broker_url: "redis://redis:6379/0"
-  #     GRAMPSWEB_CELERY_CONFIG__result_backend: "redis://redis:6379/0"
-  #     GRAMPSWEB_RATELIMIT_STORAGE_URI: redis://redis:6379/1
-  #   depends_on:
-  #     - immich_redis
-  #   volumes:
-  #     - ${GRAMPS_USERS}:/app/users  # persist user database
-  #     - ${GRAMPS_INDEX}:/app/indexdir  # persist search index
-  #     - ${GRAMPS_THUMB_CACHE}:/app/thumbnail_cache  # persist thumbnails
-  #     - ${GRAMPS_CACHE}:/app/cache  # persist export and report caches
-  #     - ${GRAMPS_SECRET}:/app/secret  # persist flask secret
-  #     - ${GRAMPS_DB}:/root/.gramps/grampsdb  # persist Gramps database
-  #     - ${GRAMPS_MEDIA}:/app/media  # persist media files
-  #     - ${GRAMPS_TMP}:/tmp
-  #   dns:
-  #     - 10.8.1.3
-  #     - 1.1.1.1
-  #     - 8.8.8.8
-  #   networks:
-  #     wg-easy:
-  #       ipv4_address: 10.8.1.47
-
-  # grampsweb_celery:
-  #   <<: *grampsweb  # YAML merge key copying the entire grampsweb service config
-  #   ports: []
-  #   container_name: grampsweb_celery
-  #   depends_on:
-  #     - immich_redis
-  #   command: celery -A gramps_webapi.celery worker --loglevel=INFO --concurrency=1
-
-
-
-
-
-# # Booked 10.8.1.2 - 10.8.1.47
+# Booked 10.8.1.2 - 10.8.1.47
 
 networks:
   wg-easy:

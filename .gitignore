@@ -13,3 +13,4 @@
 !sonic.cfg
 !prometheus
 !sonic.Dockerfile
+!unused_docker_compose.yml
