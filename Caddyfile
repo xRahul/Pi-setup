@@ -43,7 +43,7 @@ cloudflaredns.pi.rahulja.in {
 # }
 
 immich.pi.rahulja.in {
-    reverse_proxy * 10.8.1.6:3001
+    reverse_proxy * 10.8.1.6:2283
      tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
