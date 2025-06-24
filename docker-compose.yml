@@ -56,7 +56,7 @@ services:
 
 
   web-test:
-    image: crccheck/hello-world
+    image: traefik/whoami
     container_name: web-test
     restart: unless-stopped
     networks:
