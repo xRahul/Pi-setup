@@ -295,3 +295,19 @@ gramps.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+
+webtest.pi.rahulja.in {
+    reverse_proxy * 10.8.1.49:80
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
+
+
+openproject.pi.rahulja.in {
+    reverse_proxy * 10.8.1.50:8080
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
