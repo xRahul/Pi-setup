@@ -110,6 +110,7 @@ services:
     environment:
       OPENPROJECT_HOST__NAME: ${OPENPROJECT_HOST_NAME}
       OPENPROJECT_SECRET_KEY_BASE: ${OPENPROJECT_SECRET_KEY_BASE}
+      OPENPROJECT_HTTPS: false
     volumes:
       - ${OPENPROJECT_PGDATA_PATH}:/var/openproject/pgdata
       - ${OPENPROJECT_ASSETS_PATH}:/var/openproject/assets
