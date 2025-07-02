@@ -37,7 +37,9 @@ services:
     restart: unless-stopped
     environment:
       - FTLCONF_webserver_api_password=${PIHOLE__WEBPASSWORD}
+      - FTLCONF_dns_hosts=${PIHOLE_LOCAL_DNS}
       - TZ=${DEFAULT_TZ}
+      - FTLCONF_dns_upstreams=10.8.1.4#5053
     volumes:
       - ${PIHOLE_ETC_PATH}:/etc/pihole
       - ${PIHOLE_ETC_DNSMASQ_PATH}:/etc/dnsmasq.d
