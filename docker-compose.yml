@@ -5,7 +5,6 @@ services:
     image: tailscale/tailscale:v1.84.3
     container_name: tailscale
     restart: unless-stopped
-    network_mode: host
     environment:
       - TS_AUTHKEY=${TAILSCALE_AUTH_KEY} // can be commented out after 1st run
       - TS_STATE_DIR=/var/lib/tailscale
@@ -15,7 +14,7 @@ services:
       - TS_EXTRA_ARGS=${TS_EXTRA_ARGS}
     volumes:
       - ${TAILSCALE_PATH}:/var/lib/tailscale
-      - ${TAILSCALE_TMP_PATH}:/tmp
+      # - ${TAILSCALE_TMP_PATH}:/tmp
     devices:
       - /dev/net/tun:/dev/net/tun
     sysctls:
@@ -24,10 +23,10 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
     cap_add:
       - NET_ADMIN
-      # - SYS_MODULE
-    # networks:
-    #   wg-easy:
-    #     ipv4_address: 10.8.1.48
+      - SYS_MODULE
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.48
 
 
 
@@ -83,10 +82,12 @@ services:
     image: ghcr.io/caddybuilds/caddy-cloudflare:2.10
     container_name: caddy
     hostname: caddy
+    network_mode: service:tailscale
     user: 1000:1000 # should be owner of volumes
     restart: unless-stopped
     depends_on:
-      - tailscale
+      tailscale:
+        condition: service_healthy
     cap_add:
       - NET_ADMIN
     environment:
@@ -100,10 +101,10 @@ services:
       - ${CADDY_SITE_PATH}:/srv
       - ${CADDY_DATA_PATH}:/data
       - ${CADDY_CONFIG_PATH}:/config
-      - ${TAILSCALE_TMP_PATH}/tailscaled.sock:/var/run/tailscale/tailscaled.sock
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.5
+      # - ${TAILSCALE_TMP_PATH}/tailscaled.sock:/var/run/tailscale/tailscaled.sock
+    # networks:
+    #   wg-easy:
+    #     ipv4_address: 10.8.1.5
 
 
     
@@ -129,7 +130,7 @@ services:
 
 
   web-test:
-    image: traefik/whoami
+    image: traefik/whoami:latest
     container_name: web-test
     restart: unless-stopped
     networks:
