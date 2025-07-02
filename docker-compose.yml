@@ -81,7 +81,6 @@ services:
   caddy:
     image: ghcr.io/caddybuilds/caddy-cloudflare:2.10
     container_name: caddy
-    hostname: caddy
     network_mode: service:tailscale
     user: 1000:1000 # should be owner of volumes
     restart: unless-stopped
