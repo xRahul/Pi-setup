@@ -7,6 +7,7 @@
 !LICENSE
 !Caddyfile
 !example.env
+!example_immich.env
 !immich
 !caddy.Dockerfile
 !docs
