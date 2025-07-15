@@ -1272,3 +1272,35 @@ services:
     networks:
       wg-easy:
         ipv4_address: 10.8.1.44
+
+
+
+
+   
+  openproject:
+    image: openproject/openproject:16
+    container_name: openproject
+    restart: unless-stopped
+    environment:
+      OPENPROJECT_HOST__NAME: ${OPENPROJECT_HOST_NAME}
+      OPENPROJECT_SECRET_KEY_BASE: ${OPENPROJECT_SECRET_KEY_BASE}
+      OPENPROJECT_HTTPS: false
+    volumes:
+      - ${OPENPROJECT_PGDATA_PATH}:/var/openproject/pgdata
+      - ${OPENPROJECT_ASSETS_PATH}:/var/openproject/assets
+    dns:
+      - 10.8.1.3
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.50
+
+
+  web-test:
+    image: traefik/whoami:latest
+    container_name: web-test
+    restart: unless-stopped
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.49
