@@ -1295,12 +1295,3 @@ services:
     networks:
       wg-easy:
         ipv4_address: 10.8.1.50
-
-
-  web-test:
-    image: traefik/whoami:latest
-    container_name: web-test
-    restart: unless-stopped
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.49
