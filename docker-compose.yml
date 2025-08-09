@@ -2,7 +2,7 @@ services:
 
 
   tailscale:
-    image: tailscale/tailscale:v1.84.3
+    image: tailscale/tailscale:v1.86.2
     container_name: tailscale
     restart: unless-stopped
     environment:
@@ -14,7 +14,6 @@ services:
       - TS_EXTRA_ARGS=${TS_EXTRA_ARGS}
     volumes:
       - ${TAILSCALE_PATH}:/var/lib/tailscale
-      # - ${TAILSCALE_TMP_PATH}:/tmp
     devices:
       - /dev/net/tun:/dev/net/tun
     sysctls:
@@ -31,7 +30,7 @@ services:
 
 
   pihole:
-    image: pihole/pihole:2025.06.2
+    image: pihole/pihole:2025.08.0
     container_name: pihole
     hostname: pihole
     restart: unless-stopped
