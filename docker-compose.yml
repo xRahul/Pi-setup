@@ -6,7 +6,7 @@ services:
     container_name: tailscale
     restart: unless-stopped
     environment:
-      - TS_AUTHKEY=${TAILSCALE_AUTH_KEY} // can be commented out after 1st run
+      - TS_AUTHKEY=${TAILSCALE_AUTH_KEY}
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false
       - TS_HOSTNAME=pi-docker-ts
