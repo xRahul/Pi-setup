@@ -309,8 +309,7 @@ openproject.pi.rahulja.in {
 
 
 nc.pi.rahulja.in {
-    header Strict-Transport-Security max-age=31536000;
-    reverse_proxy * 10.8.1.51:11000
+    reverse_proxy * nextcloud-aio-apache:11000
      tls {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
