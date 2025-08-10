@@ -129,6 +129,7 @@ services:
     environment: # Is needed when using any of the options below
       APACHE_PORT: 11000
       APACHE_IP_BINDING: 0.0.0.0
+      SKIP_DOMAIN_VALIDATION: true
     networks:
       wg-easy:
         ipv4_address: 10.8.1.51
