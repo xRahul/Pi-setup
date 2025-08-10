@@ -128,7 +128,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro # May be changed on macOS, Windows or docker rootless. See the applicable documentation. If adjusting, don't forget to also set 'WATCHTOWER_DOCKER_SOCKET_PATH'!
     environment: # Is needed when using any of the options below
       APACHE_PORT: 11000
-      APACHE_IP_BINDING: 10.8.1.51
+      APACHE_IP_BINDING: 0.0.0.0
     networks:
       wg-easy:
         ipv4_address: 10.8.1.51
