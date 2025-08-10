@@ -139,7 +139,7 @@ volumes:
     name: nextcloud_aio_mastercontainer
 
 
-# Booked 10.8.1.2 - 10.8.1.51
+# Booked 10.8.1.2 - 10.8.1.51 # remember to add to .env of local dns pihole
 
 networks:
   wg-easy:
