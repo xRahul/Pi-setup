@@ -314,27 +314,3 @@ nc.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
-
-
-nc1.pi.rahulja.in {
-    reverse_proxy * 10.8.1.51:80
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
-}
-
-
-nc2.pi.rahulja.in {
-    reverse_proxy * 10.8.1.51:8080
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
-}
-
-
-nc3.pi.rahulja.in {
-    reverse_proxy * 10.8.1.51:8443
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
-}
