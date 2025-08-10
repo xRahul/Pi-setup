@@ -306,3 +306,11 @@ openproject.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+
+nc.pi.rahulja.in {
+    reverse_proxy * 10.8.1.51:11000
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
