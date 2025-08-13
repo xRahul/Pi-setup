@@ -158,7 +158,32 @@ services:
         ipv4_address: 10.8.1.32
 
 
-# Booked 10.8.1.2 - 10.8.1.52 # remember to add to .env of local dns pihole
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    restart: unless-stopped
+    # ports:
+    #   - 5678:5678
+    dns:
+      - 10.8.1.3
+      - 1.1.1.1
+      - 8.8.8.8
+    environment:
+      - N8N_HOST=n8n.pi.rahulja.in
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - NODE_ENV=production
+      - WEBHOOK_URL=https://n8n.pi.rahulja.in/
+      - GENERIC_TIMEZONE=${DEFAULT_TZ}
+    volumes:
+      - ${N8N_DATA_FOLDER}:/home/node/.n8n
+      - ${N8N_LOCAL_FILES_FOLDER}/local_files:/files
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.53
+
+
+
+# Booked 10.8.1.2 - 10.8.1.53 # remember to add to .env of local dns pihole
 
 networks:
   wg-easy:

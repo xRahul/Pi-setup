@@ -314,3 +314,13 @@ nc.pi.rahulja.in {
         dns cloudflare {env.CLOUDFLARE_API_TOKEN}
     }
 }
+
+
+n8n.pi.rahulja.in {
+    reverse_proxy * 10.8.1.53:5678 {
+      flush_interval -1
+    }
+     tls {
+        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+    }
+}
