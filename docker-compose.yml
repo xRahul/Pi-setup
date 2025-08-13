@@ -119,6 +119,7 @@ services:
 
   redis:
     image: redis:8.2.0
+    container_name: redis
     # volumes:
     #   - ${REDDIS_DATA_PATH}:/data
     healthcheck:
