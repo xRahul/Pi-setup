@@ -43,23 +43,7 @@ services:
 
 
 
-  transmission:
-    image: linuxserver/transmission:4.0.6
-    container_name: transmission
-    restart: unless-stopped
-    network_mode: "service:gluetun"
-    volumes:
-      - ${TRANSMISSION_CONFIG_SOURCE}:/config
-      - ${TRANSMISSION_DOWNLOAD_SOURCE}:/downloads
-      - ${TRANSMISSION_WATCH_SOURCE}:/watch
-    environment:
-      - PGID=1000
-      - PUID=1000
-      - TZ=${DEFAULT_TZ}
-      # - DOCKER_MODS=linuxserver/mods:transmission-floodui
-      - DOCKER_MODS=linuxserver/mods:transmission-transmissionic
-      - USER=${TRANSMISSION_USERNAME}
-      - PASS=${TRANSMISSION_PASSWORD}
+
 
 
 
