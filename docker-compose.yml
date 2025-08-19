@@ -224,6 +224,10 @@ services:
       # - DOCKER_MODS=linuxserver/mods:transmission-transmissionic
       - USER=${TRANSMISSION_USERNAME}
       - PASS=${TRANSMISSION_PASSWORD}
+    dns:
+      - 10.8.1.3
+      - 1.1.1.1
+      - 8.8.8.8
     networks:
       wg-easy:
         ipv4_address: 10.8.1.23
