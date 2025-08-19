@@ -236,6 +236,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
       - ${HOMARR_APP_DATA_PATH}:/appdata
+    environment:
+      - SECRET_ENCRYPTION_KEY=${HOMARR_SECRET_ENCRYPTION_KEY}
     # ports:
     #   - '7575:7575'
     restart: always
