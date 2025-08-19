@@ -1004,24 +1004,7 @@ services:
 
 
 
-  homarr:
-    image: ghcr.io/ajnart/homarr:latest
-    container_name: homarr
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
-      - ${HOMARR_CONFIGS_PATH}:/app/data/configs
-      - ${HOMARR_ICONS_PATH}:/app/public/icons
-      - ${HOMARR_DATA_PATH}:/data
-    # ports:
-    #   - '7575:7575'
-    restart: always
-    dns:
-      - 10.8.1.3
-      - 1.1.1.1
-      - 8.8.8.8
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.35
+
 
 
 
