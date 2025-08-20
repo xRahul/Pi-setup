@@ -175,6 +175,7 @@ services:
       - NODE_ENV=production
       - WEBHOOK_URL=https://n8n.pi.rahulja.in/
       - GENERIC_TIMEZONE=${DEFAULT_TZ}
+      - TZ=${DEFAULT_TZ}
     volumes:
       - ${N8N_DATA_FOLDER}:/home/node/.n8n
       - ${N8N_LOCAL_FILES_FOLDER}/local_files:/files
