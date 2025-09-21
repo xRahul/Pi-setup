@@ -2,7 +2,7 @@ services:
 
 
   tailscale:
-    image: tailscale/tailscale:v1.86.2
+    image: tailscale/tailscale:v1.88.2
     container_name: tailscale
     restart: unless-stopped
     environment:
@@ -55,7 +55,7 @@ services:
 
 
   cloudflared-dns:
-    image: cloudflare/cloudflared:2025.6.1
+    image: cloudflare/cloudflared:2025.9.0
     container_name: cloudflared-dns-tunnel
     hostname: cloudflareddnstunnel
     user: 1000:1000 # should be owner of volumes
@@ -80,7 +80,7 @@ services:
 
 
   caddy:
-    image: ghcr.io/caddybuilds/caddy-cloudflare:2.10
+    image: ghcr.io/caddybuilds/caddy-cloudflare:2.10.2
     container_name: caddy
     network_mode: service:tailscale
     user: 1000:1000 # should be owner of volumes
@@ -118,7 +118,7 @@ services:
 
 
   redis:
-    image: redis:8.2.0
+    image: redis:8.2.1
     container_name: redis
     # volumes:
     #   - ${REDDIS_DATA_PATH}:/data
@@ -132,7 +132,7 @@ services:
 
 
   paperless-ngx:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.17.1
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.18.4
     container_name: paperless-ngx
     restart: unless-stopped
     depends_on:
@@ -186,7 +186,7 @@ services:
 
 
   filebrowser:
-    image: filebrowser/filebrowser:v2.42.3
+    image: filebrowser/filebrowser:v2.43.0
     container_name: filebrowser
     volumes:
       - ${FILEBROWSER_ROOT_PATH}:/srv
@@ -236,7 +236,7 @@ services:
 
 
   homarr:
-    image: ghcr.io/homarr-labs/homarr:v1.33.0
+    image: ghcr.io/homarr-labs/homarr:v1.38.0
     container_name: homarr
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
