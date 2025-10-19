@@ -120,6 +120,7 @@ services:
   redis:
     image: redis:8.2.1
     container_name: redis
+    restart: unless-stopped
     # volumes:
     #   - ${REDDIS_DATA_PATH}:/data
     healthcheck:
