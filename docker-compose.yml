@@ -246,6 +246,11 @@ services:
       - SECRET_ENCRYPTION_KEY=${HOMARR_SECRET_ENCRYPTION_KEY}
     # ports:
     #   - '7575:7575'
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     restart: unless-stopped
     dns:
       - 10.8.1.3
