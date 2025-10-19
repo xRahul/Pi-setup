@@ -237,7 +237,7 @@ services:
 
 
   homarr:
-    image: ghcr.io/homarr-labs/homarr:v1.38.0
+    image: ghcr.io/homarr-labs/homarr:v1.42.1
     container_name: homarr
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
