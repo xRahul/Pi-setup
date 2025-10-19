@@ -244,6 +244,7 @@ services:
       - ${HOMARR_APP_DATA_PATH}:/appdata
     environment:
       - SECRET_ENCRYPTION_KEY=${HOMARR_SECRET_ENCRYPTION_KEY}
+      - REDIS_IS_EXTERNAL=true
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     # ports:
