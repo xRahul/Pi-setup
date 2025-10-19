@@ -2,7 +2,7 @@ services:
 
 
   tailscale:
-    image: tailscale/tailscale:v1.88.2
+    image: tailscale/tailscale:v1.88.4
     container_name: tailscale
     restart: unless-stopped
     environment:
@@ -118,7 +118,7 @@ services:
 
 
   redis:
-    image: redis:8.2.1
+    image: redis:8.2.2
     container_name: redis
     restart: unless-stopped
     # volumes:
@@ -187,7 +187,7 @@ services:
 
 
   filebrowser:
-    image: filebrowser/filebrowser:v2.43.0
+    image: filebrowser/filebrowser:v2.44.1
     container_name: filebrowser
     volumes:
       - ${FILEBROWSER_ROOT_PATH}:/srv
