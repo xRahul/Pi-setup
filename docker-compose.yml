@@ -2,7 +2,7 @@ services:
 
 
   tailscale:
-    image: tailscale/tailscale:v1.88.4
+    image: tailscale/tailscale:v1.92.4
     container_name: tailscale
     restart: unless-stopped
     environment:
@@ -30,7 +30,7 @@ services:
 
 
   pihole:
-    image: pihole/pihole:2025.08.0
+    image: pihole/pihole:2025.11.1
     container_name: pihole
     hostname: pihole
     restart: unless-stopped
@@ -39,6 +39,9 @@ services:
       - FTLCONF_dns_hosts=${PIHOLE_LOCAL_DNS}
       - TZ=${DEFAULT_TZ}
       - FTLCONF_dns_upstreams=10.8.1.4#5053
+    cap_add:
+      - SYS_NICE
+      - SYS_TIME
     volumes:
       - ${PIHOLE_ETC_PATH}:/etc/pihole
       - ${PIHOLE_ETC_DNSMASQ_PATH}:/etc/dnsmasq.d
@@ -55,7 +58,7 @@ services:
 
 
   cloudflared-dns:
-    image: cloudflare/cloudflared:2025.9.0
+    image: cloudflare/cloudflared:2025.11.1
     container_name: cloudflared-dns-tunnel
     hostname: cloudflareddnstunnel
     user: 1000:1000 # should be owner of volumes
@@ -109,7 +112,7 @@ services:
  
 
   web-test:
-    image: traefik/whoami:latest
+    image: traefik/whoami:v1.10.4
     container_name: web-test
     restart: unless-stopped
     networks:
@@ -118,7 +121,7 @@ services:
 
 
   redis:
-    image: redis:8.2.2
+    image: redis:8.4.0
     container_name: redis
     restart: unless-stopped
     # volumes:
@@ -133,7 +136,7 @@ services:
 
 
   paperless-ngx:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.18.4
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.2
     container_name: paperless-ngx
     restart: unless-stopped
     depends_on:
@@ -187,15 +190,19 @@ services:
 
 
   filebrowser:
-    image: filebrowser/filebrowser:v2.44.1
+    image: filebrowser/filebrowser:v2.52.0
     container_name: filebrowser
     volumes:
       - ${FILEBROWSER_ROOT_PATH}:/srv
-      - ${FILEBROWSER_DB_FILE_PATH}:/database
-      - ${FILEBROWSER_CONFIG_SETTING_FILE_PATH}:/config
+      - ${FILEBROWSER_DB_FILE_PATH}:/database/filebrowser.db
+      - ${FILEBROWSER_CONFIG_SETTING_FILE_PATH}:/config/settings.json
     environment:
       - PUID=1000
       - PGID=1000
+      - FB_DATABASE=/database/filebrowser.db
+      - FB_CONFIG=/config/settings.json
+      - FB_ADDR=0.0.0.0
+      - FB_PORT=80
     # ports:
     #   - 8080:80
     restart: unless-stopped
@@ -237,7 +244,7 @@ services:
 
 
   homarr:
-    image: ghcr.io/homarr-labs/homarr:v1.42.1
+    image: ghcr.io/homarr-labs/homarr:v1.47.0
     container_name: homarr
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
