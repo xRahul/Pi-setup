@@ -4,11 +4,11 @@
 # }
 
 pihole.pi.rahulja.in {
-    # rewrite * /admin{uri}
-    reverse_proxy * 10.8.1.3:80
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        # rewrite * /admin{uri}
+        reverse_proxy * 10.8.1.3:80
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
 
 # http://wgslx.in {
@@ -16,10 +16,10 @@ pihole.pi.rahulja.in {
 # }
 
 wg.pi.rahulja.in {
-    reverse_proxy * 10.8.1.2:51821
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.2:51821
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
 
 # http://cloudflarednsslx.in {
@@ -27,10 +27,10 @@ wg.pi.rahulja.in {
 # }
 
 cloudflaredns.pi.rahulja.in {
-    reverse_proxy * 10.8.1.4:43697
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.4:43697
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
 
 # http://immichslx.in {
@@ -38,10 +38,10 @@ cloudflaredns.pi.rahulja.in {
 # }
 
 immich.pi.rahulja.in {
-    reverse_proxy * 10.8.1.6:2283
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.6:2283
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
 
 # photoprism.pi.rahulja.in {
@@ -52,275 +52,248 @@ immich.pi.rahulja.in {
 # }
 
 watchtower.pi.rahulja.in {
-    reverse_proxy * 10.8.1.13:8080
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.13:8080
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
 
 navidrome.pi.rahulja.in {
-    reverse_proxy * 10.8.1.14:4533
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.14:4533
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
 
 mikochi.pi.rahulja.in {
-    reverse_proxy * 10.8.1.15:8080
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.15:8080
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
 
 jellyfin.pi.rahulja.in {
-    reverse_proxy * 10.8.1.16:8096
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.16:8096
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
 
 archivebox.pi.rahulja.in {
-    reverse_proxy * 10.8.1.17:8000
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.17:8000
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
 
 prometheus.pi.rahulja.in {
-    reverse_proxy * 10.8.1.19:9090
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.19:9090
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
 
 grafana.pi.rahulja.in {
-    reverse_proxy * 10.8.1.20:3000
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.20:3000
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
 
 wallabag.pi.rahulja.in {
-    reverse_proxy * 10.8.1.22:80
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.22:80
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 trans.pi.rahulja.in {
-    reverse_proxy * 10.8.1.23:9091
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.23:9091
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 prowlarr.pi.rahulja.in {
-    reverse_proxy * 10.8.1.23:9696
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.23:9696
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 flame.pi.rahulja.in {
-    reverse_proxy * 10.8.1.24:5005
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.24:5005
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 plex.pi.rahulja.in {
-    reverse_proxy * 10.8.1.25:32400
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.25:32400
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 ntfy.pi.rahulja.in {
-    reverse_proxy * 10.8.1.26:8000
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.26:8000
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 freshrss.pi.rahulja.in {
-    reverse_proxy * 10.8.1.27:80
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.27:80
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 miniflux.pi.rahulja.in {
-    reverse_proxy * 10.8.1.28:8080
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.28:8080
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 shiori.pi.rahulja.in {
-    reverse_proxy * 10.8.1.31:8080
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.31:8080
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 pngx.pi.rahulja.in {
-    reverse_proxy * 10.8.1.32:8000
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.32:8000
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 grocy.pi.rahulja.in {
-    reverse_proxy * 10.8.1.33:80
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.33:80
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 filebrowser.pi.rahulja.in {
-    reverse_proxy * 10.8.1.34:80
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.34:80
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 homarr.pi.rahulja.in {
-    reverse_proxy * 10.8.1.35:7575
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.35:7575
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 dash.pi.rahulja.in {
-    reverse_proxy * 10.8.1.35:7575
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.35:7575
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 cyberchef.pi.rahulja.in {
-    reverse_proxy * 10.8.1.36:80
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.36:80
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 minio.pi.rahulja.in {
-    reverse_proxy * 10.8.1.37:35507
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.37:35507
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 resume.pi.rahulja.in {
-    reverse_proxy * 10.8.1.39:3000
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.39:3000
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 languagetool.pi.rahulja.in {
-    reverse_proxy * 10.8.1.40:8010
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.40:8010
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 memos.pi.rahulja.in {
-    reverse_proxy * 10.8.1.41:5230
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.41:5230
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 linkding.pi.rahulja.in {
-    reverse_proxy * 10.8.1.42:9090
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.42:9090
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 firefly.pi.rahulja.in {
-    reverse_proxy * 10.8.1.43:8080
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.43:8080
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 fireflyimporter.pi.rahulja.in {
-    reverse_proxy * 10.8.1.44:8080
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.44:8080
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 vikunja.pi.rahulja.in {
-    reverse_proxy * 10.8.1.46:3456
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.46:3456
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 gramps.pi.rahulja.in {
-    reverse_proxy * 10.8.1.47:5000
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.47:5000
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 webtest.pi.rahulja.in {
-    reverse_proxy * 10.8.1.49:80
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.49:80
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 openproject.pi.rahulja.in {
-    reverse_proxy * 10.8.1.50:8080
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.50:8080
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
-
 
 nc.pi.rahulja.in {
-    reverse_proxy * 10.8.1.51:11000
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.51:11000
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
 
-
 n8n.pi.rahulja.in {
-    reverse_proxy * 10.8.1.53:5678 {
-      flush_interval -1
-    }
-     tls {
-        dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-    }
+        reverse_proxy * 10.8.1.53:5678 {
+                flush_interval -1
+        }
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
 }
