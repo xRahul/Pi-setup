@@ -298,4 +298,11 @@ n8n.pi.rahulja.in {
         }
 }
 
+searxng.pi.rahulja.in {
+        reverse_proxy * 10.8.1.54:8080
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
+}
+
 

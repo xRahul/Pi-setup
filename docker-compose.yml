@@ -175,6 +175,8 @@ services:
     volumes:
       - ${N8N_DATA_FOLDER}:/home/node/.n8n
       - ${N8N_LOCAL_FILES_FOLDER}/local_files:/files
+    depends_on:
+      - searxng
     networks:
       wg-easy:
         ipv4_address: 10.8.1.53
@@ -335,7 +337,34 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.10
 
-# Booked 10.8.1.2 - 10.8.1.53 # remember to add to .env of local dns pihole
+  searxng:
+    image: searxng/searxng:latest
+    container_name: searxng
+    restart: unless-stopped
+    volumes:
+      - ./searxng:/etc/searxng:rw
+    environment:
+      - SEARXNG_BASE_URL=${SEARXNG_BASE_URL}
+      - SEARXNG_SECRET=${SEARXNG_SECRET}
+      - SEARXNG_REDIS_URL=${SEARXNG_REDIS_URL}
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+    depends_on:
+      - immich-redis
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.54
+
+# Booked 10.8.1.2 - 10.8.1.54 # remember to add to .env of local dns pihole
 
 networks:
   wg-easy:
