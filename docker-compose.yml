@@ -164,6 +164,12 @@ services:
       - WEBHOOK_URL=https://n8n.pi.rahulja.in/
       - GENERIC_TIMEZONE=${DEFAULT_TZ}
       - TZ=${DEFAULT_TZ}
+      # Performance & Maintenance
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=336
+      - EXECUTIONS_DATA_SAVE_ON_ERROR=all
+      - EXECUTIONS_DATA_SAVE_ON_SUCCESS=none
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
     volumes:
       - ${N8N_DATA_FOLDER}:/home/node/.n8n
       - ${N8N_LOCAL_FILES_FOLDER}/local_files:/files
