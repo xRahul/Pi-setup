@@ -166,6 +166,8 @@ services:
     image: docker.n8n.io/n8nio/n8n
     container_name: n8n
     restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     # ports:
     #   - 5678:5678
     dns:
