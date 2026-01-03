@@ -160,6 +160,7 @@ services:
       - N8N_HOST=n8n.pi.rahulja.in
       - N8N_PORT=5678
       - N8N_PROTOCOL=https
+      - N8N_PROXY_HOPS=1
       - NODE_ENV=production
       - WEBHOOK_URL=https://n8n.pi.rahulja.in/
       - GENERIC_TIMEZONE=${DEFAULT_TZ}
@@ -169,6 +170,7 @@ services:
       - EXECUTIONS_DATA_MAX_AGE=336
       - EXECUTIONS_DATA_SAVE_ON_ERROR=all
       - EXECUTIONS_DATA_SAVE_ON_SUCCESS=none
+      - N8N_CONCURRENCY_PRODUCTION_LIMIT=2
       - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
     volumes:
       - ${N8N_DATA_FOLDER}:/home/node/.n8n
