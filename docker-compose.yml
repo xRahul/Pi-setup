@@ -39,6 +39,7 @@ services:
       - FTLCONF_dns_hosts=${PIHOLE_LOCAL_DNS}
       - TZ=${DEFAULT_TZ}
       - FTLCONF_dns_upstreams=10.8.1.4#5053
+      - FTLCONF_dns_listeningMode=all
     cap_add:
       - SYS_NICE
       - SYS_TIME
@@ -107,9 +108,6 @@ services:
     # networks:
     #   wg-easy:
     #     ipv4_address: 10.8.1.5
-    
- 
- 
 
   web-test:
     image: traefik/whoami:v1.10.4
@@ -119,28 +117,12 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.49
 
-
-  redis:
-    image: redis:8.4.0
-    container_name: redis
-    restart: unless-stopped
-    # volumes:
-    #   - ${REDDIS_DATA_PATH}:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 20s
-      timeout: 3s
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.52
-
-
   paperless-ngx:
     image: ghcr.io/paperless-ngx/paperless-ngx:2.20.2
     container_name: paperless-ngx
     restart: unless-stopped
     depends_on:
-      - redis
+      - immich-redis
     # ports:
     #   - "8000:8000"
     volumes:
@@ -149,7 +131,7 @@ services:
       - ${PAPERLESS_NGX_EXPORT_PATH}:/usr/src/paperless/export
       - ${PAPERLESS_NGX_CONSUME_PATH}:/usr/src/paperless/consume
     environment:
-      PAPERLESS_REDIS: redis://redis:6379
+      PAPERLESS_REDIS: redis://immich-redis:6379
       PAPERLESS_TIME_ZONE: ${DEFAULT_TZ}
       PAPERLESS_URL: ${PAPERLESS_NGX_URL}
       PAPERLESS_SECRET_KEY: ${PAPERLESS_NGX_SECRET_KEY}
@@ -254,12 +236,12 @@ services:
     environment:
       - SECRET_ENCRYPTION_KEY=${HOMARR_SECRET_ENCRYPTION_KEY}
       - REDIS_IS_EXTERNAL=true
-      - REDIS_HOST=redis
+      - REDIS_HOST=immich-redis
       - REDIS_PORT=6379
     # ports:
     #   - '7575:7575'
     depends_on:
-      - redis
+      - immich-redis
     restart: unless-stopped
     dns:
       - 10.8.1.3
