@@ -2,7 +2,7 @@ use_default_settings: true
 server:
   # base_url is defined in the environment variable
   secret_key: "default-secret-key-to-be-overridden"
-  limiter: true
+  limiter: false
   image_proxy: true
 ui:
   static_use_hash: true
