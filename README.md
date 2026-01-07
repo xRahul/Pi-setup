@@ -36,7 +36,7 @@ graph TD
 
         %% Internal Network
         subgraph Internal ["Private Docker Network (10.8.1.0/24)"]
-            pihole[Pi-hole DNS]
+            pihole["Pi-hole DNS<br/>(Local DNS: *.pi -> TS IP)"]
             cloudflared[Cloudflared DoH]
             apps["Applications<br/>(Immich, N8n, etc.)"]
             db[Databases]
