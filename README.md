@@ -14,46 +14,80 @@ The stack is designed to be efficient and secure, utilizing **Caddy** as a rever
 
 ## 📐 Architecture
 
-The following diagram illustrates the system architecture, highlighting **Split DNS** resolution and the request flow through the stack.
+The following diagram provides a comprehensive view of the system, including network isolation, storage persistence, DNS resolution chains, and service interactions.
 
 ```mermaid
 graph TD
+    %% --- External Entities ---
     user((User Device))
-    internet(Internet / Cloudflare)
+    internet(Internet)
+    cf_api[Cloudflare API]
+
+    %% --- Tailscale / Network Layer ---
     ts_dns[Tailscale MagicDNS<br/>100.100.100.100]
 
-    subgraph "Raspberry Pi Host"
-        subgraph "Shared Network Namespace"
-            ts["Tailscale Container<br/>(VPN Endpoint)"]
-            caddy["Caddy<br/>(Reverse Proxy)"]
+    subgraph "Raspberry Pi 5 Host"
+        
+        %% Physical Storage
+        usb[USB Storage<br/>/mnt/usb]
+
+        subgraph "Network Namespace: Tailscale"
+            ts["Tailscale VPN<br/>(100.x.y.z)"]
+            caddy["Caddy Reverse Proxy"]
         end
 
         subgraph "Docker Network: wg-easy (10.8.1.0/24)"
-            pihole["Pi-hole<br/>(DNS: 10.8.1.3)"]
-            cloudflared["Cloudflared<br/>(DoH Proxy: 10.8.1.4)"]
-            immich[Immich<br/>10.8.1.6]
+            direction TB
+            
+            subgraph "System & DNS"
+                pihole["Pi-hole<br/>(DNS: 10.8.1.3)"]
+                cloudflared["Cloudflared<br/>(DoH: 10.8.1.4)"]
+            end
+
+            subgraph "Applications"
+                immich["Immich<br/>10.8.1.6"]
+                n8n["N8n<br/>10.8.1.53"]
+                other_apps["Other Apps<br/>(Paperless, Homarr, etc.)"]
+            end
+
+            subgraph "Backends"
+                db[("Postgres / Redis")]
+            end
         end
     end
 
-    %% Flow 1: User DNS Resolution (Split DNS)
-    user -- "1. DNS Query: *.pi.rahulja.in" --> ts_dns
-    ts_dns -- "2. Forward (Split DNS)" --> pihole
-    
-    %% Flow 2: DNS Resolution Chain
-    immich -.->|"Internal DNS Query"| pihole
-    pihole -- "3. Upstream (5053)" --> cloudflared
-    cloudflared -- "4. DoH (Encrypted)" --> internet
-    
-    %% Flow 3: Service Access
-    pihole -.->|"Resolve to Pi IP"| user
-    user -- "5. HTTPS Request" --> ts
-    ts -- "6. Local Handoff" --> caddy
-    caddy -- "7. Proxy (10.8.1.6:2283)" --> immich
+    %% --- Data Persistence ---
+    usb -.->|"Bind Mounts (Media/DBs)"| immich
+    usb -.->|"Bind Mounts"| db
+    usb -.->|"Bind Mounts"| other_apps
 
+    %% --- DNS Resolution Flow ---
+    user -- "1. DNS: *.pi.rahulja.in" --> ts_dns
+    ts_dns -- "2. Forward (Split DNS)" --> pihole
+    pihole -- "3. Upstream" --> cloudflared
+    cloudflared -- "4. DoH (Encrypted)" --> internet
+    immich -.->|"Internal DNS"| pihole
+
+    %% --- Access & Control Flow ---
+    user -- "5. HTTPS Request" --> ts
+    ts -- "6. Localhost Handoff" --> caddy
+    caddy -- "7. Proxy" --> immich
+    caddy -- "Proxy" --> n8n
+    caddy -- "Proxy" --> other_apps
+    
+    %% --- Certificate Management ---
+    caddy -.->|"DNS-01 Challenge"| cf_api
+
+    %% --- Inter-Service Communication ---
+    immich <--> db
+    n8n <--> db
+
+    %% --- Styling ---
     style user fill:#f9f,stroke:#333,stroke-width:2px
     style ts_dns fill:#fff2cc,stroke:#d6b656
-    style ts fill:#cce5ff,stroke:#333
+    style usb fill:#ddd,stroke:#333,stroke-dasharray: 5 5
     style caddy fill:#cce5ff,stroke:#333
+    style ts fill:#cce5ff,stroke:#333
     style pihole fill:#e5ffcc,stroke:#333
     style cloudflared fill:#e5ffcc,stroke:#333
     style immich fill:#e5ffcc,stroke:#333
