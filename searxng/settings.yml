@@ -1,16 +1,71 @@
 use_default_settings: true
+
 server:
   # base_url is defined in the environment variable
   secret_key: "default-secret-key-to-be-overridden"
-  limiter: false
+  limiter: false # Critical: Disable rate limiting for n8n/LLM automation
   image_proxy: true
+  method: "GET"
+
 ui:
   static_use_hash: true
+  infinite_scroll: true
+  center_alignment: true
+  default_theme: simple
+  
 redis:
-  url: "redis://immich-redis:6379/1" # Default, but will be overridden by env
+  url: "redis://immich-redis:6379/1"
+
 search:
   safe_search: 0
   autocomplete: 'google'
   formats:
     - html
-    - json
+    - json # Essential for n8n/programmatic access
+  default_lang: "auto"
+
+# Engine configuration to ensure high-quality results
+engines:
+  - name: google
+    engine: google
+    shortcut: g
+    disabled: false
+    use_mobile_ui: false # Desktop UI often yields better snippets
+
+  - name: bing
+    engine: bing
+    shortcut: b
+    disabled: false
+
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    disabled: false
+
+  - name: wikipedia
+    engine: wikipedia
+    shortcut: w
+    disabled: false
+
+  - name: reddit
+    engine: reddit
+    shortcut: r
+    disabled: false
+
+  - name: github
+    engine: github
+    shortcut: gh
+    disabled: false
+
+  - name: arxiv
+    engine: arxiv
+    shortcut: a
+    disabled: false
+
+# Outgoing request settings to handle timeouts better
+outgoing:
+  request_timeout: 10.0
+  max_request_timeout: 20.0
+  pool_connections: 100
+  pool_maxsize: 100
+  enable_http2: true
