@@ -1,84 +1,112 @@
-# Raspberry Pi Home Lab Setup
+# Raspberry Pi Home Lab (Docker)
 
-This repository contains the Docker Compose configuration for a comprehensive self-hosted home lab running on a Raspberry Pi (optimized for Pi 5). It uses **Caddy** as a reverse proxy with Cloudflare DNS validation, **WireGuard** (`wg-easy`) for internal networking, and **Tailscale** for remote access.
+This repository contains the Docker Compose configuration for a comprehensive home lab setup running on a Raspberry Pi (optimized for Pi 5). It integrates various self-hosted services using a custom bridge network and Tailscale for secure remote access.
 
 ## 🚀 Overview
 
--   **Base OS:** Linux (Debian/Raspberry Pi OS)
--   **Orchestration:** Docker Compose
--   **Reverse Proxy:** Caddy (handling `*.pi.rahulja.in`)
--   **Networking:** Custom bridge network `wg-easy` (10.8.1.0/24)
--   **DNS:** Pi-hole & Cloudflared
+The stack is designed to be efficient and secure, utilizing **Caddy** as a reverse proxy with Cloudflare DNS validation for automatic SSL certificates. A specific subnet (`10.8.1.0/24`) is used to assign static IPs to containers, facilitating easy internal DNS resolution via Pi-hole.
 
-## 🛠️ Prerequisites
+### Core Infrastructure
+- **Caddy:** Reverse proxy handling `*.pi.rahulja.in` domains.
+- **Tailscale:** VPN and subnet router for secure remote access.
+- **Pi-hole:** Network-wide ad blocking and local DNS.
+- **Cloudflared:** DNS-over-HTTPS (DoH) tunnel for secure upstream DNS.
 
--   Docker & Docker Compose
--   WireGuard kernel modules (usually included in modern kernels)
--   A domain name managed by Cloudflare (for API-based SSL challenges)
+## 📐 Architecture
 
-## 📦 Installation
+The following diagram illustrates how a user device connected via Tailscale securely accesses services running on the Raspberry Pi.
+
+```mermaid
+graph TD
+    user((User Device))
+    internet(Internet)
+
+    subgraph "Raspberry Pi Host"
+        subgraph "Shared Network Namespace"
+            ts[Tailscale Container<br/>(VPN Endpoint)]
+            caddy[Caddy<br/>(Reverse Proxy)]
+        end
+
+        subgraph "Docker Network: wg-easy (10.8.1.0/24)"
+            immich[Immich<br/>10.8.1.6]
+            pihole[Pi-hole<br/>10.8.1.3]
+            other[Other Services...]
+        end
+    end
+
+    user -- "1. Request: https://immich.pi.rahulja.in" --> internet
+    internet -- "2. Encrypted Tailscale Tunnel" --> ts
+    ts -- "3. Handoff (Localhost)" --> caddy
+    caddy -- "4. Proxy (10.8.1.6:2283)" --> immich
+
+    style user fill:#f9f,stroke:#333,stroke-width:2px
+    style ts fill:#cce5ff,stroke:#333
+    style caddy fill:#cce5ff,stroke:#333
+    style immich fill:#e5ffcc,stroke:#333
+```
+
+## 🛠️ Services & IP Assignments
+
+The following services are configured with static IPs in the `10.8.1.0/24` subnet:
+
+| Service | Internal IP | External URL (Example) | Description |
+| :--- | :--- | :--- | :--- |
+| **Pi-hole** | `10.8.1.3` | `pihole.pi.rahulja.in` | DNS Sinkhole & Ad Blocker |
+| **Cloudflared** | `10.8.1.4` | `cloudflaredns.pi.rahulja.in` | DoH Proxy |
+| **Immich** | `10.8.1.6` | `immich.pi.rahulja.in` | Self-hosted Photo & Video Management |
+| **Transmission** | `10.8.1.23` | `trans.pi.rahulja.in` | Torrent Client |
+| **Paperless-ngx** | `10.8.1.32` | `pngx.pi.rahulja.in` | Document Management System |
+| **Filebrowser** | `10.8.1.34` | `filebrowser.pi.rahulja.in` | Web-based File Manager |
+| **Homarr** | `10.8.1.35` | `homarr.pi.rahulja.in` | Dashboard for your services |
+| **Tailscale** | `10.8.1.48` | N/A | VPN Mesh Network |
+| **Web Test** | `10.8.1.49` | `webtest.pi.rahulja.in` | Connectivity Test (Whoami) |
+| **N8n** | `10.8.1.53` | `n8n.pi.rahulja.in` | Workflow Automation |
+| **SearXNG** | `10.8.1.54` | `searxng.pi.rahulja.in` | Privacy-respecting Metasearch Engine |
+| **Storyteller** | `10.8.1.55` | `storyteller.pi.rahulja.in` | Self-hosted Audiobook Server |
+
+*Note: Immich auxiliary services (ML, Redis, DB) occupy IPs `10.8.1.8`, `10.8.1.9`, and `10.8.1.10` respectively.*
+
+## ⚙️ Configuration
+
+### Environment Variables
+The setup relies heavily on environment variables for sensitive data and path configurations.
+1.  Copy `example.env` to `.env`.
+2.  Fill in the required fields, especially:
+    -   `CLOUDFLARE_API_TOKEN` (for Caddy SSL)
+    -   `TAILSCALE_AUTH_KEY` (for Tailscale connection)
+    -   Data paths (defaulting to `/mnt/usb/...`)
+
+### Networking
+-   **Network Name:** `wg-easy`
+-   **Subnet:** `10.8.1.0/24`
+-   **Gateway:** `10.8.1.1` (Default Docker bridge gateway)
+
+### Storage
+Most heavy data (media, databases) is mapped to an external USB drive mounted at `/mnt/usb`. Ensure this mount point exists and has correct permissions, or update the `.env` file to point to your desired locations.
+
+## 📦 Usage
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/xRahul/Pi-setup.git
-    cd Pi-setup
+    git clone <repository-url>
+    cd <repository-directory>
     ```
 
-2.  **Configure Environment:**
-    Copy the example environment file and edit it with your secrets.
+2.  **Prepare Environment:**
     ```bash
     cp example.env .env
+    # Edit .env with your specific configuration
     nano .env
     ```
-    *Ensure you fill in `CLOUDFLARE_API_TOKEN`, `TAILSCALE_AUTH_KEY`, and volume paths.*
 
-3.  **Network Setup:**
-    Ensure the `wg-easy` network subnet `10.8.1.0/24` does not conflict with your local network.
-
-4.  **Start Services:**
+3.  **Start Services:**
     ```bash
-    docker compose up -d
+    docker-compose up -d
     ```
 
-## 🖥️ Services & Static IPs
+4.  **Access Services:**
+    Open your browser and navigate to the configured domains (e.g., `https://homarr.pi.rahulja.in`). Ensure your DNS (likely Pi-hole) is correctly pointing these domains to your Nginx/Caddy instance or that you have local host entries if testing offline.
 
-The project uses static IP assignments within the `10.8.1.x` range for internal stability and DNS resolution.
-
-| Service | IP Address | Domain | Description |
-| :--- | :--- | :--- | :--- |
-| **Network Core** | | | |
-| WireGuard (wg-easy) | `10.8.1.2` | `wg.pi.rahulja.in` | VPN Server |
-| Pi-hole | `10.8.1.3` | `pihole.pi.rahulja.in` | DNS Ad-blocking |
-| Cloudflared | `10.8.1.4` | `cloudflaredns.pi.rahulja.in` | DoH Proxy |
-| Caddy | `Host/TS` | `*.pi.rahulja.in` | Reverse Proxy |
-| Tailscale | `10.8.1.48` | - | Remote Access Mesh |
-| **Media & Photos** | | | |
-| Immich | `10.8.1.6` | `immich.pi.rahulja.in` | Photo Backup |
-| Jellyfin | `10.8.1.16` | `jellyfin.pi.rahulja.in` | Media Server |
-| Navidrome | `10.8.1.14` | `navidrome.pi.rahulja.in` | Music Server |
-| Plex | `10.8.1.25` | `plex.pi.rahulja.in` | Media Server |
-| **Productivity** | | | |
-| N8n | `10.8.1.53` | `n8n.pi.rahulja.in` | Workflow Automation |
-| Paperless-ngx | `10.8.1.32` | `pngx.pi.rahulja.in` | Document Management |
-| Filebrowser | `10.8.1.34` | `filebrowser.pi.rahulja.in` | Web File Manager |
-| Homarr | `10.8.1.35` | `homarr.pi.rahulja.in` | Dashboard |
-| OpenProject | `10.8.1.50` | `openproject.pi.rahulja.in` | Project Management |
-| Vikunja | `10.8.1.46` | `vikunja.pi.rahulja.in` | Todo List |
-| Firefly III | `10.8.1.43` | `firefly.pi.rahulja.in` | Finance Manager |
-| **Tools** | | | |
-| Watchtower | `10.8.1.13` | `watchtower.pi.rahulja.in` | Auto-updater |
-| Prometheus | `10.8.1.19` | `prometheus.pi.rahulja.in` | Metrics |
-| Grafana | `10.8.1.20` | `grafana.pi.rahulja.in` | Monitoring Dashboard |
-| Transmission | `10.8.1.23` | `trans.pi.rahulja.in` | Torrent Client |
-
-*(See `docker-compose.yml` and `Caddyfile` for the complete list of 40+ services)*
-
-## 📂 Volume Management
-
-Most data is persisted in `/mnt/usb/`, mapped via environment variables in `.env`. Ensure your external drive is mounted correctly before starting the stack.
-
-## 📝 Configuration Notes
-
--   **N8n:** Concurrency limit set to `2` to prevent OOM on Pi.
--   **Caddy:** Uses Cloudflare DNS challenge for automatic HTTPS.
--   **Logs:** System logs are optimized for flash storage (see project context).
+## 📝 Notes
+-   **Caddy & Tailscale:** The Caddy container is configured to use the Tailscale container's network stack (`network_mode: service:tailscale`) in some configurations (check `docker-compose.yml`), allowing it to serve content securely over the mesh network if needed.
+-   **Immich:** Requires a significant amount of RAM for machine learning tasks.

@@ -13,7 +13,7 @@ ui:
   center_alignment: true
   default_theme: simple
   
-redis:
+valkey:
   url: "redis://immich-redis:6379/1"
 
 search:
@@ -61,6 +61,10 @@ engines:
     engine: arxiv
     shortcut: a
     disabled: false
+
+  - name: ahmia
+    engine: ahmia
+    disabled: true
 
 # Outgoing request settings to handle timeouts better
 outgoing:

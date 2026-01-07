@@ -5,6 +5,7 @@
 !.gitignore
 !docker-compose.yml
 !LICENSE
+!README.md
 !Caddyfile
 !example.env
 !example_immich.env
