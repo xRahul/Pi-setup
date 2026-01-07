@@ -23,8 +23,8 @@ graph TD
 
     subgraph "Raspberry Pi Host"
         subgraph "Shared Network Namespace"
-            ts[Tailscale Container<br/>(VPN Endpoint)]
-            caddy[Caddy<br/>(Reverse Proxy)]
+            ts["Tailscale Container<br/>(VPN Endpoint)"]
+            caddy["Caddy<br/>(Reverse Proxy)"]
         end
 
         subgraph "Docker Network: wg-easy (10.8.1.0/24)"
