@@ -8,6 +8,7 @@
 !Caddyfile
 !example.env
 !example_immich.env
+!example_pihole.env
 !immich
 !caddy.Dockerfile
 !docs
