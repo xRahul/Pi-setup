@@ -14,12 +14,12 @@ The stack is designed to be efficient and secure, utilizing **Caddy** as a rever
 
 ## 📐 Architecture
 
-The following diagram illustrates how a user device connected via Tailscale securely accesses services running on the Raspberry Pi.
+The following diagram illustrates how a user device connected via Tailscale securely resolves and accesses services using **Split DNS**.
 
 ```mermaid
 graph TD
     user((User Device))
-    internet(Internet)
+    ts_dns[Tailscale MagicDNS<br/>100.100.100.100]
 
     subgraph "Raspberry Pi Host"
         subgraph "Shared Network Namespace"
@@ -28,20 +28,24 @@ graph TD
         end
 
         subgraph "Docker Network: wg-easy (10.8.1.0/24)"
+            pihole["Pi-hole<br/>(Split DNS: 10.8.1.3)"]
             immich[Immich<br/>10.8.1.6]
-            pihole[Pi-hole<br/>10.8.1.3]
             other[Other Services...]
         end
     end
 
-    user -- "1. Request: https://immich.pi.rahulja.in" --> internet
-    internet -- "2. Encrypted Tailscale Tunnel" --> ts
-    ts -- "3. Handoff (Localhost)" --> caddy
-    caddy -- "4. Proxy (10.8.1.6:2283)" --> immich
+    user -- "1. DNS Query: *.pi.rahulja.in" --> ts_dns
+    ts_dns -- "2. Forward Split DNS" --> pihole
+    pihole -- "3. Resolve to Pi's Tailscale IP" --> user
+    user -- "4. HTTPS Request (Encrypted Tunnel)" --> ts
+    ts -- "5. Local Handoff" --> caddy
+    caddy -- "6. Proxy (10.8.1.6:2283)" --> immich
 
     style user fill:#f9f,stroke:#333,stroke-width:2px
+    style ts_dns fill:#fff2cc,stroke:#d6b656
     style ts fill:#cce5ff,stroke:#333
     style caddy fill:#cce5ff,stroke:#333
+    style pihole fill:#e5ffcc,stroke:#333
     style immich fill:#e5ffcc,stroke:#333
 ```
 
