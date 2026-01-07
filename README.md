@@ -14,11 +14,12 @@ The stack is designed to be efficient and secure, utilizing **Caddy** as a rever
 
 ## 📐 Architecture
 
-The following diagram illustrates how a user device connected via Tailscale securely resolves and accesses services using **Split DNS**.
+The following diagram illustrates the system architecture, highlighting **Split DNS** resolution and the request flow through the stack.
 
 ```mermaid
 graph TD
     user((User Device))
+    internet(Internet / Cloudflare)
     ts_dns[Tailscale MagicDNS<br/>100.100.100.100]
 
     subgraph "Raspberry Pi Host"
@@ -28,24 +29,33 @@ graph TD
         end
 
         subgraph "Docker Network: wg-easy (10.8.1.0/24)"
-            pihole["Pi-hole<br/>(Split DNS: 10.8.1.3)"]
+            pihole["Pi-hole<br/>(DNS: 10.8.1.3)"]
+            cloudflared["Cloudflared<br/>(DoH Proxy: 10.8.1.4)"]
             immich[Immich<br/>10.8.1.6]
-            other[Other Services...]
         end
     end
 
+    %% Flow 1: User DNS Resolution (Split DNS)
     user -- "1. DNS Query: *.pi.rahulja.in" --> ts_dns
-    ts_dns -- "2. Forward Split DNS" --> pihole
-    pihole -- "3. Resolve to Pi's Tailscale IP" --> user
-    user -- "4. HTTPS Request (Encrypted Tunnel)" --> ts
-    ts -- "5. Local Handoff" --> caddy
-    caddy -- "6. Proxy (10.8.1.6:2283)" --> immich
+    ts_dns -- "2. Forward (Split DNS)" --> pihole
+    
+    %% Flow 2: DNS Resolution Chain
+    immich -.->|"Internal DNS Query"| pihole
+    pihole -- "3. Upstream (5053)" --> cloudflared
+    cloudflared -- "4. DoH (Encrypted)" --> internet
+    
+    %% Flow 3: Service Access
+    pihole -.->|"Resolve to Pi IP"| user
+    user -- "5. HTTPS Request" --> ts
+    ts -- "6. Local Handoff" --> caddy
+    caddy -- "7. Proxy (10.8.1.6:2283)" --> immich
 
     style user fill:#f9f,stroke:#333,stroke-width:2px
     style ts_dns fill:#fff2cc,stroke:#d6b656
     style ts fill:#cce5ff,stroke:#333
     style caddy fill:#cce5ff,stroke:#333
     style pihole fill:#e5ffcc,stroke:#333
+    style cloudflared fill:#e5ffcc,stroke:#333
     style immich fill:#e5ffcc,stroke:#333
 ```
 
