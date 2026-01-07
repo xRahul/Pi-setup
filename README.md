@@ -39,7 +39,7 @@ graph TD
             pihole["Pi-hole DNS<br/>(Local DNS: *.pi -> TS IP)"]
             cloudflared[Cloudflared DoH]
             apps["Applications<br/>(Immich, N8n, etc.)"]
-            db[Databases]
+            db["Databases & Cache<br/>(Postgres, Redis)"]
         end
         
         storage[("USB Storage<br/>/mnt/usb")]
@@ -48,6 +48,7 @@ graph TD
     %% --- FLOW 1: DNS Resolution (Dotted) ---
     user -.-|1. Lookup *.pi.rahulja.in| magicdns
     magicdns -.-|2. Split DNS| pihole
+    apps -.-|Internal DNS| pihole
     pihole -.-|3. Upstream| cloudflared
     cloudflared -.-|4. DoH| internet
 
@@ -57,9 +58,9 @@ graph TD
     caddy ===|7. Proxy| apps
 
     %% --- Dependencies ---
-    apps --- db
-    apps --- storage
-    db --- storage
+    apps --> db
+    apps --> storage
+    db --> storage
 
     %% --- Styling ---
     style user fill:#f9f,stroke:#333,stroke-width:2px
