@@ -30,14 +30,14 @@ graph TD
         
         %% Entry Point
         subgraph Gateway ["Secure Gateway"]
-            ts[Tailscale VPN]
+            ts["Tailscale VPN<br/>(10.8.1.48)"]
             caddy[Caddy Proxy]
         end
 
         %% Internal Network
         subgraph Internal ["Private Docker Network (10.8.1.0/24)"]
-            pihole["Pi-hole DNS<br/>(Local DNS: *.pi -> TS IP)"]
-            cloudflared[Cloudflared DoH]
+            pihole["Pi-hole DNS<br/>(10.8.1.3)"]
+            cloudflared["Cloudflared DoH<br/>(10.8.1.4)"]
             apps["Applications<br/>(Immich, N8n, etc.)"]
             db["Databases & Cache<br/>(Postgres, Redis)"]
         end
