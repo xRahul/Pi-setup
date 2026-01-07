@@ -46,7 +46,7 @@ graph TD
     end
 
     %% --- FLOW 1: DNS Resolution (Dotted) ---
-    user -.-|1. Lookup *.pi| magicdns
+    user -.-|1. Lookup *.pi.rahulja.in| magicdns
     magicdns -.-|2. Split DNS| pihole
     pihole -.-|3. Upstream| cloudflared
     cloudflared -.-|4. DoH| internet
