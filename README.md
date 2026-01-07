@@ -38,11 +38,11 @@ graph TD
         subgraph Internal ["Private Docker Network (10.8.1.0/24)"]
             pihole[Pi-hole DNS]
             cloudflared[Cloudflared DoH]
-            apps[Applications<br/>(Immich, N8n, etc.)]
+            apps["Applications<br/>(Immich, N8n, etc.)"]
             db[Databases]
         end
         
-        storage[(USB Storage<br/>/mnt/usb)]
+        storage[("USB Storage<br/>/mnt/usb")]
     end
 
     %% --- FLOW 1: DNS Resolution (Dotted) ---
