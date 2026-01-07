@@ -133,5 +133,11 @@ Most heavy data (media, databases) is mapped to an external USB drive mounted at
     Open your browser and navigate to the configured domains (e.g., `https://homarr.pi.rahulja.in`). Ensure your DNS (likely Pi-hole) is correctly pointing these domains to your Nginx/Caddy instance or that you have local host entries if testing offline.
 
 ## 📝 Notes
--   **Caddy & Tailscale:** The Caddy container is configured to use the Tailscale container's network stack (`network_mode: service:tailscale`) in some configurations (check `docker-compose.yml`), allowing it to serve content securely over the mesh network if needed.
+
+-   **Caddy & Tailscale:** Caddy is configured with `network_mode: service:tailscale`, sharing the Tailscale container's network namespace. This allows Caddy to seamlessly serve content over the Tailscale mesh network and resolve internal IPs on the `wg-easy` bridge.
+
+-   **Internal DNS:** All application containers are configured with `dns: 10.8.1.3`, ensuring they use Pi-hole for both internal and external name resolution.
+
 -   **Immich:** Requires a significant amount of RAM for machine learning tasks.
+
+-   **Extended Documentation:** Detailed architecture diagrams in `.drawio` and `.svg` formats can be found in the `docs/` directory.
