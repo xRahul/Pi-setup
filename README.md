@@ -14,83 +14,59 @@ The stack is designed to be efficient and secure, utilizing **Caddy** as a rever
 
 ## 📐 Architecture
 
-The following diagram provides a comprehensive view of the system, including network isolation, storage persistence, DNS resolution chains, and service interactions.
+The following diagram illustrates the simplified flow of **DNS resolution** (dotted lines) and **Secure Access** (solid lines).
 
 ```mermaid
 graph TD
-    %% --- External Entities ---
-    user((User Device))
-    internet(Internet)
-    cf_api[Cloudflare API]
-
-    %% --- Tailscale / Network Layer ---
-    ts_dns[Tailscale MagicDNS<br/>100.100.100.100]
-
-    subgraph "Raspberry Pi 5 Host"
-        
-        %% Physical Storage
-        usb[USB Storage<br/>/mnt/usb]
-
-        subgraph "Network Namespace: Tailscale"
-            ts["Tailscale VPN<br/>(100.x.y.z)"]
-            caddy["Caddy Reverse Proxy"]
-        end
-
-        subgraph "Docker Network: wg-easy (10.8.1.0/24)"
-            direction TB
-            
-            subgraph "System & DNS"
-                pihole["Pi-hole<br/>(DNS: 10.8.1.3)"]
-                cloudflared["Cloudflared<br/>(DoH: 10.8.1.4)"]
-            end
-
-            subgraph "Applications"
-                immich["Immich<br/>10.8.1.6"]
-                n8n["N8n<br/>10.8.1.53"]
-                other_apps["Other Apps<br/>(Paperless, Homarr, etc.)"]
-            end
-
-            subgraph "Backends"
-                db[("Postgres / Redis")]
-            end
-        end
+    %% --- Clients & External ---
+    subgraph Remote ["User & Internet"]
+        user((User Device))
+        magicdns[Tailscale MagicDNS]
+        internet((Internet))
     end
 
-    %% --- Data Persistence ---
-    usb -.->|"Bind Mounts (Media/DBs)"| immich
-    usb -.->|"Bind Mounts"| db
-    usb -.->|"Bind Mounts"| other_apps
+    %% --- The Server ---
+    subgraph Server ["Raspberry Pi Home Server"]
+        
+        %% Entry Point
+        subgraph Gateway ["Secure Gateway"]
+            ts[Tailscale VPN]
+            caddy[Caddy Proxy]
+        end
 
-    %% --- DNS Resolution Flow ---
-    user -- "1. DNS: *.pi.rahulja.in" --> ts_dns
-    ts_dns -- "2. Forward (Split DNS)" --> pihole
-    pihole -- "3. Upstream" --> cloudflared
-    cloudflared -- "4. DoH (Encrypted)" --> internet
-    immich -.->|"Internal DNS"| pihole
+        %% Internal Network
+        subgraph Internal ["Private Docker Network (10.8.1.0/24)"]
+            pihole[Pi-hole DNS]
+            cloudflared[Cloudflared DoH]
+            apps[Applications<br/>(Immich, N8n, etc.)]
+            db[Databases]
+        end
+        
+        storage[(USB Storage<br/>/mnt/usb)]
+    end
 
-    %% --- Access & Control Flow ---
-    user -- "5. HTTPS Request" --> ts
-    ts -- "6. Localhost Handoff" --> caddy
-    caddy -- "7. Proxy" --> immich
-    caddy -- "Proxy" --> n8n
-    caddy -- "Proxy" --> other_apps
-    
-    %% --- Certificate Management ---
-    caddy -.->|"DNS-01 Challenge"| cf_api
+    %% --- FLOW 1: DNS Resolution (Dotted) ---
+    user -.-|1. Lookup *.pi| magicdns
+    magicdns -.-|2. Split DNS| pihole
+    pihole -.-|3. Upstream| cloudflared
+    cloudflared -.-|4. DoH| internet
 
-    %% --- Inter-Service Communication ---
-    immich <--> db
-    n8n <--> db
+    %% --- FLOW 2: Secure Access (Solid / Thick) ---
+    user ===|5. HTTPS Tunnel| ts
+    ts ===|6. Handoff| caddy
+    caddy ===|7. Proxy| apps
+
+    %% --- Dependencies ---
+    apps --- db
+    apps --- storage
+    db --- storage
 
     %% --- Styling ---
     style user fill:#f9f,stroke:#333,stroke-width:2px
-    style ts_dns fill:#fff2cc,stroke:#d6b656
-    style usb fill:#ddd,stroke:#333,stroke-dasharray: 5 5
-    style caddy fill:#cce5ff,stroke:#333
+    style magicdns fill:#fff2cc,stroke:#d6b656
     style ts fill:#cce5ff,stroke:#333
-    style pihole fill:#e5ffcc,stroke:#333
-    style cloudflared fill:#e5ffcc,stroke:#333
-    style immich fill:#e5ffcc,stroke:#333
+    style caddy fill:#cce5ff,stroke:#333
+    style apps fill:#e5ffcc,stroke:#333
 ```
 
 ## 🛠️ Services & IP Assignments
