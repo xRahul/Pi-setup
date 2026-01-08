@@ -306,7 +306,9 @@ searxng.pi.rahulja.in {
 }
 
 storyteller.pi.rahulja.in {
-        reverse_proxy * 10.8.1.55:8001
+        reverse_proxy * 10.8.1.55:8001 {
+                flush_interval -1
+        }
         tls {
                 dns cloudflare {env.CLOUDFLARE_API_TOKEN}
         }
