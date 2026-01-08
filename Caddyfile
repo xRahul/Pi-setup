@@ -314,4 +314,11 @@ storyteller.pi.rahulja.in {
         }
 }
 
+paisa.pi.rahulja.in {
+        reverse_proxy * 10.8.1.56:7500
+        tls {
+                dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+        }
+}
+
 
