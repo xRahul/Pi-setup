@@ -454,8 +454,30 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.56
 
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ${HOMEPAGE_CONFIG_PATH}:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock # Optional, for docker integration
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    # ports:
+    #   - 3000:3000
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.57
 
-# Booked 10.8.1.2 - 10.8.1.56 # remember to add to .env of local dns pihole
+
+# Booked 10.8.1.2 - 10.8.1.57 # remember to add to .env of local dns pihole
 
 networks:
   wg-easy:
