@@ -87,7 +87,8 @@ The following services are configured with static IPs in the `10.8.1.0/24` subne
 | **Web Test** | `10.8.1.49` | `webtest.pi.rahulja.in` | Connectivity Test (Whoami) |
 | **N8n** | `10.8.1.53` | `n8n.pi.rahulja.in` | Workflow Automation |
 | **SearXNG** | `10.8.1.54` | `searxng.pi.rahulja.in` | Privacy-respecting Metasearch Engine |
-| **Storyteller** | `10.8.1.55` | `storyteller.pi.rahulja.in` | Self-hosted Audiobook Server |
+| **Paisa** | `10.8.1.56` | `paisa.pi.rahulja.in` | Personal Finance Manager |
+| **Homepage** | `10.8.1.57` | `homepage.pi.rahulja.in` | Modern Startpage |
 
 *Note: Immich auxiliary services (ML, Redis, DB) occupy IPs `10.8.1.8`, `10.8.1.9`, and `10.8.1.10` respectively.*
 
