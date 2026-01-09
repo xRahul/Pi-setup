@@ -356,6 +356,7 @@ services:
       - DB_PASSWORD=${IMMICH_DB_PASSWORD}
       - DB_USERNAME=${IMMICH_DB_USERNAME}
       - DB_DATABASE_NAME=${IMMICH_DB_DATABASE_NAME}
+      - MACHINE_LEARNING_ACCELERATOR=cpu
     healthcheck:
       test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:3003/ping')\""]
       interval: 30s
@@ -460,7 +461,7 @@ services:
     restart: unless-stopped
     environment:
       - PUID=1000
-      - PGID=1000
+      - PGID=985
       - HOMEPAGE_ALLOWED_HOSTS=homepage.pi.rahulja.in,dash.pi.rahulja.in
     volumes:
       - ${HOMEPAGE_CONFIG_PATH}:/app/config
@@ -471,6 +472,10 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
+    dns:
+      - 10.8.1.3
+      - 1.1.1.1
+      - 8.8.8.8
     # ports:
     #   - 3000:3000
     networks:
