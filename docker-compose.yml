@@ -461,6 +461,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
+      - HOMEPAGE_ALLOWED_HOSTS=homepage.pi.rahulja.in,dash.pi.rahulja.in
     volumes:
       - ${HOMEPAGE_CONFIG_PATH}:/app/config
       - /var/run/docker.sock:/var/run/docker.sock # Optional, for docker integration
