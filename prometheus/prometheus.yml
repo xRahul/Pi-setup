@@ -32,9 +32,6 @@ scrape_configs:
 - job_name: 'pihole'
   static_configs:
     - targets: ['piholeexporter:9617']
-- job_name: 'cloudflared_dns_tunnel'
-  static_configs:
-    - targets: ['cloudflareddnstunnel:43697']
 - job_name: 'caddy_cloudflare_web_server'
   static_configs:
     - targets: ['caddycloudflarewebserver:2019']

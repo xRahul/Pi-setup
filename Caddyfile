@@ -26,12 +26,7 @@ wg.pi.rahulja.in {
 #     reverse_proxy * 10.8.1.4:43697
 # }
 
-cloudflaredns.pi.rahulja.in {
-	reverse_proxy * 10.8.1.4:43697
-	tls {
-		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-	}
-}
+
 
 # http://immichslx.in {
 #     reverse_proxy * 10.8.1.6:3001

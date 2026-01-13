@@ -1,3 +1,9 @@
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
 
 
@@ -5,6 +11,7 @@ services:
     image: tailscale/tailscale:v1.92.4
     container_name: tailscale
     restart: unless-stopped
+    logging: *default-logging
     environment:
       - TS_AUTHKEY=${TAILSCALE_AUTH_KEY}
       - TS_STATE_DIR=/var/lib/tailscale
@@ -40,13 +47,15 @@ services:
     container_name: pihole
     hostname: pihole
     restart: unless-stopped
+    logging: *default-logging
     env_file:
       - pihole.env
     environment:
       - FTLCONF_webserver_api_password=${PIHOLE__WEBPASSWORD}
       - TZ=${DEFAULT_TZ}
       - FTLCONF_dns_upstreams=10.8.1.4#5053
-      - FTLCONF_dns_listeningMode=all
+      - FTLCONF_dns_listeningMode=ALL
+      - FTLCONF_log_query=false # Disable text log to save writes
     cap_add:
       - SYS_NICE
       - SYS_TIME
@@ -71,25 +80,13 @@ services:
 
 
 
-  cloudflared-dns:
-    image: cloudflare/cloudflared:2025.11.1
-    container_name: cloudflared-dns-tunnel
-    hostname: cloudflareddnstunnel
-    user: 1000:1000 # should be owner of volumes
+  dnscrypt-proxy:
+    image: klutchell/dnscrypt-proxy:v2.1.5
+    container_name: dnscrypt-proxy
     restart: unless-stopped
-    command: proxy-dns
-    environment:
-      TUNNEL_DNS_UPSTREAM: "https://1.0.0.1/dns-query,https://1.1.1.1/dns-query"
-      # Listen on an unprivileged port
-      TUNNEL_DNS_PORT: 5053
-      # Listen on all interfaces
-      TUNNEL_DNS_ADDRESS: "0.0.0.0"
-      # Tunnel metrics
-      TUNNEL_METRICS: 10.8.1.4:43697
+    logging: *default-logging
     volumes:
-      - ${CLOUDFALRED_DNS_PATH}:/etc/cloudflared
-    # ports:
-      # - "43697:43697/tcp"
+      - ./dnscrypt-proxy/dnscrypt-proxy.toml:/config/dnscrypt-proxy.toml
     networks:
       wg-easy:
         ipv4_address: 10.8.1.4
@@ -102,6 +99,7 @@ services:
     network_mode: service:tailscale
     user: 1000:1000 # should be owner of volumes
     restart: unless-stopped
+    logging: *default-logging
     depends_on:
       - tailscale
     cap_add:
@@ -132,14 +130,16 @@ services:
     image: traefik/whoami:v1.10.4
     container_name: web-test
     restart: unless-stopped
+    logging: *default-logging
     networks:
       wg-easy:
         ipv4_address: 10.8.1.49
 
   paperless-ngx:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.2
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.3
     container_name: paperless-ngx
     restart: unless-stopped
+    logging: *default-logging
     depends_on:
       - immich-redis
     # ports:
@@ -173,6 +173,7 @@ services:
     image: docker.n8n.io/n8nio/n8n
     container_name: n8n
     restart: unless-stopped
+    logging: *default-logging
     extra_hosts:
       - "host.docker.internal:host-gateway"
     # ports:
@@ -217,6 +218,7 @@ services:
   filebrowser:
     image: filebrowser/filebrowser:v2.52.0
     container_name: filebrowser
+    logging: *default-logging
     volumes:
       - ${FILEBROWSER_ROOT_PATH}:/srv
       - ${FILEBROWSER_DB_FILE_PATH}:/database/filebrowser.db
@@ -251,6 +253,7 @@ services:
     image: linuxserver/transmission:4.0.6
     container_name: transmission
     restart: unless-stopped
+    logging: *default-logging
     # network_mode: "service:gluetun"
     healthcheck:
       test: ["CMD", "nc", "-z", "127.0.0.1", "9091"]
@@ -284,6 +287,7 @@ services:
   immich-server:
     container_name: immich_server
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    logging: *default-logging
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
       - ${EXTERNAL_LIBRARY_LOCATION}:/usr/src/app/external:ro
@@ -316,6 +320,7 @@ services:
   immich-machine-learning:
     container_name: immich_machine_learning
     image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    logging: *default-logging
     volumes:
       - ${IMMICH_ML_MODEL_CACHE_LOCATION}:/cache
       - ${EXTERNAL_LIBRARY_LOCATION}:/usr/src/app/external:ro
@@ -345,6 +350,7 @@ services:
   immich-redis:
     container_name: immich_redis
     image: docker.io/valkey/valkey:9@sha256:fb8d272e529ea567b9bf1302245796f21a2672b8368ca3fcb938ac334e613c8f
+    logging: *default-logging
     healthcheck:
       test: redis-cli ping || exit 1
     restart: always
@@ -357,6 +363,7 @@ services:
   immich-database:
     container_name: immich_postgres
     image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
+    logging: *default-logging
     environment:
       POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}
       POSTGRES_USER: ${IMMICH_DB_USERNAME}
@@ -397,11 +404,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "1m"
-        max-file: "1"
+    logging: *default-logging
     depends_on:
       - immich-redis
     networks:
@@ -409,9 +412,10 @@ services:
         ipv4_address: 10.8.1.54
 
   paisa:
-    image: ananthakumaran/paisa:latest
+    image: ananthakumaran/paisa:v0.7.4
     container_name: paisa
     restart: unless-stopped
+    logging: *default-logging
     volumes:
       - ${PAISA_DATA_PATH}:/root/Documents/paisa/
     healthcheck:
@@ -427,9 +431,10 @@ services:
         ipv4_address: 10.8.1.56
 
   homepage:
-    image: ghcr.io/gethomepage/homepage:latest
+    image: ghcr.io/gethomepage/homepage:v1.8.0
     container_name: homepage
     restart: unless-stopped
+    logging: *default-logging
     environment:
       - PUID=1000
       - PGID=985
