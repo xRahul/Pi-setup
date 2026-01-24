@@ -1,0 +1,49 @@
+name: Release Configuration
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g., v1.0.0)'
+        required: false
+        default: ''
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set Version
+        id: version
+        run: |
+          if [ -z "${{ github.event.inputs.version }}" ]; then
+            echo "TAG=v$(date +'%Y.%m.%d-%H%M')" >> $GITHUB_ENV
+          else
+            echo "TAG=${{ github.event.inputs.version }}" >> $GITHUB_ENV
+          fi
+
+      - name: Zip Artifacts
+        run: |
+          mkdir release_artifacts
+          cp docker-compose.yml release_artifacts/
+          cp Caddyfile release_artifacts/
+          # Copy example envs if they exist
+          cp example*.env release_artifacts/ 2>/dev/null || true
+          # Copy config directories if they exist
+          [ -d prometheus ] && cp -r prometheus release_artifacts/
+          [ -d searxng ] && cp -r searxng release_artifacts/
+          [ -f sonic.cfg ] && cp sonic.cfg release_artifacts/
+
+          cd release_artifacts
+          zip -r ../config.zip .
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: config.zip
+          tag_name: ${{ env.TAG }}
+          name: Release ${{ env.TAG }}
+          generate_release_notes: true

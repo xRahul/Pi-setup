@@ -43,7 +43,7 @@ services:
 
 
   pihole:
-    image: pihole/pihole:2025.11.1
+    image: pihole/pihole:2024.07.0
     container_name: pihole
     hostname: pihole
     restart: unless-stopped
@@ -68,10 +68,6 @@ services:
     volumes:
       - ${PIHOLE_ETC_PATH}:/etc/pihole
       - ${PIHOLE_ETC_DNSMASQ_PATH}:/etc/dnsmasq.d
-    # ports:
-      # - "53:53/tcp"
-      # - "53:53/udp"
-      # - "5353:80/tcp"
     networks:
       wg-easy:
         ipv4_address: 10.8.1.3
@@ -106,10 +102,6 @@ services:
       - NET_ADMIN
     environment:
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
-    # ports:
-    #   - "80:80"
-    #   - "443:443"
-    #   - "443:443/udp"
     healthcheck:
       test: ["CMD-SHELL", "nc -z 127.0.0.1 80 || exit 1"]
       interval: 30s
@@ -122,9 +114,6 @@ services:
       - ${CADDY_DATA_PATH}:/data
       - ${CADDY_CONFIG_PATH}:/config
       # - ${TAILSCALE_TMP_PATH}/tailscaled.sock:/var/run/tailscale/tailscaled.sock
-    # networks:
-    #   wg-easy:
-    #     ipv4_address: 10.8.1.5
 
   web-test:
     image: traefik/whoami:v1.10.4
@@ -142,8 +131,6 @@ services:
     logging: *default-logging
     depends_on:
       - immich-redis
-    # ports:
-    #   - "8000:8000"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/"]
       interval: 30s
@@ -170,14 +157,12 @@ services:
 
 
   n8n:
-    image: docker.n8n.io/n8nio/n8n
+    image: n8nio/n8n
     container_name: n8n
     restart: unless-stopped
     logging: *default-logging
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    # ports:
-    #   - 5678:5678
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:5678/healthz"]
       interval: 30s
@@ -236,8 +221,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    # ports:
-    #   - 8080:80
     restart: unless-stopped
     dns:
       - 10.8.1.3
@@ -254,7 +237,6 @@ services:
     container_name: transmission
     restart: unless-stopped
     logging: *default-logging
-    # network_mode: "service:gluetun"
     healthcheck:
       test: ["CMD", "nc", "-z", "127.0.0.1", "9091"]
       interval: 30s
@@ -269,8 +251,6 @@ services:
       - PGID=1000
       - PUID=1000
       - TZ=${DEFAULT_TZ}
-      # - DOCKER_MODS=linuxserver/mods:transmission-floodui
-      # - DOCKER_MODS=linuxserver/mods:transmission-transmissionic
       - USER=${TRANSMISSION_USERNAME}
       - PASS=${TRANSMISSION_PASSWORD}
     dns:
@@ -309,7 +289,7 @@ services:
     depends_on:
       - immich-redis
       - immich-database
-    restart: always
+    restart: unless-stopped
     dns:
       - 10.8.1.3
       - 1.1.1.1
@@ -339,7 +319,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
-    restart: always
+    restart: unless-stopped
     dns:
       - 10.8.1.3
       - 1.1.1.1
@@ -353,7 +333,7 @@ services:
     logging: *default-logging
     healthcheck:
       test: redis-cli ping || exit 1
-    restart: always
+    restart: unless-stopped
     volumes:
       - ${IMMICH_REDIS_DATA_PATH}:/data
     networks:
@@ -377,7 +357,7 @@ services:
     volumes:
       - ${IMMICH_DB_DATA_LOCATION}:/var/lib/postgresql/data
     shm_size: 128mb
-    restart: always
+    restart: unless-stopped
     networks:
       wg-easy:
         ipv4_address: 10.8.1.10
@@ -424,8 +404,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    # ports:
-    #   - 7500:7500
     networks:
       wg-easy:
         ipv4_address: 10.8.1.56
@@ -454,8 +432,6 @@ services:
       - 10.8.1.3
       - 1.1.1.1
       - 8.8.8.8
-    # ports:
-    #   - 3000:3000
     networks:
       wg-easy:
         ipv4_address: 10.8.1.57
