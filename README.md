@@ -142,10 +142,3 @@ Most heavy data (media, databases) is mapped to an external USB drive mounted at
 -   **Immich:** Requires a significant amount of RAM for machine learning tasks.
 
 -   **Extended Documentation:** Detailed architecture diagrams in `.drawio` and `.svg` formats can be found in the `docs/` directory.
-
-## 🔄 CI/CD & Releases
-
-This repository includes GitHub Actions for Continuous Integration and Release Management:
-
-*   **CI (`.github/workflows/ci.yml`):** Automatically validates the `docker-compose.yml` configuration and `Caddyfile` syntax on every pull request and push to the main branch.
-*   **Release (`.github/workflows/release.yml`):** Can be triggered manually ("on click") via the **Actions** tab. This workflow packages the configuration files (including `docker-compose.yml`, `Caddyfile`, and config directories) into a zip file and creates a new GitHub Release.

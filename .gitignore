@@ -19,5 +19,3 @@
 !unused_docker_compose.yml
 !searxng
 !searxng/**
-!.github
-!.github/**
