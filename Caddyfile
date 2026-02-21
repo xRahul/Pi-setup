@@ -217,3 +217,10 @@ homepage.pi.rahulja.in {
 	reverse_proxy * 10.8.1.57:3000
 	import cloudflare
 }
+
+pdf.pi.rahulja.in {
+	reverse_proxy * 10.8.1.58:8080
+	tls {
+		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+	}
+}
