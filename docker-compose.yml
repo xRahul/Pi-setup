@@ -8,7 +8,7 @@ services:
 
 
   tailscale:
-    image: tailscale/tailscale:v1.92.4
+    image: tailscale/tailscale:v1.94.2
     container_name: tailscale
     restart: unless-stopped
     logging: *default-logging
@@ -43,7 +43,7 @@ services:
 
 
   pihole:
-    image: pihole/pihole:2025.11.1
+    image: pihole/pihole:2026.02.0
     container_name: pihole
     hostname: pihole
     restart: unless-stopped
@@ -81,7 +81,7 @@ services:
 
 
   dnscrypt-proxy:
-    image: klutchell/dnscrypt-proxy:v2.1.5
+    image: klutchell/dnscrypt-proxy:2.1.15
     container_name: dnscrypt-proxy
     restart: unless-stopped
     logging: *default-logging
@@ -94,7 +94,7 @@ services:
 
 
   caddy:
-    image: ghcr.io/caddybuilds/caddy-cloudflare:2.10.2
+    image: ghcr.io/caddybuilds/caddy-cloudflare:2.11.2
     container_name: caddy
     network_mode: service:tailscale
     user: 1000:1000 # should be owner of volumes
@@ -126,17 +126,8 @@ services:
     #   wg-easy:
     #     ipv4_address: 10.8.1.5
 
-  web-test:
-    image: traefik/whoami:v1.10.4
-    container_name: web-test
-    restart: unless-stopped
-    logging: *default-logging
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.49
-
   paperless-ngx:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.3
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.13
     container_name: paperless-ngx
     restart: unless-stopped
     logging: *default-logging
@@ -169,54 +160,8 @@ services:
         ipv4_address: 10.8.1.32
 
 
-  n8n:
-    image: docker.n8n.io/n8nio/n8n:2.3.6
-    container_name: n8n
-    restart: unless-stopped
-    logging: *default-logging
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    # ports:
-    #   - 5678:5678
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:5678/healthz"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    dns:
-      - 10.8.1.3
-      - 1.1.1.1
-      - 8.8.8.8
-    environment:
-      - N8N_HOST=n8n.pi.rahulja.in
-      - N8N_PORT=5678
-      - N8N_PROTOCOL=https
-      - N8N_PROXY_HOPS=1
-      - NODE_ENV=production
-      - WEBHOOK_URL=https://n8n.pi.rahulja.in/
-      - GENERIC_TIMEZONE=${DEFAULT_TZ}
-      - TZ=${DEFAULT_TZ}
-      # Performance & Maintenance
-      - EXECUTIONS_DATA_PRUNE=true
-      - EXECUTIONS_DATA_MAX_AGE=336
-      - EXECUTIONS_DATA_SAVE_ON_ERROR=all
-      - EXECUTIONS_DATA_SAVE_ON_SUCCESS=none
-      - N8N_CONCURRENCY_PRODUCTION_LIMIT=2
-      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
-    volumes:
-      - ${N8N_DATA_FOLDER}:/home/node/.n8n
-      - ${N8N_LOCAL_FILES_FOLDER}/local_files:/files
-    depends_on:
-      - searxng
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.53
-
-
-
   filebrowser:
-    image: filebrowser/filebrowser:v2.52.0
+    image: filebrowser/filebrowser:v2.62.1
     container_name: filebrowser
     logging: *default-logging
     volumes:
@@ -250,7 +195,7 @@ services:
 
 
   transmission:
-    image: linuxserver/transmission:4.0.6
+    image: lscr.io/linuxserver/transmission:4.1.1-r1-ls336
     container_name: transmission
     restart: unless-stopped
     logging: *default-logging
@@ -286,7 +231,7 @@ services:
 
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    image: ghcr.io/immich-app/immich-server:v2.6.3
     logging: *default-logging
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
@@ -295,8 +240,8 @@ services:
     env_file:
       - .env
     environment:
-      - DB_HOSTNAME=immich-database
-      - REDIS_HOSTNAME=immich-redis
+      - DB_HOSTNAME=immich_postgres
+      - REDIS_HOSTNAME=immich_redis
       - DB_PASSWORD=${IMMICH_DB_PASSWORD}
       - DB_USERNAME=${IMMICH_DB_USERNAME}
       - DB_DATABASE_NAME=${IMMICH_DB_DATABASE_NAME}
@@ -319,7 +264,7 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    image: ghcr.io/immich-app/immich-machine-learning:v2.6.3
     logging: *default-logging
     volumes:
       - ${IMMICH_ML_MODEL_CACHE_LOCATION}:/cache
@@ -327,8 +272,8 @@ services:
     env_file:
       - .env
     environment:
-      - DB_HOSTNAME=immich-database
-      - REDIS_HOSTNAME=immich-redis
+      - DB_HOSTNAME=immich_postgres
+      - REDIS_HOSTNAME=immich_redis
       - DB_PASSWORD=${IMMICH_DB_PASSWORD}
       - DB_USERNAME=${IMMICH_DB_USERNAME}
       - DB_DATABASE_NAME=${IMMICH_DB_DATABASE_NAME}
@@ -349,7 +294,7 @@ services:
 
   immich-redis:
     container_name: immich_redis
-    image: docker.io/valkey/valkey:9@sha256:fb8d272e529ea567b9bf1302245796f21a2672b8368ca3fcb938ac334e613c8f
+    image: docker.io/valkey/valkey:9@sha256:3eeb09785cd61ec8e3be35f8804c8892080f3ca21934d628abc24ee4ed1698f6
     logging: *default-logging
     healthcheck:
       test: redis-cli ping || exit 1
@@ -382,56 +327,8 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.10
 
-  searxng:
-    image: searxng/searxng:latest
-    container_name: searxng
-    restart: unless-stopped
-    volumes:
-      - ./searxng:/etc/searxng:rw
-    environment:
-      - SEARXNG_BASE_URL=${SEARXNG_BASE_URL}
-      - SEARXNG_SECRET=${SEARXNG_SECRET}
-      - SEARXNG_REDIS_URL=${SEARXNG_REDIS_URL}
-    cap_drop:
-      - ALL
-    cap_add:
-      - CHOWN
-      - SETGID
-      - SETUID
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8080/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-    logging: *default-logging
-    depends_on:
-      - immich-redis
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.54
-
-  paisa:
-    image: ananthakumaran/paisa:v0.7.4
-    container_name: paisa
-    restart: unless-stopped
-    logging: *default-logging
-    volumes:
-      - ${PAISA_DATA_PATH}:/root/Documents/paisa/
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:7500/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-    # ports:
-    #   - 7500:7500
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.56
-
   homepage:
-    image: ghcr.io/gethomepage/homepage:v1.8.0
+    image: ghcr.io/gethomepage/homepage:v1.11.0
     container_name: homepage
     restart: unless-stopped
     logging: *default-logging
@@ -461,7 +358,7 @@ services:
         ipv4_address: 10.8.1.57
 
   stirling-pdf:
-    image: stirlingtools/stirling-pdf:latest
+    image: stirlingtools/stirling-pdf:2.8.0
     container_name: stirling-pdf
     hostname: stirling-pdf
     restart: unless-stopped
