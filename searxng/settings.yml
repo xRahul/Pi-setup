@@ -14,7 +14,7 @@ ui:
   default_theme: simple
   
 valkey:
-  url: "redis://immich-redis:6379/1"
+  url: "valkey://immich-redis:6379/1"
 
 search:
   safe_search: 0
@@ -22,7 +22,7 @@ search:
   formats:
     - html
     - json # Essential for n8n/programmatic access
-  default_lang: "auto"
+  default_lang: 'auto'
 
 # Engine configuration to ensure high-quality results
 engines:
