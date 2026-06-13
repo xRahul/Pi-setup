@@ -36,7 +36,7 @@ graph TD
 
         %% Internal Network
         subgraph Internal ["Private Docker Network (10.8.1.0/24)"]
-            pihole["Pi-hole DNS<br/>(10.8.1.3)"]
+            pihole["Pi-hole DNS<br/>(10.8.1.48)"]
             cloudflared["Cloudflared DoH<br/>(10.8.1.4)"]
             apps["Applications<br/>(Immich, N8n, etc.)"]
             db["Databases & Cache<br/>(Postgres, Redis)"]
@@ -76,7 +76,7 @@ The following services are configured with static IPs in the `10.8.1.0/24` subne
 
 | Service | Internal IP | External URL (Example) | Description |
 | :--- | :--- | :--- | :--- |
-| **Pi-hole** | `10.8.1.3` | `pihole.pi.rahulja.in` | DNS Sinkhole & Ad Blocker |
+| **Pi-hole** | `10.8.1.48` | `pihole.pi.rahulja.in` | DNS Sinkhole & Ad Blocker |
 | **Cloudflared** | `10.8.1.4` | `cloudflaredns.pi.rahulja.in` | DoH Proxy |
 | **Immich** | `10.8.1.6` | `immich.pi.rahulja.in` | Self-hosted Photo & Video Management |
 | **Transmission** | `10.8.1.23` | `trans.pi.rahulja.in` | Torrent Client |
@@ -137,7 +137,7 @@ Most heavy data (media, databases) is mapped to an external USB drive mounted at
 
 -   **Caddy & Tailscale:** Caddy is configured with `network_mode: service:tailscale`, sharing the Tailscale container's network namespace. This allows Caddy to seamlessly serve content over the Tailscale mesh network and resolve internal IPs on the `wg-easy` bridge.
 
--   **Internal DNS:** All application containers are configured with `dns: 10.8.1.3`, ensuring they use Pi-hole for both internal and external name resolution.
+-   **Internal DNS:** All application containers are configured with `dns: 10.8.1.48`, ensuring they use Pi-hole for both internal and external name resolution.
 
 -   **Immich:** Requires a significant amount of RAM for machine learning tasks.
 

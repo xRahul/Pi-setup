@@ -21,6 +21,7 @@ services:
       - TS_EXTRA_ARGS=${TS_EXTRA_ARGS}
     volumes:
       - ${TAILSCALE_PATH}:/var/lib/tailscale
+      - /lib/modules:/lib/modules:ro
     devices:
       - /dev/net/tun:/dev/net/tun
     sysctls:
@@ -29,9 +30,10 @@ services:
       - net.ipv4.conf.all.src_valid_mark=1
     cap_add:
       - NET_ADMIN
+      - NET_RAW
       - SYS_MODULE
     healthcheck:
-      test: ["CMD", "tailscale", "status"]
+      test: ["CMD-SHELL", "tailscale status && ip addr show dev tailscale0"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -39,13 +41,10 @@ services:
     networks:
       wg-easy:
         ipv4_address: 10.8.1.48
-
-
-
   pihole:
     image: pihole/pihole:2026.05.0
+    network_mode: service:tailscale
     container_name: pihole
-    hostname: pihole
     restart: unless-stopped
     logging: *default-logging
     env_file:
@@ -53,9 +52,10 @@ services:
     environment:
       - FTLCONF_webserver_api_password=${PIHOLE__WEBPASSWORD}
       - TZ=${DEFAULT_TZ}
-      - FTLCONF_dns_upstreams=10.8.1.4#5053
+      - FTLCONF_dns_upstreams=127.0.0.1#5053
       - FTLCONF_dns_listeningMode=ALL
-      - FTLCONF_log_query=false # Disable text log to save writes
+      - FTLCONF_log_query=false
+      - FTLCONF_webserver_port=8080
     cap_add:
       - SYS_NICE
       - SYS_TIME
@@ -68,31 +68,18 @@ services:
     volumes:
       - ${PIHOLE_ETC_PATH}:/etc/pihole
       - ${PIHOLE_ETC_DNSMASQ_PATH}:/etc/dnsmasq.d
-    # ports:
-      # - "53:53/tcp"
-      # - "53:53/udp"
-      # - "5353:80/tcp"
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.3
-
-
-
-
-
+    depends_on:
+      - tailscale
   dnscrypt-proxy:
     image: klutchell/dnscrypt-proxy:2.1.15
+    network_mode: service:tailscale
     container_name: dnscrypt-proxy
     restart: unless-stopped
     logging: *default-logging
     volumes:
       - ./dnscrypt-proxy/dnscrypt-proxy.toml:/config/dnscrypt-proxy.toml
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.4
-
-
-
+    depends_on:
+      - tailscale
   caddy:
     image: ghcr.io/caddybuilds/caddy-cloudflare:2.11.2
     container_name: caddy
@@ -152,7 +139,7 @@ services:
       PAPERLESS_URL: ${PAPERLESS_NGX_URL}
       PAPERLESS_SECRET_KEY: ${PAPERLESS_NGX_SECRET_KEY}
     dns:
-      - 10.8.1.3
+      - 10.8.1.48
       - 1.1.1.1
       - 8.8.8.8
     networks:
@@ -185,7 +172,7 @@ services:
     #   - 8080:80
     restart: unless-stopped
     dns:
-      - 10.8.1.3
+      - 10.8.1.48
       - 1.1.1.1
       - 8.8.8.8
     networks:
@@ -219,7 +206,7 @@ services:
       - USER=${TRANSMISSION_USERNAME}
       - PASS=${TRANSMISSION_PASSWORD}
     dns:
-      - 10.8.1.3
+      - 10.8.1.48
       - 1.1.1.1
       - 8.8.8.8
     networks:
@@ -256,7 +243,7 @@ services:
       - immich-database
     restart: always
     dns:
-      - 10.8.1.3
+      - 10.8.1.48
       - 1.1.1.1
     networks:
       wg-easy:
@@ -286,7 +273,7 @@ services:
       start_period: 60s
     restart: always
     dns:
-      - 10.8.1.3
+      - 10.8.1.48
       - 1.1.1.1
     networks:
       wg-easy:
@@ -330,6 +317,11 @@ services:
   homepage:
     image: ghcr.io/gethomepage/homepage:v1.13.2
     container_name: homepage
+    extra_hosts:
+      - "dash.pi.rahulja.in:10.8.1.48"
+      - "pihole.pi.rahulja.in:10.8.1.48"
+      - "immich.pi.rahulja.in:10.8.1.48"
+      - "homepage.pi.rahulja.in:10.8.1.48"
     restart: unless-stopped
     logging: *default-logging
     environment:
@@ -348,7 +340,7 @@ services:
       retries: 3
       start_period: 30s
     dns:
-      - 10.8.1.3
+      - 10.8.1.48
       - 1.1.1.1
       - 8.8.8.8
     # ports:
@@ -382,7 +374,7 @@ services:
       retries: 3
       start_period: 120s
     dns:
-      - 10.8.1.3
+      - 10.8.1.48
       - 1.1.1.1
     networks:
       wg-easy:
