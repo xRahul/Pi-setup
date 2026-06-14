@@ -118,11 +118,6 @@ filebrowser.pi.rahulja.in {
 	import cloudflare
 }
 
-homarr.pi.rahulja.in {
-	reverse_proxy * 10.8.1.35:7575
-	import cloudflare
-}
-
 dash.pi.rahulja.in {
 	reverse_proxy * 10.8.1.57:3000
 	import cloudflare

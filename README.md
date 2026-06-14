@@ -10,64 +10,68 @@ The stack is designed to be efficient and secure, utilizing **Caddy** as a rever
 - **Caddy:** Reverse proxy handling `*.pi.rahulja.in` domains.
 - **Tailscale:** VPN and subnet router for secure remote access.
 - **Pi-hole:** Network-wide ad blocking and local DNS.
-- **Cloudflared:** DNS-over-HTTPS (DoH) tunnel for secure upstream DNS.
+- **DNSCrypt-Proxy:** Provides encrypted upstream DNS for Pi-hole.
 
 ## 📐 Architecture
 
-The following diagram illustrates the simplified flow of **DNS resolution** (dotted lines) and **Secure Access** (solid lines).
+The following diagram illustrates the **Unified Network Core** architecture. Services like Caddy, Pi-hole, and DNSCrypt-Proxy share the **Tailscale network namespace**, allowing them to operate as a single logical gateway at `10.8.1.48`.
 
 ```mermaid
 graph TD
-    %% --- Clients & External ---
-    subgraph Remote ["User & Internet"]
-        user((User Device))
-        magicdns[Tailscale MagicDNS]
-        internet((Internet))
+    %% --- External ---
+    User((Remote User))
+    CF_DNS[Cloudflare / Upstream DNS]
+
+    subgraph TS_Mesh ["Tailscale Mesh (VPN)"]
+        TS_Interface["Tailscale Interface<br/>(100.x.y.z)"]
     end
 
     %% --- The Server ---
-    subgraph Server ["Raspberry Pi Home Server"]
+    subgraph RPi ["Raspberry Pi 5"]
         
-        %% Entry Point
-        subgraph Gateway ["Secure Gateway"]
-            ts["Tailscale VPN<br/>(10.8.1.48)"]
-            caddy[Caddy Proxy]
+        subgraph Unified_Core ["Unified Network Core (IP: 10.8.1.48)"]
+            direction TB
+            TS_Client[Tailscale Container]
+            Caddy[Caddy Reverse Proxy]
+            Pihole[Pi-hole DNS]
+            DNSCrypt[DNSCrypt-Proxy]
+            
+            %% Internal Core Links
+            TS_Client <--> Caddy
+            Caddy <--> Pihole
+            Pihole ---|localhost#5053| DNSCrypt
         end
 
-        %% Internal Network
-        subgraph Internal ["Private Docker Network (10.8.1.0/24)"]
-            pihole["Pi-hole DNS<br/>(10.8.1.48)"]
-            cloudflared["Cloudflared DoH<br/>(10.8.1.4)"]
-            apps["Applications<br/>(Immich, N8n, etc.)"]
-            db["Databases & Cache<br/>(Postgres, Redis)"]
+        subgraph Bridge_Net ["wg-easy Bridge (10.8.1.0/24)"]
+            direction LR
+            Apps["App Containers<br/>(Immich, n8n, etc.)"]
+            Storage[("/mnt/usb")]
         end
-        
-        storage[("USB Storage<br/>/mnt/usb")]
     end
 
-    %% --- FLOW 1: DNS Resolution (Dotted) ---
-    user -.-|1. Lookup *.pi.rahulja.in| magicdns
-    magicdns -.-|2. Split DNS| pihole
-    apps -.-|Internal DNS| pihole
-    pihole -.-|3. Upstream| cloudflared
-    cloudflared -.-|4. DoH| internet
+    %% --- Traffic Flows ---
+    
+    %% Flow 1: External Access
+    User ==>|Secure Tunnel| TS_Mesh
+    TS_Mesh ==> TS_Interface
+    TS_Interface ==>|Port 80/443| Caddy
+    Caddy ==>|Reverse Proxy| Apps
 
-    %% --- FLOW 2: Secure Access (Solid / Thick) ---
-    user ===|5. HTTPS Tunnel| ts
-    ts ===|6. Handoff| caddy
-    caddy ===|7. Proxy| apps
-
-    %% --- Dependencies ---
-    apps --> db
-    apps --> storage
-    db --> storage
-
-    %% --- Styling ---
-    style user fill:#f9f,stroke:#333,stroke-width:2px
-    style magicdns fill:#fff2cc,stroke:#d6b656
-    style ts fill:#cce5ff,stroke:#333
-    style caddy fill:#cce5ff,stroke:#333
-    style apps fill:#e5ffcc,stroke:#333
+    %% Flow 2: Internal DNS
+    Apps -.->|DNS Query| Pihole
+    Pihole -.->|Upstream| DNSCrypt
+    DNSCrypt -.->|DoH / DNSCrypt| CF_DNS
+    
+    %% Flow 3: Storage
+    Apps --- Storage
+    
+    %% Styling
+    style Unified_Core fill:#f0f7ff,stroke:#005cc5,stroke-width:2px
+    style TS_Client fill:#fff,stroke:#333
+    style Caddy fill:#fff,stroke:#333
+    style Pihole fill:#fff,stroke:#333
+    style DNSCrypt fill:#fff,stroke:#333
+    style Bridge_Net fill:#f6ffed,stroke:#52c41a
 ```
 
 ## 🛠️ Services & IP Assignments
@@ -77,18 +81,18 @@ The following services are configured with static IPs in the `10.8.1.0/24` subne
 | Service | Internal IP | External URL (Example) | Description |
 | :--- | :--- | :--- | :--- |
 | **Pi-hole** | `10.8.1.48` | `pihole.pi.rahulja.in` | DNS Sinkhole & Ad Blocker |
-| **Cloudflared** | `10.8.1.4` | `cloudflaredns.pi.rahulja.in` | DoH Proxy |
+| **DNSCrypt-Proxy** | `10.8.1.48` | `dnscrypt.pi.rahulja.in` | Encrypted DNS Proxy |
 | **Immich** | `10.8.1.6` | `immich.pi.rahulja.in` | Self-hosted Photo & Video Management |
 | **Transmission** | `10.8.1.23` | `trans.pi.rahulja.in` | Torrent Client |
 | **Paperless-ngx** | `10.8.1.32` | `pngx.pi.rahulja.in` | Document Management System |
 | **Filebrowser** | `10.8.1.34` | `filebrowser.pi.rahulja.in` | Web-based File Manager |
-| **Homarr** | `10.8.1.35` | `homarr.pi.rahulja.in` | Dashboard for your services |
 | **Tailscale** | `10.8.1.48` | N/A | VPN Mesh Network |
 | **Web Test** | `10.8.1.49` | `webtest.pi.rahulja.in` | Connectivity Test (Whoami) |
 | **N8n** | `10.8.1.53` | `n8n.pi.rahulja.in` | Workflow Automation |
 | **SearXNG** | `10.8.1.54` | `searxng.pi.rahulja.in` | Privacy-respecting Metasearch Engine |
 | **Paisa** | `10.8.1.56` | `paisa.pi.rahulja.in` | Personal Finance Manager |
 | **Homepage** | `10.8.1.57` | `homepage.pi.rahulja.in` | Modern Startpage |
+| **Stirling-PDF** | `10.8.1.58` | `pdf.pi.rahulja.in` | Powerful PDF Manipulation Tools |
 
 *Note: Immich auxiliary services (ML, Redis, DB) occupy IPs `10.8.1.8`, `10.8.1.9`, and `10.8.1.10` respectively.*
 
@@ -131,7 +135,7 @@ Most heavy data (media, databases) is mapped to an external USB drive mounted at
     ```
 
 4.  **Access Services:**
-    Open your browser and navigate to the configured domains (e.g., `https://homarr.pi.rahulja.in`). Ensure your DNS (likely Pi-hole) is correctly pointing these domains to your Nginx/Caddy instance or that you have local host entries if testing offline.
+    Open your browser and navigate to the configured domains (e.g., `https://homepage.pi.rahulja.in`). Ensure your DNS (likely Pi-hole) is correctly pointing these domains to your Nginx/Caddy instance or that you have local host entries if testing offline.
 
 ## 📝 Notes
 
