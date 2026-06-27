@@ -380,6 +380,86 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.58
 
+  firefly:
+    image: fireflyiii/core:version-6.6.3
+    hostname: firefly
+    container_name: firefly
+    restart: always
+    logging: *default-logging
+    volumes:
+      - ${FIREFLY_UPLOAD_PATH}:/var/www/html/storage/upload
+      - ${FIREFLY_DB_PATH}:/var/www/html/storage/database
+    environment:
+      - SITE_OWNER=me@rahulja.in
+      - TRUSTED_PROXIES=**
+      - AUDIT_LOG_LEVEL=emergency
+      - DB_CONNECTION=sqlite
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - REDIS_HOST=immich-redis
+      - REDIS_PORT=6379
+      - ENABLE_EXCHANGE_RATES=true
+      - ENABLE_EXTERNAL_RATES=true
+      - APP_URL=https://firefly.pi.rahulja.in
+      - APP_KEY=${FIREFLY_APP_KEY}
+      - STATIC_CRON_TOKEN=${FIREFLY_STATIC_CRON_TOKEN}
+      - TZ=${DEFAULT_TZ}
+    depends_on:
+      - immich-redis
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.43
+
+  firefly-importer:
+    image: fireflyiii/data-importer:version-2.3.2
+    hostname: firefly-importer
+    container_name: firefly-importer
+    restart: always
+    logging: *default-logging
+    depends_on:
+      - firefly
+      - immich-redis
+    environment:
+      - FIREFLY_III_URL=http://firefly:8080
+      - VANITY_URL=https://firefly.pi.rahulja.in
+      - LOG_LEVEL=info
+      - TRUSTED_PROXIES=**
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - REDIS_HOST=immich-redis
+      - REDIS_PORT=6379
+      - TZ=${DEFAULT_TZ}
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.44
+
+  firefly-cron:
+    image: alpine:3.18
+    container_name: firefly-cron
+    restart: always
+    logging: *default-logging
+    depends_on:
+      - firefly
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - STATIC_CRON_TOKEN=${FIREFLY_STATIC_CRON_TOKEN}
+    command: ["sh", "-c", "apk add --no-cache tzdata && \
+      (ln -s /usr/share/zoneinfo/$$TZ /etc/localtime || true) && \
+      echo \"0 3 * * * wget -qO- http://firefly:8080/api/v1/cron/$$STATIC_CRON_TOKEN;echo\" \
+      | crontab - && \
+      crond -f -L /dev/stdout"]
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.45
+
 
 # Booked 10.8.1.2 - 10.8.1.58 # remember to add to .env of local dns pihole
 
