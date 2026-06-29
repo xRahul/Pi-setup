@@ -57,6 +57,8 @@ services:
       - FTLCONF_dns_listeningMode=ALL
       - FTLCONF_dns_queryLogging=false
       - FTLCONF_webserver_port=8080
+      - FTLCONF_files_database=/pihole-db/pihole-FTL.db
+      - FTLCONF_misc_check_disk=0
     cap_add:
       - SYS_NICE
       - SYS_TIME
@@ -69,6 +71,7 @@ services:
     volumes:
       - ${PIHOLE_ETC_PATH}:/etc/pihole
       - ${PIHOLE_ETC_DNSMASQ_PATH}:/etc/dnsmasq.d
+      - ./pihole-db:/pihole-db
     depends_on:
       - tailscale
   dnscrypt-proxy:
@@ -325,6 +328,8 @@ services:
       - "homepage.pi.rahulja.in:10.8.1.48"
     restart: unless-stopped
     logging: *default-logging
+    env_file:
+      - .env
     environment:
       - PUID=1000
       - PGID=985
@@ -334,6 +339,9 @@ services:
       - ${HOMEPAGE_CONFIG_PATH}:/app/config
       - /var/run/docker.sock:/var/run/docker.sock # Optional, for docker integration
       - /mnt/usb:/storage:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/host:ro
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:3000/"]
       interval: 30s
