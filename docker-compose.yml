@@ -470,7 +470,25 @@ services:
         ipv4_address: 10.8.1.45
 
 
-# Booked 10.8.1.2 - 10.8.1.58 # remember to add to .env of local dns pihole
+  portainer:
+    image: portainer/portainer-ce:2.39.4
+    container_name: portainer
+    hostname: portainer
+    restart: unless-stopped
+    logging: *default-logging
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${PORTAINER_DATA_PATH}:/data
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.59
+
+
+# Booked 10.8.1.2 - 10.8.1.59 # remember to add to .env of local dns pihole
+
 
 networks:
   wg-easy:
