@@ -19,6 +19,7 @@ services:
       - TS_HOSTNAME=pi-docker-ts
       - TS_ROUTES=10.8.1.0/24
       - TS_EXTRA_ARGS=${TS_EXTRA_ARGS}
+      - TS_DEBUG_FIREWALL_MODE=nftables
     volumes:
       - ${TAILSCALE_PATH}:/var/lib/tailscale
       - /lib/modules:/lib/modules:ro
@@ -54,7 +55,7 @@ services:
       - TZ=${DEFAULT_TZ}
       - FTLCONF_dns_upstreams=127.0.0.1#5053
       - FTLCONF_dns_listeningMode=ALL
-      - FTLCONF_log_query=false
+      - FTLCONF_log_queries=false
       - FTLCONF_webserver_port=8080
     cap_add:
       - SYS_NICE
@@ -384,6 +385,7 @@ services:
     image: fireflyiii/core:version-6.6.3
     hostname: firefly
     container_name: firefly
+    user: "1000:1000"
     restart: always
     logging: *default-logging
     volumes:
