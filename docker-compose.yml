@@ -55,7 +55,7 @@ services:
       - TZ=${DEFAULT_TZ}
       - FTLCONF_dns_upstreams=127.0.0.1#5053
       - FTLCONF_dns_listeningMode=ALL
-      - FTLCONF_queries_active=false
+      - FTLCONF_dns_queryLogging=false
       - FTLCONF_webserver_port=8080
     cap_add:
       - SYS_NICE
