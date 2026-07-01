@@ -43,7 +43,7 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.48
   pihole:
-    image: pihole/pihole:2026.05.0
+    image: pihole/pihole:2026.06.0
     network_mode: service:tailscale
     container_name: pihole
     restart: unless-stopped
@@ -75,7 +75,7 @@ services:
     depends_on:
       - tailscale
   dnscrypt-proxy:
-    image: klutchell/dnscrypt-proxy:2.1.15
+    image: klutchell/dnscrypt-proxy:2.1.16
     network_mode: service:tailscale
     container_name: dnscrypt-proxy
     restart: unless-stopped
@@ -85,7 +85,7 @@ services:
     depends_on:
       - tailscale
   caddy:
-    image: ghcr.io/caddybuilds/caddy-cloudflare:2.11.2
+    image: ghcr.io/caddybuilds/caddy-cloudflare:2.11.4
     container_name: caddy
     network_mode: service:tailscale
     user: 1000:1000 # should be owner of volumes
@@ -119,7 +119,7 @@ services:
 
 
   filebrowser:
-    image: filebrowser/filebrowser:v2.63.13
+    image: filebrowser/filebrowser:v2.63.17
     container_name: filebrowser
     logging: *default-logging
     volumes:
@@ -153,7 +153,7 @@ services:
 
 
   transmission:
-    image: lscr.io/linuxserver/transmission:4.1.2-r0-ls348
+    image: lscr.io/linuxserver/transmission:4.1.3-r0-ls352
     container_name: transmission
     restart: unless-stopped
     logging: *default-logging
@@ -241,7 +241,7 @@ services:
         ipv4_address: 10.8.1.57
 
   firefly:
-    image: fireflyiii/core:version-6.6.3
+    image: fireflyiii/core:version-6.6.5
     hostname: firefly
     container_name: firefly
     restart: always
@@ -275,7 +275,7 @@ services:
         ipv4_address: 10.8.1.43
 
   firefly-importer:
-    image: fireflyiii/data-importer:version-2.3.2
+    image: fireflyiii/data-importer:version-2.3.3
     hostname: firefly-importer
     container_name: firefly-importer
     restart: always
