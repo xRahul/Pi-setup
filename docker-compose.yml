@@ -430,7 +430,7 @@ services:
         ipv4_address: 10.8.1.10
 
   stirling-pdf:
-    image: stirlingtools/stirling-pdf:2.14.0
+    image: stirlingtools/stirling-pdf:2.14.0-ultra-lite
     container_name: stirling-pdf
     hostname: stirling-pdf
     restart: unless-stopped
@@ -449,6 +449,7 @@ services:
       - TZ=${DEFAULT_TZ}
       - SPRINGDOC_API_DOCS_ENABLED=false
       - SPRINGDOC_SWAGGER_UI_ENABLED=false
+      - JAVA_TOOL_OPTIONS=-XX:+UseSerialGC -Xmx512m -XX:MaxMetaspaceSize=128m
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://127.0.0.1:8080/ || exit 1"]
       interval: 30s
