@@ -1,4 +1,92 @@
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
+
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:2.13.1
+    container_name: n8n
+    restart: unless-stopped
+    logging: *default-logging
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    # ports:
+    #   - 5678:5678
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:5678/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    environment:
+      - N8N_HOST=n8n.pi.rahulja.in
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - N8N_PROXY_HOPS=1
+      - NODE_ENV=production
+      - WEBHOOK_URL=https://n8n.pi.rahulja.in/
+      - GENERIC_TIMEZONE=${DEFAULT_TZ}
+      - TZ=${DEFAULT_TZ}
+      # Performance & Maintenance
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=336
+      - EXECUTIONS_DATA_SAVE_ON_ERROR=all
+      - EXECUTIONS_DATA_SAVE_ON_SUCCESS=none
+      - N8N_CONCURRENCY_PRODUCTION_LIMIT=2
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
+    volumes:
+      - ${N8N_DATA_FOLDER}:/home/node/.n8n
+      - ${N8N_LOCAL_FILES_FOLDER}/local_files:/files
+    depends_on:
+      - searxng
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.53
+
+  searxng:
+    image: ghcr.io/searxng/searxng:2026.3.17-2bb8ac17c
+    container_name: searxng
+    restart: unless-stopped
+    volumes:
+      - ./searxng:/etc/searxng:rw
+    environment:
+      - SEARXNG_BASE_URL=${SEARXNG_BASE_URL}
+      - SEARXNG_SECRET=${SEARXNG_SECRET}
+      - SEARXNG_REDIS_URL=${SEARXNG_REDIS_URL}
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8080/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging: *default-logging
+    depends_on:
+      - immich-redis
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.54
+
+  web-test:
+    image: traefik/whoami:v1.11.0
+    container_name: web-test
+    restart: unless-stopped
+    logging: *default-logging
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.49
 
 
 
