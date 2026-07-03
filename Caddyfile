@@ -219,9 +219,7 @@ homepage.pi.rahulja.in {
 
 pdf.pi.rahulja.in {
 	reverse_proxy * 10.8.1.58:8080
-	tls {
-		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
-	}
+	import cloudflare
 }
 
 portainer.pi.rahulja.in {

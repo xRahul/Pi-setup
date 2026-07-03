@@ -241,7 +241,7 @@ services:
         ipv4_address: 10.8.1.57
 
   firefly:
-    image: fireflyiii/core:version-6.6.5
+    image: fireflyiii/core:version-6.6.6
     hostname: firefly
     container_name: firefly
     restart: always
@@ -336,6 +336,122 @@ services:
     networks:
       wg-easy:
         ipv4_address: 10.8.1.59
+
+  immich-server:
+    container_name: immich_server
+    image: ghcr.io/immich-app/immich-server:v2.7.5
+    logging: *default-logging
+    volumes:
+      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - ${EXTERNAL_LIBRARY_LOCATION}:/usr/src/app/external:ro
+      - /etc/localtime:/etc/localtime:ro
+    env_file:
+      - .env
+    environment:
+      - DB_HOSTNAME=immich-database
+      - REDIS_HOSTNAME=immich-redis
+      - DB_PASSWORD=${IMMICH_DB_PASSWORD}
+      - DB_USERNAME=${IMMICH_DB_USERNAME}
+      - DB_DATABASE_NAME=${IMMICH_DB_DATABASE_NAME}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:2283/api/server/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    depends_on:
+      - immich-redis
+      - immich-database
+    restart: always
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.6
+
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    image: ghcr.io/immich-app/immich-machine-learning:v2.7.5
+    logging: *default-logging
+    volumes:
+      - ${IMMICH_ML_MODEL_CACHE_LOCATION}:/cache
+      - ${EXTERNAL_LIBRARY_LOCATION}:/usr/src/app/external:ro
+    env_file:
+      - .env
+    environment:
+      - DB_HOSTNAME=immich-database
+      - REDIS_HOSTNAME=immich-redis
+      - DB_PASSWORD=${IMMICH_DB_PASSWORD}
+      - DB_USERNAME=${IMMICH_DB_USERNAME}
+      - DB_DATABASE_NAME=${IMMICH_DB_DATABASE_NAME}
+      - MACHINE_LEARNING_ACCELERATOR=cpu
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:3003/ping')\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: always
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.8
+
+  immich-database:
+    container_name: immich_postgres
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
+    logging: *default-logging
+    environment:
+      POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}
+      POSTGRES_USER: ${IMMICH_DB_USERNAME}
+      POSTGRES_DB: ${IMMICH_DB_DATABASE_NAME}
+      POSTGRES_INITDB_ARGS: '--data-checksums'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${IMMICH_DB_USERNAME} -d ${IMMICH_DB_DATABASE_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ${IMMICH_DB_DATA_LOCATION}:/var/lib/postgresql/data
+    shm_size: 128mb
+    restart: always
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.10
+
+  stirling-pdf:
+    image: stirlingtools/stirling-pdf:2.14.0
+    container_name: stirling-pdf
+    hostname: stirling-pdf
+    restart: unless-stopped
+    logging: *default-logging
+    volumes:
+      - ${STIRLING_PDF_DATA_PATH}/tessdata:/usr/share/tessdata
+      - ${STIRLING_PDF_DATA_PATH}/configs:/configs
+      - ${STIRLING_PDF_DATA_PATH}/logs:/logs
+      - ${STIRLING_PDF_DATA_PATH}/pipeline:/pipeline
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - SECURITY_ENABLELOGIN=false
+      - LANGS=${STIRLING_PDF_LANGS:-en_GB}
+      - DOCKER_ENABLE_SECURITY=false
+      - TZ=${DEFAULT_TZ}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8080/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.58
 
 
 # Booked 10.8.1.2 - 10.8.1.59 # remember to add to .env of local dns pihole
