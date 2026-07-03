@@ -196,7 +196,7 @@ services:
 
   immich-redis:
     container_name: immich_redis
-    image: docker.io/valkey/valkey:9@sha256:3b55fbaa0cd93cf0d9d961f405e4dfcc70efe325e2d84da207a0a8e6d8fde4f9
+    image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
     logging: *default-logging
     healthcheck:
       test: redis-cli ping || exit 1
@@ -346,7 +346,7 @@ services:
 
   immich-server:
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v2.7.5
+    image: ghcr.io/immich-app/immich-server:v3.0.1
     logging: *default-logging
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
@@ -379,7 +379,7 @@ services:
 
   immich-machine-learning:
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:v2.7.5
+    image: ghcr.io/immich-app/immich-machine-learning:v3.0.1
     logging: *default-logging
     volumes:
       - ${IMMICH_ML_MODEL_CACHE_LOCATION}:/cache
