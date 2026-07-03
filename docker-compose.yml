@@ -130,6 +130,9 @@ services:
   filebrowser:
     image: filebrowser/filebrowser:v2.63.17
     container_name: filebrowser
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=filebrowser"
     logging: *default-logging
     volumes:
       - ${FILEBROWSER_ROOT_PATH}:/srv
@@ -253,6 +256,9 @@ services:
     image: fireflyiii/core:version-6.6.6
     hostname: firefly
     container_name: firefly
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=firefly"
     restart: always
     logging: *default-logging
     volumes:
@@ -287,6 +293,9 @@ services:
     image: fireflyiii/data-importer:version-2.3.3
     hostname: firefly-importer
     container_name: firefly-importer
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=firefly"
     restart: always
     logging: *default-logging
     depends_on:
@@ -322,9 +331,12 @@ services:
       - STATIC_CRON_TOKEN=${FIREFLY_STATIC_CRON_TOKEN}
     command: ["sh", "-c", "apk add --no-cache tzdata && \
       (ln -s /usr/share/zoneinfo/$$TZ /etc/localtime || true) && \
-      echo \"0 3 * * * wget -qO- http://firefly:8080/api/v1/cron/$$STATIC_CRON_TOKEN;echo\" \
+      echo \"0 3 * * * wget -qO- --no-check-certificate https://firefly.pi.rahulja.in/api/v1/cron/$$STATIC_CRON_TOKEN;echo\" \
       | crontab - && \
       crond -f -L /dev/stdout"]
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
     networks:
       wg-easy:
         ipv4_address: 10.8.1.45
@@ -334,6 +346,9 @@ services:
     image: portainer/portainer-ce:2.39.4
     container_name: portainer
     hostname: portainer
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=portainer"
     restart: unless-stopped
     logging: *default-logging
     volumes:
@@ -349,6 +364,9 @@ services:
   immich-server:
     container_name: immich_server
     image: ghcr.io/immich-app/immich-server:v3.0.1
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=immich"
     logging: *default-logging
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
@@ -382,6 +400,9 @@ services:
   immich-machine-learning:
     container_name: immich_machine_learning
     image: ghcr.io/immich-app/immich-machine-learning:v3.0.1
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=immich"
     logging: *default-logging
     volumes:
       - ${IMMICH_ML_MODEL_CACHE_LOCATION}:/cache
@@ -412,6 +433,9 @@ services:
   immich-database:
     container_name: immich_postgres
     image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=immich"
     logging: *default-logging
     environment:
       POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}

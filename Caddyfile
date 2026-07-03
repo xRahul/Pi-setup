@@ -20,7 +20,17 @@ wg.pi.rahulja.in {
 }
 
 immich.pi.rahulja.in {
-	reverse_proxy * 10.8.1.6:2283
+	route {
+		sablier http://sablier:10000 {
+			group immich
+			session_duration 30m
+			dynamic {
+				display_name "Immich"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.6:2283
+	}
 	import cloudflare
 }
 
@@ -115,7 +125,17 @@ grocy.pi.rahulja.in {
 }
 
 filebrowser.pi.rahulja.in {
-	reverse_proxy * 10.8.1.34:80
+	route {
+		sablier http://sablier:10000 {
+			group filebrowser
+			session_duration 30m
+			dynamic {
+				display_name "FileBrowser"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.34:80
+	}
 	import cloudflare
 }
 
@@ -155,12 +175,32 @@ linkding.pi.rahulja.in {
 }
 
 firefly.pi.rahulja.in {
-	reverse_proxy * 10.8.1.43:8080
+	route {
+		sablier http://sablier:10000 {
+			group firefly
+			session_duration 30m
+			dynamic {
+				display_name "Firefly III"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.43:8080
+	}
 	import cloudflare
 }
 
 fireflyimporter.pi.rahulja.in {
-	reverse_proxy * 10.8.1.44:8080
+	route {
+		sablier http://sablier:10000 {
+			group firefly
+			session_duration 30m
+			dynamic {
+				display_name "Firefly Importer"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.44:8080
+	}
 	import cloudflare
 }
 
@@ -234,6 +274,16 @@ pdf.pi.rahulja.in {
 }
 
 portainer.pi.rahulja.in {
-	reverse_proxy * 10.8.1.59:9000
+	route {
+		sablier http://sablier:10000 {
+			group portainer
+			session_duration 30m
+			dynamic {
+				display_name "Portainer"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.59:9000
+	}
 	import cloudflare
 }
