@@ -11,6 +11,12 @@ services:
     image: tailscale/tailscale:v1.98.4
     container_name: tailscale
     restart: unless-stopped
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        apk add --no-cache ethtool && ethtool -K eth0 rx-udp-gro-forwarding on rx-gro-list off || true
+        exec /usr/local/bin/containerboot
     logging: *default-logging
     environment:
       - TS_AUTHKEY=${TAILSCALE_AUTH_KEY}
@@ -42,6 +48,7 @@ services:
     networks:
       wg-easy:
         ipv4_address: 10.8.1.48
+
   pihole:
     image: pihole/pihole:2026.06.0
     network_mode: service:tailscale
@@ -440,6 +447,8 @@ services:
       - LANGS=${STIRLING_PDF_LANGS:-en_GB}
       - DOCKER_ENABLE_SECURITY=false
       - TZ=${DEFAULT_TZ}
+      - SPRINGDOC_API_DOCS_ENABLED=false
+      - SPRINGDOC_SWAGGER_UI_ENABLED=false
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://127.0.0.1:8080/ || exit 1"]
       interval: 30s
