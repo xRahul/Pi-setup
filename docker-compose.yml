@@ -343,6 +343,7 @@ services:
 
 networks:
   wg-easy:
+    name: wg-easy
     driver: bridge
     ipam:
       config:
