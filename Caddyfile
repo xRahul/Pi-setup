@@ -1,5 +1,6 @@
 {
 	admin 0.0.0.0:2019
+	order sablier before reverse_proxy
 }
 
 (cloudflare) {
@@ -218,7 +219,17 @@ homepage.pi.rahulja.in {
 }
 
 pdf.pi.rahulja.in {
-	reverse_proxy * 10.8.1.58:8080
+	route {
+		sablier http://sablier:10000 {
+			group stirling-pdf
+			session_duration 30m
+			dynamic {
+				display_name "Stirling PDF"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.58:8080
+	}
 	import cloudflare
 }
 
