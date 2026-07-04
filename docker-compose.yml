@@ -215,6 +215,9 @@ services:
   homepage:
     image: ghcr.io/gethomepage/homepage:v1.13.2
     container_name: homepage
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=homepage"
     extra_hosts:
       - "dash.pi.rahulja.in:10.8.1.48"
       - "pihole.pi.rahulja.in:10.8.1.48"
@@ -499,6 +502,7 @@ services:
     command:
       - start
       - --provider.name=docker
+      - --provider.auto-stop-externally-started
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
