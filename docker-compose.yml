@@ -215,6 +215,8 @@ services:
   homepage:
     image: ghcr.io/gethomepage/homepage:v1.13.2
     container_name: homepage
+    depends_on:
+      - socket-proxy-read
     labels:
       - "sablier.enable=true"
       - "sablier.group=homepage"
@@ -234,7 +236,6 @@ services:
       - TZ=${DEFAULT_TZ}
     volumes:
       - ${HOMEPAGE_CONFIG_PATH}:/app/config
-      - /var/run/docker.sock:/var/run/docker.sock # Optional, for docker integration
       - /mnt/usb:/storage:ro
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -254,6 +255,7 @@ services:
     networks:
       wg-easy:
         ipv4_address: 10.8.1.57
+      read-proxy-net:
 
   firefly:
     image: fireflyiii/core:version-6.6.6
@@ -348,21 +350,21 @@ services:
   portainer:
     image: portainer/portainer-ce:2.39.4
     container_name: portainer
+    depends_on:
+      - socket-proxy-admin
     hostname: portainer
+    command: -H tcp://socket-proxy-admin:2375
     labels:
       - "sablier.enable=true"
       - "sablier.group=portainer"
     restart: unless-stopped
     logging: *default-logging
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - ${PORTAINER_DATA_PATH}:/data
-    dns:
-      - 10.8.1.48
-      - 1.1.1.1
     networks:
       wg-easy:
         ipv4_address: 10.8.1.59
+      portainer-proxy-net:
 
   immich-server:
     container_name: immich_server
@@ -498,18 +500,69 @@ services:
   sablier:
     image: sablierapp/sablier:1.14.0
     container_name: sablier
+    depends_on:
+      - socket-proxy-read
     restart: unless-stopped
     command:
       - start
       - --provider.name=docker
       - --provider.auto-stop-externally-started
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - DOCKER_HOST=tcp://socket-proxy-read:2375
     networks:
       wg-easy:
         ipv4_address: 10.8.1.60
+      read-proxy-net:
     logging: *default-logging
 
+  socket-proxy-read:
+    image: lscr.io/linuxserver/socket-proxy:3.4.1-r0-ls87
+    container_name: socket-proxy-read
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /run
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - POST=0
+      - CONTAINERS=1
+      - ALLOW_START=1
+      - ALLOW_STOP=1
+      - PING=1
+      - VERSION=1
+    networks:
+      - read-proxy-net
+    logging: *default-logging
+
+  socket-proxy-admin:
+    image: lscr.io/linuxserver/socket-proxy:3.4.1-r0-ls87
+    container_name: socket-proxy-admin
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /run
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - POST=1
+      - CONTAINERS=1
+      - IMAGES=1
+      - NETWORKS=1
+      - VOLUMES=1
+      - EXEC=1
+      - INFO=1
+      - SYSTEM=1
+      - ALLOW_START=1
+      - ALLOW_STOP=1
+      - ALLOW_RESTARTS=1
+      - ALLOW_PAUSE=1
+      - ALLOW_UNPAUSE=1
+      - PING=1
+      - VERSION=1
+    networks:
+      - portainer-proxy-net
+    logging: *default-logging
 
 # Booked 10.8.1.2 - 10.8.1.60 # remember to add to .env of local dns pihole
 
@@ -521,3 +574,9 @@ networks:
     ipam:
       config:
         - subnet: 10.8.1.0/24
+  read-proxy-net:
+    driver: bridge
+    internal: true
+  portainer-proxy-net:
+    driver: bridge
+    internal: true
