@@ -1301,6 +1301,29 @@ services:
     networks:
       wg-easy:
         ipv4_address: 10.8.1.32
+  portainer:
+    cap_drop:
+      - ALL
+    user: "1000:1000"
+    image: portainer/portainer-ce:2.39.4
+    container_name: portainer
+    depends_on:
+      - socket-proxy-admin
+    hostname: portainer
+    command: -H tcp://socket-proxy-admin:2375
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=portainer"
+    restart: unless-stopped
+    logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ${PORTAINER_DATA_PATH}:/data
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.59
+      portainer-proxy-net:
 
 volumes:
   nextcloud_aio_mastercontainer:

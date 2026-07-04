@@ -411,29 +411,31 @@ services:
         ipv4_address: 10.8.1.45
 
 
-  portainer:
+  dockge:
+    image: louislam/dockge:1
+    container_name: dockge
+    restart: unless-stopped
     cap_drop:
       - ALL
     user: "1000:1000"
-    image: portainer/portainer-ce:2.39.4
-    container_name: portainer
-    depends_on:
-      - socket-proxy-admin
-    hostname: portainer
-    command: -H tcp://socket-proxy-admin:2375
-    labels:
-      - "sablier.enable=true"
-      - "sablier.group=portainer"
-    restart: unless-stopped
-    logging: *default-logging
     security_opt:
       - no-new-privileges:true
+    depends_on:
+      - socket-proxy-admin
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=dockge"
+    logging: *default-logging
+    environment:
+      - DOCKGE_STACKS_DIR=/opt/stacks
+      - DOCKER_HOST=tcp://socket-proxy-admin:2375
     volumes:
-      - ${PORTAINER_DATA_PATH}:/data
+      - ${DOCKGE_DATA_PATH}:/app/data
+      - /home/rahul/docker/docker-compose.yml:/opt/stacks/homelab/compose.yaml:ro
     networks:
       wg-easy:
-        ipv4_address: 10.8.1.59
-      portainer-proxy-net:
+        ipv4_address: 10.8.1.61
+      dockge-proxy-net:
 
   immich-server:
     cap_drop:
@@ -645,6 +647,9 @@ services:
       - ALL
     image: lscr.io/linuxserver/socket-proxy:3.4.1-r0-ls87
     container_name: socket-proxy-admin
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=dockge"
     restart: unless-stopped
     read_only: true
     tmpfs:
@@ -668,12 +673,12 @@ services:
       - PING=1
       - VERSION=1
     networks:
-      - portainer-proxy-net
+      - dockge-proxy-net
     logging: *default-logging
     security_opt:
       - no-new-privileges:true
 
-# Booked 10.8.1.2 - 10.8.1.60 # remember to add to .env of local dns pihole
+# Booked 10.8.1.2 - 10.8.1.61 # remember to add to .env of local dns pihole
 
 
 networks:
@@ -686,6 +691,6 @@ networks:
   read-proxy-net:
     driver: bridge
     internal: true
-  portainer-proxy-net:
+  dockge-proxy-net:
     driver: bridge
     internal: true

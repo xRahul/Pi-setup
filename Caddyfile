@@ -307,3 +307,19 @@ portainer.pi.rahulja.in {
 	}
 	import cloudflare
 }
+
+dockge.pi.rahulja.in {
+	route {
+		sablier http://sablier:10000 {
+			group dockge
+			session_duration 30m
+			dynamic {
+				display_name "Dockge"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.61:5001
+	}
+	import cloudflare
+}
+
