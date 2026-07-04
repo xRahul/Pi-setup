@@ -35,6 +35,8 @@ services:
       - net.ipv4.ip_forward=1
       - net.ipv6.conf.all.forwarding=1
       - net.ipv4.conf.all.src_valid_mark=1
+    security_opt:
+      - no-new-privileges:true
     cap_add:
       - NET_ADMIN
       - NET_RAW
@@ -66,6 +68,8 @@ services:
       - FTLCONF_webserver_port=8080
       - FTLCONF_files_database=/pihole-db/pihole-FTL.db
       - FTLCONF_misc_check_disk=0
+    security_opt:
+      - no-new-privileges:true
     cap_add:
       - SYS_NICE
       - SYS_TIME
@@ -87,6 +91,8 @@ services:
     container_name: dnscrypt-proxy
     restart: unless-stopped
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
     volumes:
       - ./dnscrypt-proxy/dnscrypt-proxy.toml:/config/dnscrypt-proxy.toml
     depends_on:
@@ -102,6 +108,8 @@ services:
     logging: *default-logging
     depends_on:
       - tailscale
+    security_opt:
+      - no-new-privileges:true
     cap_add:
       - NET_ADMIN
     environment:
@@ -134,6 +142,8 @@ services:
       - "sablier.enable=true"
       - "sablier.group=filebrowser"
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
     volumes:
       - ${FILEBROWSER_ROOT_PATH}:/srv
       - ${FILEBROWSER_DB_FILE_PATH}:/database/filebrowser.db
@@ -169,6 +179,8 @@ services:
     container_name: transmission
     restart: unless-stopped
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
     # network_mode: "service:gluetun"
     healthcheck:
       test: ["CMD", "nc", "-z", "127.0.0.1", "9091"]
@@ -203,6 +215,8 @@ services:
     container_name: immich_redis
     image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
     healthcheck:
       test: redis-cli ping || exit 1
     restart: always
@@ -227,6 +241,8 @@ services:
       - "homepage.pi.rahulja.in:10.8.1.48"
     restart: unless-stopped
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
     env_file:
       - .env
     environment:
@@ -266,6 +282,8 @@ services:
       - "sablier.group=firefly"
     restart: always
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
     volumes:
       - ${FIREFLY_UPLOAD_PATH}:/var/www/html/storage/upload
       - ${FIREFLY_DB_PATH}:/var/www/html/storage/database
@@ -303,6 +321,8 @@ services:
       - "sablier.group=firefly"
     restart: always
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
     depends_on:
       - firefly
       - immich-redis
@@ -329,6 +349,8 @@ services:
     container_name: firefly-cron
     restart: always
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
     depends_on:
       - firefly
     environment:
@@ -359,6 +381,8 @@ services:
       - "sablier.group=portainer"
     restart: unless-stopped
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
     volumes:
       - ${PORTAINER_DATA_PATH}:/data
     networks:
@@ -373,6 +397,8 @@ services:
       - "sablier.enable=true"
       - "sablier.group=immich"
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
       - ${EXTERNAL_LIBRARY_LOCATION}:/usr/src/app/external:ro
@@ -409,6 +435,8 @@ services:
       - "sablier.enable=true"
       - "sablier.group=immich"
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
     volumes:
       - ${IMMICH_ML_MODEL_CACHE_LOCATION}:/cache
       - ${EXTERNAL_LIBRARY_LOCATION}:/usr/src/app/external:ro
@@ -442,6 +470,8 @@ services:
       - "sablier.enable=true"
       - "sablier.group=immich"
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
     environment:
       POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}
       POSTGRES_USER: ${IMMICH_DB_USERNAME}
@@ -470,6 +500,8 @@ services:
     restart: unless-stopped
     mem_limit: 512m
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
     volumes:
       - ${STIRLING_PDF_DATA_PATH}/tessdata:/usr/share/tessdata
       - ${STIRLING_PDF_DATA_PATH}/configs:/configs
@@ -514,6 +546,8 @@ services:
         ipv4_address: 10.8.1.60
       read-proxy-net:
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
 
   socket-proxy-read:
     image: lscr.io/linuxserver/socket-proxy:3.4.1-r0-ls87
@@ -534,6 +568,8 @@ services:
     networks:
       - read-proxy-net
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
 
   socket-proxy-admin:
     image: lscr.io/linuxserver/socket-proxy:3.4.1-r0-ls87
@@ -563,6 +599,8 @@ services:
     networks:
       - portainer-proxy-net
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
 
 # Booked 10.8.1.2 - 10.8.1.60 # remember to add to .env of local dns pihole
 
