@@ -847,6 +847,53 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.29
 
+  archivebox:
+    # cap_drop:
+    #   - ALL
+    # user: "1000:1000"
+    image: archivebox/archivebox:0.7.4
+    container_name: archivebox
+    platform: "linux/arm64"
+    restart: unless-stopped
+    mem_limit: 768m
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=archivebox"
+    logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
+    shm_size: "1gb"
+    volumes:
+      - ${ARCHIVEBOX_DATA_LOCATION}:/data
+    environment:
+      - ADMIN_USERNAME=${ARCHIVEBOX_ADMIN_USERNAME}
+      - ADMIN_PASSWORD=${ARCHIVEBOX_ADMIN_PASSWORD}
+      - ALLOWED_HOSTS=*
+      - PUBLIC_INDEX=True
+      - PUBLIC_SNAPSHOTS=True
+      - PUBLIC_ADD_VIEW=False
+      - SEARCH_BACKEND_ENGINE=ripgrep
+      - PUID=1000
+      - PGID=1000
+      - TZ=${DEFAULT_TZ}
+      # RAM/Space Optimizations
+      - CRAWL_MAX_CONCURRENT_SNAPSHOTS=1
+      - MEDIA_MAX_SIZE=1g
+      - SAVE_ARCHIVE_DOT_ORG=False
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8000/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.17
+
 # Booked 10.8.1.2 - 10.8.1.60 # remember to add to .env of local dns pihole
 
 

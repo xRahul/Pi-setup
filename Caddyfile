@@ -71,7 +71,17 @@ jellyfin.pi.rahulja.in {
 }
 
 archivebox.pi.rahulja.in {
-	reverse_proxy * 10.8.1.17:8000
+	route {
+		sablier http://sablier:10000 {
+			group archivebox
+			session_duration 30m
+			dynamic {
+				display_name "ArchiveBox"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.17:8000
+	}
 	import cloudflare
 }
 
