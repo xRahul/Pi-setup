@@ -135,62 +135,6 @@ services:
 
 
 
-  miniflux:
-    image: miniflux/miniflux:2.2.6
-    container_name: miniflux
-    restart: unless-stopped
-    # ports:
-    #   - "80:8080"
-    depends_on:
-      miniflux_db:
-        condition: service_healthy
-    environment:
-      - DATABASE_URL=${MINIFLUX_DB_URL}
-      - RUN_MIGRATIONS=1
-      - CREATE_ADMIN=1
-      - ADMIN_USERNAME=${MINIFLUX_ADMIN_USER}
-      - ADMIN_PASSWORD=${MINIFLUX_ADMIN_PASS}
-      - POLLING_FREQUENCY=120
-      - POLLING_SCHEDULER=entry_frequency
-      - SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL=1440
-      - SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL=120
-      - SCHEDULER_ROUND_ROBIN_MIN_INTERVAL=120
-      - CLEANUP_ARCHIVE_READ_DAYS=0
-      - CLEANUP_ARCHIVE_UNREAD_DAYS=-1
-      - WEBAUTHN=true
-      - BASE_URL=https://miniflux.pi.rahulja.in
-      - DATABASE_MIN_CONNS=0
-      - DATABASE_CONNECTION_LIFETIME=1
-    healthcheck:
-      test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
-      interval: 10m
-    dns:
-      - 10.8.1.48
-      - 1.1.1.1
-      - 8.8.8.8
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.28
-
-
-  miniflux_db:
-    image: postgres:17-alpine3.21
-    container_name: miniflux-db
-    hostname: minifluxdbhost
-    restart: unless-stopped
-    environment:
-      - POSTGRES_USER=${MINIFLUX_DB_USER}
-      - POSTGRES_PASSWORD=${MINIFLUX_DB_PASS}
-      - POSTGRES_DB=${MINIFLUX_DB_NAME}
-    volumes:
-      - ${MINIFLUX_DB_DATA_PATH}:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "$$MINIFLUX_DB_USER"]
-      interval: 20s
-      start_period: 30s
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.29
 
 
 

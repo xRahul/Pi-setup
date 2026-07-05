@@ -20,6 +20,22 @@ wg.pi.rahulja.in {
 }
 
 immich.pi.rahulja.in {
+	# API and mobile app endpoints (need blocking strategy)
+	@api {
+		path /api/* /server-info /api-docs*
+	}
+	route @api {
+		sablier http://sablier:10000 {
+			group immich
+			session_duration 30m
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.6:2283
+	}
+
+	# Other requests (browsers) get the dynamic loading page
 	route {
 		sablier http://sablier:10000 {
 			group immich
@@ -185,6 +201,22 @@ linkding.pi.rahulja.in {
 }
 
 firefly.pi.rahulja.in {
+	# API and cron endpoints (need blocking strategy)
+	@api {
+		path /api/*
+	}
+	route @api {
+		sablier http://sablier:10000 {
+			group firefly
+			session_duration 30m
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.43:8080
+	}
+
+	# Other requests (browsers) get the dynamic loading page
 	route {
 		sablier http://sablier:10000 {
 			group firefly
@@ -279,6 +311,22 @@ homepage.pi.rahulja.in {
 }
 
 pdf.pi.rahulja.in {
+	# API endpoints (need blocking strategy)
+	@api {
+		path /api/*
+	}
+	route @api {
+		sablier http://sablier:10000 {
+			group stirling-pdf
+			session_duration 30m
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.58:8080
+	}
+
+	# Other requests (browsers) get the dynamic loading page
 	route {
 		sablier http://sablier:10000 {
 			group stirling-pdf
@@ -294,6 +342,22 @@ pdf.pi.rahulja.in {
 }
 
 portainer.pi.rahulja.in {
+	# API endpoints (need blocking strategy)
+	@api {
+		path /api/*
+	}
+	route @api {
+		sablier http://sablier:10000 {
+			group portainer
+			session_duration 30m
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.59:9000
+	}
+
+	# Other requests (browsers) get the dynamic loading page
 	route {
 		sablier http://sablier:10000 {
 			group portainer

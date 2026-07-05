@@ -238,6 +238,10 @@ services:
     user: "999:999"
     container_name: immich_redis
     image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=immich,firefly"
+      - "sablier.ready-on-start=true"
     logging: *default-logging
     security_opt:
       - no-new-privileges:true
@@ -316,6 +320,7 @@ services:
     labels:
       - "sablier.enable=true"
       - "sablier.group=firefly"
+      - "sablier.running-hours=02:30-04:30"
     restart: always
     logging: *default-logging
     security_opt:
@@ -362,6 +367,7 @@ services:
     labels:
       - "sablier.enable=true"
       - "sablier.group=firefly"
+      - "sablier.running-hours=02:30-04:30"
     restart: always
     logging: *default-logging
     security_opt:
@@ -395,8 +401,12 @@ services:
       - DAC_OVERRIDE
     cap_drop:
       - ALL
-    image: alpine:3.18
+    image: alpine:3.24.1
     container_name: firefly-cron
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=firefly-cron"
+      - "sablier.running-hours=02:30-04:30"
     restart: always
     logging: *default-logging
     security_opt:
@@ -496,6 +506,7 @@ services:
     labels:
       - "sablier.enable=true"
       - "sablier.group=immich"
+      - "sablier.ready-on-start=true"
     logging: *default-logging
     security_opt:
       - no-new-privileges:true
@@ -740,6 +751,72 @@ services:
       - ${JELLYFIN_TRANSMISSION_COMPLETE_LOCATION}:/data/downloads:ro
       - ${JELLYFIN_MUSIC_LOCAL_LOCATION}:/data/music_local:ro
       - ${JELLYFIN_MUSIC_USB_LOCATION}:/data/music_usb:ro
+
+  miniflux:
+    image: miniflux/miniflux:2.3.2-distroless
+    container_name: miniflux
+    restart: unless-stopped
+    depends_on:
+      miniflux_db:
+        condition: service_healthy
+    cap_drop:
+      - ALL
+    user: "1000:1000"
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    environment:
+      - DATABASE_URL=${MINIFLUX_DB_URL}
+      - RUN_MIGRATIONS=1
+      - CREATE_ADMIN=1
+      - ADMIN_USERNAME=${MINIFLUX_ADMIN_USER}
+      - ADMIN_PASSWORD=${MINIFLUX_ADMIN_PASS}
+      - POLLING_FREQUENCY=120
+      - POLLING_SCHEDULER=entry_frequency
+      - SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL=1440
+      - SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL=120
+      - SCHEDULER_ROUND_ROBIN_MIN_INTERVAL=120
+      - CLEANUP_ARCHIVE_READ_DAYS=0
+      - CLEANUP_ARCHIVE_UNREAD_DAYS=-1
+      - WEBAUTHN=true
+      - BASE_URL=https://miniflux.pi.rahulja.in
+      - DATABASE_MIN_CONNS=0
+      - DATABASE_CONNECTION_LIFETIME=1
+    healthcheck:
+      test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
+      interval: 10m
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.28
+
+  miniflux_db:
+    image: postgres:18.4-alpine3.24
+    container_name: miniflux-db
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    user: "999:999"
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    environment:
+      - POSTGRES_USER=${MINIFLUX_DB_USER}
+      - POSTGRES_PASSWORD=${MINIFLUX_DB_PASS}
+      - POSTGRES_DB=${MINIFLUX_DB_NAME}
+    volumes:
+      - ${MINIFLUX_DB_DATA_PATH}:/var/lib/postgresql
+    command: ["-c", "shared_buffers=16MB", "-c", "max_connections=15", "-c", "work_mem=1MB", "-c", "maintenance_work_mem=8MB", "-c", "temp_buffers=2MB", "-c", "effective_cache_size=64MB"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${MINIFLUX_DB_USER} -d ${MINIFLUX_DB_NAME}"]
+      interval: 20s
+      start_period: 30s
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.29
 
 # Booked 10.8.1.2 - 10.8.1.60 # remember to add to .env of local dns pihole
 
