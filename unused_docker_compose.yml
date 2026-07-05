@@ -1150,39 +1150,6 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.35
 
-  paperless-ngx:
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.13
-    container_name: paperless-ngx
-    restart: unless-stopped
-    logging: *default-logging
-    depends_on:
-      - immich-redis
-    # ports:
-    #   - "8000:8000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
-    volumes:
-      - ${PAPERLESS_NGX_DATA_PATH}:/usr/src/paperless/data
-      - ${PAPERLESS_NGX_MEDIA_PATH}:/usr/src/paperless/media
-      - ${PAPERLESS_NGX_EXPORT_PATH}:/usr/src/paperless/export
-      - ${PAPERLESS_NGX_CONSUME_PATH}:/usr/src/paperless/consume
-    environment:
-      PAPERLESS_REDIS: redis://immich-redis:6379
-      PAPERLESS_TIME_ZONE: ${DEFAULT_TZ}
-      PAPERLESS_URL: ${PAPERLESS_NGX_URL}
-      PAPERLESS_SECRET_KEY: ${PAPERLESS_NGX_SECRET_KEY}
-    dns:
-      - 10.8.1.48
-      - 1.1.1.1
-      - 8.8.8.8
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.32
-
 volumes:
   nextcloud_aio_mastercontainer:
     name: nextcloud_aio_mastercontainer

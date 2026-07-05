@@ -240,7 +240,7 @@ services:
     image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
     labels:
       - "sablier.enable=true"
-      - "sablier.group=immich,firefly"
+      - "sablier.group=immich"
       - "sablier.ready-on-start=true"
     logging: *default-logging
     security_opt:
@@ -335,7 +335,7 @@ services:
       - DB_CONNECTION=sqlite
       - CACHE_DRIVER=redis
       - SESSION_DRIVER=redis
-      - REDIS_HOST=immich-redis
+      - REDIS_HOST=firefly-redis
       - REDIS_PORT=6379
       - ENABLE_EXCHANGE_RATES=true
       - ENABLE_EXTERNAL_RATES=true
@@ -344,7 +344,7 @@ services:
       - STATIC_CRON_TOKEN=${FIREFLY_STATIC_CRON_TOKEN}
       - TZ=${DEFAULT_TZ}
     depends_on:
-      - immich-redis
+      - firefly-redis
     dns:
       - 10.8.1.48
       - 1.1.1.1
@@ -487,7 +487,7 @@ services:
       retries: 3
       start_period: 60s
     depends_on:
-      - immich-redis
+      - gramps-redis
       - immich-database
     restart: always
     dns:
@@ -650,7 +650,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       - TZ=${DEFAULT_TZ}
-      - POST=0
+      - POST=1
       - CONTAINERS=1
       - ALLOW_START=1
       - ALLOW_STOP=1
@@ -786,8 +786,10 @@ services:
     container_name: miniflux
     restart: unless-stopped
     depends_on:
-      miniflux_db:
-        condition: service_healthy
+      - miniflux_db
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=miniflux"
     cap_drop:
       - ALL
     user: "1000:1000"
@@ -813,7 +815,10 @@ services:
       - DATABASE_CONNECTION_LIFETIME=1
     healthcheck:
       test: ["CMD", "/usr/bin/miniflux", "-healthcheck", "auto"]
-      interval: 10m
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     dns:
       - 10.8.1.48
       - 1.1.1.1
@@ -826,6 +831,10 @@ services:
     image: postgres:18.4-alpine3.24
     container_name: miniflux-db
     restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=miniflux"
+      - "sablier.ready-on-start=true"
     cap_drop:
       - ALL
     user: "999:999"
@@ -846,6 +855,30 @@ services:
     networks:
       wg-easy:
         ipv4_address: 10.8.1.29
+
+  miniflux-cron:
+    image: alpine:3.24.1
+    container_name: miniflux-cron
+    restart: always
+    logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - MINIFLUX_API_KEY=${MINIFLUX_API_KEY}
+    command: ["sh", "-c", "apk add --no-cache tzdata curl && \
+      (ln -s /usr/share/zoneinfo/$$TZ /etc/localtime || true) && \
+      echo \"0 3,15 * * * curl -s -X POST -H \\\"X-Auth-Token: $$MINIFLUX_API_KEY\\\" https://miniflux.pi.rahulja.in/v1/feeds/refresh;echo\" \
+      | crontab - && \
+      crond -f -L /dev/stdout"]
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.46
 
   archivebox:
     # cap_drop:
@@ -894,7 +927,447 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.17
 
-# Booked 10.8.1.2 - 10.8.1.60 # remember to add to .env of local dns pihole
+  ntfy:
+    image: binwiederhier/ntfy:v2.25.0
+    container_name: ntfy
+    restart: unless-stopped
+    command:
+      - serve
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - NTFY_LISTEN_HTTP=:8000
+      - NTFY_CACHE_FILE=/var/lib/ntfy/cache.db
+      - NTFY_AUTH_FILE=/var/lib/ntfy/auth.db
+      - NTFY_AUTH_DEFAULT_ACCESS=deny-all
+      - NTFY_BEHIND_PROXY=true
+      - NTFY_ATTACHMENT_CACHE_DIR=/var/lib/ntfy/attachments
+      - NTFY_ENABLE_LOGIN=true
+      - NTFY_UPSTREAM_BASE_URL=https://ntfy.sh
+      - NTFY_BASE_URL=https://ntfy.pi.rahulja.in
+      - NTFY_ATTACHMENT_TOTAL_SIZE_LIMIT=500M
+      - NTFY_ATTACHMENT_FILE_SIZE_LIMIT=10M
+      - NTFY_ATTACHMENT_EXPIRY_DURATION=3h
+      - NTFY_LOG_LEVEL=warn
+    user: "1000:1000"
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=ntfy"
+    volumes:
+      - ${NTFY_CACHE}:/var/cache/ntfy
+      - ${NTFY_ETC}:/etc/ntfy
+      - ${NTFY_DB}:/var/lib/ntfy
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.26
+    logging: *default-logging
+
+  resume-db:
+    image: postgres:18.4-alpine3.24
+    container_name: resume-db
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=resume"
+      - "sablier.ready-on-start=true"
+    cap_drop:
+      - ALL
+    user: "999:999"
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - POSTGRES_USER=${RESUME_DB_USER}
+      - POSTGRES_PASSWORD=${RESUME_DB_PASS}
+      - POSTGRES_DB=${RESUME_DB_NAME}
+    volumes:
+      - ${RESUME_DB_DATA_PATH}:/var/lib/postgresql
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.37
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${RESUME_DB_USER} -d ${RESUME_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  resume:
+    image: amruthpillai/reactive-resume:v5.2.0
+    container_name: resume
+    restart: unless-stopped
+    depends_on:
+      - resume-db
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=resume"
+    cap_drop:
+      - ALL
+    user: "1000:1000"
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - PORT=3000
+      - NODE_ENV=production
+      - APP_URL=https://resume.pi.rahulja.in
+      - DATABASE_URL=postgresql://${RESUME_DB_USER}:${RESUME_DB_PASS}@10.8.1.37:5432/${RESUME_DB_NAME}
+      - AUTH_SECRET=${RESUME_AUTH_SECRET}
+      - ENCRYPTION_SECRET=${RESUME_ENCRYPTION_SECRET}
+    volumes:
+      - ${RESUME_DATA_PATH}:/app/data
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.39
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+
+  cyberchef:
+    image: ghcr.io/gchq/cyberchef:11.2.0
+    container_name: cyberchef
+    restart: unless-stopped
+    logging: *default-logging
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=cyberchef"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /var/run
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.36
+
+  grampsweb:
+    image: ghcr.io/gramps-project/grampsweb:26.6.2
+    container_name: grampsweb
+    restart: unless-stopped
+    logging: *default-logging
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=gramps"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    user: "1000:1000"
+    environment:
+      GRAMPSWEB_TREE: "My Family Tree"
+      GRAMPSWEB_CELERY_CONFIG__broker_url: "redis://gramps-redis:6379/0"
+      GRAMPSWEB_CELERY_CONFIG__result_backend: "redis://gramps-redis:6379/0"
+      GRAMPSWEB_RATELIMIT_STORAGE_URI: "redis://gramps-redis:6379/1"
+      GUNICORN_NUM_WORKERS: 2
+      GRAMPSHOME: /app
+      GRAMPS_DATABASE_PATH: /app/.gramps/grampsdb
+      GRAMPSWEB_NEW_DB_BACKEND: sqlite
+      HOME: /app/cache
+      TZ: ${DEFAULT_TZ}
+    depends_on:
+      - gramps-redis
+    volumes:
+      - ${GRAMPS_USERS}:/app/users
+      - ${GRAMPS_INDEX}:/app/indexdir
+      - ${GRAMPS_THUMB_CACHE}:/app/thumbnail_cache
+      - ${GRAMPS_CACHE}:/app/cache
+      - ${GRAMPS_SECRET}:/app/secret
+      - ${GRAMPS_DB}:/app/.gramps/grampsdb
+      - ${GRAMPS_MEDIA}:/app/media
+      - ${GRAMPS_TMP}:/tmp
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.61
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  grampsweb_celery:
+    image: ghcr.io/gramps-project/grampsweb:26.6.2
+    container_name: grampsweb_celery
+    restart: unless-stopped
+    logging: *default-logging
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=gramps"
+      - "sablier.ready-on-start=true"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    user: "1000:1000"
+    environment:
+      GRAMPSWEB_TREE: "My Family Tree"
+      GRAMPSWEB_CELERY_CONFIG__broker_url: "redis://gramps-redis:6379/0"
+      GRAMPSWEB_CELERY_CONFIG__result_backend: "redis://gramps-redis:6379/0"
+      GRAMPSWEB_RATELIMIT_STORAGE_URI: "redis://gramps-redis:6379/1"
+      GUNICORN_NUM_WORKERS: 2
+      GRAMPSHOME: /app
+      GRAMPS_DATABASE_PATH: /app/.gramps/grampsdb
+      GRAMPSWEB_NEW_DB_BACKEND: sqlite
+      HOME: /app/cache
+      TZ: ${DEFAULT_TZ}
+    depends_on:
+      - gramps-redis
+    volumes:
+      - ${GRAMPS_USERS}:/app/users
+      - ${GRAMPS_INDEX}:/app/indexdir
+      - ${GRAMPS_THUMB_CACHE}:/app/thumbnail_cache
+      - ${GRAMPS_CACHE}:/app/cache
+      - ${GRAMPS_SECRET}:/app/secret
+      - ${GRAMPS_DB}:/app/.gramps/grampsdb
+      - ${GRAMPS_MEDIA}:/app/media
+      - ${GRAMPS_TMP}:/tmp
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.62
+    command: celery -A gramps_webapi.celery worker --loglevel=INFO --concurrency=1
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  paperless-db:
+    image: postgres:18.4-alpine3.24
+    container_name: paperless-db
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=paperless"
+      - "sablier.ready-on-start=true"
+    cap_drop:
+      - ALL
+    user: "999:999"
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - POSTGRES_USER=${PAPERLESS_DB_USER}
+      - POSTGRES_PASSWORD=${PAPERLESS_DB_PASS}
+      - POSTGRES_DB=${PAPERLESS_DB_NAME}
+    volumes:
+      - ${PAPERLESS_DB_DATA_PATH}:/var/lib/postgresql
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.63
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PAPERLESS_DB_USER} -d ${PAPERLESS_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  paperless-redis:
+    image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
+    container_name: paperless-redis
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=paperless"
+      - "sablier.ready-on-start=true"
+    cap_drop:
+      - ALL
+    user: "999:999"
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    environment:
+      - TZ=${DEFAULT_TZ}
+    volumes:
+      - ${PAPERLESS_REDIS_DATA_PATH}:/data
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.64
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  paperless-tika:
+    image: apache/tika:3.3.1.0
+    container_name: paperless-tika
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=paperless"
+      - "sablier.ready-on-start=true"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.65
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:9998/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  paperless-gotenberg:
+    image: gotenberg/gotenberg:8.34.0
+    container_name: paperless-gotenberg
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=paperless"
+      - "sablier.ready-on-start=true"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    command:
+      - "gotenberg"
+      - "--chromium-disable-javascript=true"
+      - "--chromium-allow-list=file:///tmp/.*"
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.66
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:3000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  paperless-ngx:
+    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.15
+    container_name: paperless-ngx
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=paperless"
+    logging: *default-logging
+    depends_on:
+      - paperless-db
+      - paperless-redis
+      - paperless-tika
+      - paperless-gotenberg
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    volumes:
+      - ${PAPERLESS_NGX_DATA_PATH}:/usr/src/paperless/data
+      - ${PAPERLESS_NGX_MEDIA_PATH}:/usr/src/paperless/media
+      - ${PAPERLESS_NGX_EXPORT_PATH}:/usr/src/paperless/export
+      - ${PAPERLESS_NGX_CONSUME_PATH}:/usr/src/paperless/consume
+    environment:
+      - PAPERLESS_REDIS=redis://paperless-redis:6379
+      - PAPERLESS_DBHOST=paperless-db
+      - PAPERLESS_DBPORT=5432
+      - PAPERLESS_DBNAME=${PAPERLESS_DB_NAME}
+      - PAPERLESS_DBUSER=${PAPERLESS_DB_USER}
+      - PAPERLESS_DBPASS=${PAPERLESS_DB_PASS}
+      - PAPERLESS_TIKA_ENABLED=1
+      - PAPERLESS_TIKA_ENDPOINT=http://paperless-tika:9998
+      - PAPERLESS_TIKA_GOTENBERG_ENDPOINT=http://paperless-gotenberg:3000
+      - PAPERLESS_TIME_ZONE=${DEFAULT_TZ}
+      - PAPERLESS_URL=${PAPERLESS_NGX_URL}
+      - PAPERLESS_SECRET_KEY=${PAPERLESS_NGX_SECRET_KEY}
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.32
+
+  firefly-redis:
+    image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
+    container_name: firefly_redis
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=firefly"
+      - "sablier.ready-on-start=true"
+    cap_drop:
+      - ALL
+    user: "999:999"
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    environment:
+      - TZ=${DEFAULT_TZ}
+    volumes:
+      - ${FIREFLY_REDIS_DATA_PATH}:/data
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.67
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  gramps-redis:
+    image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
+    container_name: gramps_redis
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=gramps"
+      - "sablier.ready-on-start=true"
+    cap_drop:
+      - ALL
+    user: "999:999"
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    environment:
+      - TZ=${DEFAULT_TZ}
+    volumes:
+      - ${GRAMPS_REDIS_DATA_PATH}:/data
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.68
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# Booked 10.8.1.2 - 10.8.1.62 # remember to add to .env of local dns pihole
 
 
 networks:

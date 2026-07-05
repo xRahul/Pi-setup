@@ -50,6 +50,21 @@ immich.pi.rahulja.in {
 	import cloudflare
 }
 
+pngx.pi.rahulja.in {
+	route {
+		sablier http://sablier:10000 {
+			group paperless
+			session_duration 30m
+			dynamic {
+				display_name "Paperless-ngx"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.32:8000
+	}
+	import cloudflare
+}
+
 watchtower.pi.rahulja.in {
 	reverse_proxy * 10.8.1.13:8080
 	import cloudflare
@@ -121,9 +136,37 @@ plex.pi.rahulja.in {
 }
 
 ntfy.pi.rahulja.in {
-	reverse_proxy * 10.8.1.26:8000
+	@browser {
+		method GET
+		header Accept *text/html*
+	}
+
+	route @browser {
+		sablier http://sablier:10000 {
+			group ntfy
+			session_duration 30m
+			dynamic {
+				display_name "ntfy"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.26:8000
+	}
+
+	route {
+		sablier http://sablier:10000 {
+			group ntfy
+			session_duration 30m
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.26:8000
+	}
+
 	import cloudflare
 }
+
 
 freshrss.pi.rahulja.in {
 	reverse_proxy * 10.8.1.27:80
@@ -131,17 +174,36 @@ freshrss.pi.rahulja.in {
 }
 
 miniflux.pi.rahulja.in {
-	reverse_proxy * 10.8.1.28:8080
+	@api {
+		path /v1/*
+	}
+	route @api {
+		sablier http://sablier:10000 {
+			group miniflux
+			session_duration 30m
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.28:8080
+	}
+
+	route {
+		sablier http://sablier:10000 {
+			group miniflux
+			session_duration 30m
+			dynamic {
+				display_name "Miniflux"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.28:8080
+	}
 	import cloudflare
 }
 
 shiori.pi.rahulja.in {
 	reverse_proxy * 10.8.1.31:8080
-	import cloudflare
-}
-
-pngx.pi.rahulja.in {
-	reverse_proxy * 10.8.1.32:8000
 	import cloudflare
 }
 
@@ -210,7 +272,17 @@ dash.pi.rahulja.in {
 }
 
 cyberchef.pi.rahulja.in {
-	reverse_proxy * 10.8.1.36:80
+	route {
+		sablier http://sablier:10000 {
+			group cyberchef
+			session_duration 30m
+			dynamic {
+				display_name "CyberChef"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.36:8080
+	}
 	import cloudflare
 }
 
@@ -220,9 +292,34 @@ minio.pi.rahulja.in {
 }
 
 resume.pi.rahulja.in {
-	reverse_proxy * 10.8.1.39:3000
+	@api {
+		path /api/*
+	}
+	route @api {
+		sablier http://sablier:10000 {
+			group resume
+			session_duration 30m
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.39:3000
+	}
+
+	route {
+		sablier http://sablier:10000 {
+			group resume
+			session_duration 30m
+			dynamic {
+				display_name "Reactive Resume"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.39:3000
+	}
 	import cloudflare
 }
+
 
 languagetool.pi.rahulja.in {
 	reverse_proxy * 10.8.1.40:8010
@@ -286,7 +383,31 @@ vikunja.pi.rahulja.in {
 }
 
 gramps.pi.rahulja.in {
-	reverse_proxy * 10.8.1.47:5000
+	@api {
+		path /api/*
+	}
+	route @api {
+		sablier http://sablier:10000 {
+			group gramps
+			session_duration 30m
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.61:5000
+	}
+
+	route {
+		sablier http://sablier:10000 {
+			group gramps
+			session_duration 30m
+			dynamic {
+				display_name "Gramps Web"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.61:5000
+	}
 	import cloudflare
 }
 
