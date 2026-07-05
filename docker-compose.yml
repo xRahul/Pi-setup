@@ -1,3 +1,5 @@
+name: homelab
+
 x-logging: &default-logging
   driver: "json-file"
   options:
@@ -19,6 +21,7 @@ services:
         exec /usr/local/bin/containerboot
     logging: *default-logging
     environment:
+      - TZ=${DEFAULT_TZ}
       - TS_AUTHKEY=${TAILSCALE_AUTH_KEY}
       - TS_STATE_DIR=/var/lib/tailscale
       - TS_USERSPACE=false
@@ -93,7 +96,8 @@ services:
     network_mode: service:tailscale
     container_name: dnscrypt-proxy
     restart: unless-stopped
-    logging: *default-logging
+    environment:
+      - TZ=${DEFAULT_TZ}
     security_opt:
       - no-new-privileges:true
     volumes:
@@ -119,6 +123,7 @@ services:
     security_opt:
       - no-new-privileges:true
     environment:
+      - TZ=${DEFAULT_TZ}
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
     # ports:
     #   - "80:80"
@@ -158,6 +163,7 @@ services:
       - ${FILEBROWSER_DB_FILE_PATH}:/database/filebrowser.db
       - ${FILEBROWSER_CONFIG_SETTING_FILE_PATH}:/config/settings.json
     environment:
+      - TZ=${DEFAULT_TZ}
       - PUID=1000
       - PGID=1000
       - FB_DATABASE=/database/filebrowser.db
@@ -235,6 +241,8 @@ services:
     logging: *default-logging
     security_opt:
       - no-new-privileges:true
+    environment:
+      - TZ=${DEFAULT_TZ}
     healthcheck:
       test: redis-cli ping || exit 1
     restart: always
@@ -411,31 +419,31 @@ services:
         ipv4_address: 10.8.1.45
 
 
-  dockge:
-    image: louislam/dockge:1
-    container_name: dockge
-    restart: unless-stopped
+  portainer:
     cap_drop:
       - ALL
     user: "1000:1000"
-    security_opt:
-      - no-new-privileges:true
+    image: portainer/portainer-ce:2.39.4
+    container_name: portainer
     depends_on:
       - socket-proxy-admin
+    hostname: portainer
+    command: -H tcp://socket-proxy-admin:2375
     labels:
       - "sablier.enable=true"
-      - "sablier.group=dockge"
+      - "sablier.group=portainer"
+    restart: unless-stopped
     logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
     environment:
-      - DOCKGE_STACKS_DIR=/opt/stacks
-      - DOCKER_HOST=tcp://socket-proxy-admin:2375
+      - TZ=${DEFAULT_TZ}
     volumes:
-      - ${DOCKGE_DATA_PATH}:/app/data
-      - /home/rahul/docker/docker-compose.yml:/opt/stacks/homelab/compose.yaml:ro
+      - ${PORTAINER_DATA_PATH}:/data
     networks:
       wg-easy:
-        ipv4_address: 10.8.1.61
-      dockge-proxy-net:
+        ipv4_address: 10.8.1.59
+      portainer-proxy-net:
 
   immich-server:
     cap_drop:
@@ -456,6 +464,7 @@ services:
     env_file:
       - .env
     environment:
+      - TZ=${DEFAULT_TZ}
       - DB_HOSTNAME=immich-database
       - REDIS_HOSTNAME=immich-redis
       - DB_PASSWORD=${IMMICH_DB_PASSWORD}
@@ -496,6 +505,7 @@ services:
     env_file:
       - .env
     environment:
+      - TZ=${DEFAULT_TZ}
       - DB_HOSTNAME=immich-database
       - REDIS_HOSTNAME=immich-redis
       - DB_PASSWORD=${IMMICH_DB_PASSWORD}
@@ -529,10 +539,11 @@ services:
     security_opt:
       - no-new-privileges:true
     environment:
-      POSTGRES_PASSWORD: ${IMMICH_DB_PASSWORD}
-      POSTGRES_USER: ${IMMICH_DB_USERNAME}
-      POSTGRES_DB: ${IMMICH_DB_DATABASE_NAME}
-      POSTGRES_INITDB_ARGS: '--data-checksums'
+      - TZ=${DEFAULT_TZ}
+      - POSTGRES_PASSWORD=${IMMICH_DB_PASSWORD}
+      - POSTGRES_USER=${IMMICH_DB_USERNAME}
+      - POSTGRES_DB=${IMMICH_DB_DATABASE_NAME}
+      - POSTGRES_INITDB_ARGS=--data-checksums
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${IMMICH_DB_USERNAME} -d ${IMMICH_DB_DATABASE_NAME}"]
       interval: 10s
@@ -601,6 +612,7 @@ services:
       - --provider.name=docker
       - --provider.auto-stop-externally-started
     environment:
+      - TZ=${DEFAULT_TZ}
       - DOCKER_HOST=tcp://socket-proxy-read:2375
     networks:
       wg-easy:
@@ -626,6 +638,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
+      - TZ=${DEFAULT_TZ}
       - POST=0
       - CONTAINERS=1
       - ALLOW_START=1
@@ -649,7 +662,7 @@ services:
     container_name: socket-proxy-admin
     labels:
       - "sablier.enable=true"
-      - "sablier.group=dockge"
+      - "sablier.group=portainer"
     restart: unless-stopped
     read_only: true
     tmpfs:
@@ -657,6 +670,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
+      - TZ=${DEFAULT_TZ}
       - POST=1
       - CONTAINERS=1
       - IMAGES=1
@@ -673,12 +687,61 @@ services:
       - PING=1
       - VERSION=1
     networks:
-      - dockge-proxy-net
+      - portainer-proxy-net
     logging: *default-logging
     security_opt:
       - no-new-privileges:true
 
-# Booked 10.8.1.2 - 10.8.1.61 # remember to add to .env of local dns pihole
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${DEFAULT_TZ}
+      - JELLYFIN_PublishedServerUrl=https://jellyfin.pi.rahulja.in
+    devices:
+      - /dev/dri:/dev/dri
+      - /dev/video19:/dev/video19
+      - /dev/media0:/dev/media0
+    group_add:
+      - "44"
+      - "992"
+    # --- NETWORK TOGGLE ---
+    # Host Mode (Required for local DLNA multicast & direct Tailscale device access)
+    network_mode: "host"
+    
+    # Bridge Mode (To revert, comment "network_mode" above and uncomment the configurations below)
+    # ports:
+    #   - 8096:8096
+    #   - 7359:7359/udp
+    #   - 1900:1900/udp
+    # dns:
+    #   - 10.8.1.48
+    #   - 1.1.1.1
+    # networks:
+    #   wg-easy:
+    #     ipv4_address: 10.8.1.16
+    # ----------------------
+
+    volumes:
+      - ${JELLYFIN_CONFIG_LOCATION}:/config
+      - ${JELLYFIN_CACHE_LOCATION}:/cache
+      - ${JELLYFIN_TRANSMISSION_COMPLETE_LOCATION}:/data/downloads:ro
+      - ${JELLYFIN_MUSIC_LOCAL_LOCATION}:/data/music_local:ro
+      - ${JELLYFIN_MUSIC_USB_LOCATION}:/data/music_usb:ro
+
+# Booked 10.8.1.2 - 10.8.1.60 # remember to add to .env of local dns pihole
 
 
 networks:
@@ -691,6 +754,6 @@ networks:
   read-proxy-net:
     driver: bridge
     internal: true
-  dockge-proxy-net:
+  portainer-proxy-net:
     driver: bridge
     internal: true
