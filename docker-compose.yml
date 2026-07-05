@@ -752,6 +752,35 @@ services:
       - ${JELLYFIN_MUSIC_LOCAL_LOCATION}:/data/music_local:ro
       - ${JELLYFIN_MUSIC_USB_LOCATION}:/data/music_usb:ro
 
+  memos:
+    cap_drop:
+      - ALL
+    user: "1000:1000"
+    security_opt:
+      - no-new-privileges:true
+    image: neosmemo/memos:0.29.1
+    container_name: memos
+    restart: unless-stopped
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    logging: *default-logging
+    environment:
+      - MEMOS_PORT=5230
+      - MEMOS_DRIVER=sqlite
+      - MEMOS_DSN=${MEMOS_DSN}
+      - MEMOS_INSTANCE_URL=https://memos.pi.rahulja.in
+      - TZ=${DEFAULT_TZ}
+    volumes:
+      - ${MEMOS_DATA_PATH}:/var/opt/memos
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=memos"
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.41
+
   miniflux:
     image: miniflux/miniflux:2.3.2-distroless
     container_name: miniflux

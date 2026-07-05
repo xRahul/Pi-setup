@@ -141,24 +141,6 @@ services:
 
 
 
-  memos:
-    image: neosmemo/memos:0.24.0
-    container_name: memos
-    restart: unless-stopped
-    volumes:
-      - ${MEMOS_DATA_PATH}:/var/opt/memos
-    # ports:
-    #   - 5230:5230
-    dns:
-      - 10.8.1.48
-      - 1.1.1.1
-      - 8.8.8.8
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.41
-
-
-
   vikunja:
     image: vikunja/vikunja:0.24.6
     container_name: vikunja

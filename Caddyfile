@@ -155,6 +155,35 @@ filebrowser.pi.rahulja.in {
 	import cloudflare
 }
 
+memos.pi.rahulja.in {
+	@api {
+		path /api/*
+	}
+	route @api {
+		sablier http://sablier:10000 {
+			group memos
+			session_duration 30m
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.41:5230
+	}
+
+	route {
+		sablier http://sablier:10000 {
+			group memos
+			session_duration 30m
+			dynamic {
+				display_name "Memos"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.41:5230
+	}
+	import cloudflare
+}
+
 dash.pi.rahulja.in {
 	route {
 		sablier http://sablier:10000 {
@@ -187,11 +216,6 @@ resume.pi.rahulja.in {
 
 languagetool.pi.rahulja.in {
 	reverse_proxy * 10.8.1.40:8010
-	import cloudflare
-}
-
-memos.pi.rahulja.in {
-	reverse_proxy * 10.8.1.41:5230
 	import cloudflare
 }
 
