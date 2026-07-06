@@ -258,14 +258,6 @@ memos.pi.rahulja.in {
 
 dash.pi.rahulja.in {
 	route {
-		sablier http://sablier:10000 {
-			group homepage
-			session_duration 30m
-			dynamic {
-				display_name "Homepage Dashboard"
-				theme hacker-terminal
-			}
-		}
 		reverse_proxy * 10.8.1.57:3000
 	}
 	import cloudflare
@@ -527,14 +519,6 @@ paisa.pi.rahulja.in {
 
 homepage.pi.rahulja.in {
 	route {
-		sablier http://sablier:10000 {
-			group homepage
-			session_duration 30m
-			dynamic {
-				display_name "Homepage Dashboard"
-				theme hacker-terminal
-			}
-		}
 		reverse_proxy * 10.8.1.57:3000
 	}
 	import cloudflare

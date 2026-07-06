@@ -262,8 +262,6 @@ services:
         ipv4_address: 10.8.1.9
 
   homepage:
-    profiles:
-      - lazy
     cap_drop:
       - ALL
     user: "1000:1000"
@@ -271,9 +269,6 @@ services:
     container_name: homepage
     depends_on:
       - socket-proxy-read
-    labels:
-      - "sablier.enable=true"
-      - "sablier.group=homepage"
     extra_hosts:
       - "dash.pi.rahulja.in:10.8.1.48"
       - "pihole.pi.rahulja.in:10.8.1.48"
@@ -1685,6 +1680,10 @@ services:
     restart: unless-stopped
     cap_drop:
       - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
     security_opt:
       - no-new-privileges:true
     labels:
