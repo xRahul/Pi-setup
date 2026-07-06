@@ -11,6 +11,8 @@
 !example_immich.env
 !example_pihole.env
 !immich
+!scripts
+!scripts/**
 !caddy.Dockerfile
 !docs
 !sonic.cfg

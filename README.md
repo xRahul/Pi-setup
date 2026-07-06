@@ -107,6 +107,13 @@ The setup relies heavily on environment variables for sensitive data and path co
     -   `CLOUDFLARE_API_TOKEN` (for Caddy SSL)
     -   `TAILSCALE_AUTH_KEY` (for Tailscale connection)
     -   Data paths (defaulting to `/mnt/usb/...`)
+3.  Keep runtime env files local-only. `.env`, `pihole.env`, Pi-hole databases, and service state directories are intentionally ignored by git.
+
+### Runtime Config Files
+-   `pihole.env` is the live Pi-hole local DNS host mapping source used by the Pi-hole container.
+-   `HOMEPAGE_CONFIG_PATH` points to the live Homepage YAML directory mounted at `/app/config`.
+-   Homepage widget credentials should be provided with `HOMEPAGE_VAR_*` values from `.env`; do not hardcode secrets into Homepage YAML.
+-   Caddy admin is bound to `localhost:2019`. Dashboard entries should not rely on reaching the Caddy admin API from another container.
 
 ### Networking
 -   **Network Name:** `wg-easy`
@@ -133,7 +140,12 @@ Most heavy data (media, databases) is mapped to an external USB drive mounted at
 
 3.  **Start Services:**
     ```bash
-    docker-compose up -d
+    docker compose up -d
+    ```
+
+    Lazy services use Compose profiles. To start those services too:
+    ```bash
+    docker compose --profile lazy up -d
     ```
 
 4.  **Access Services:**
@@ -148,3 +160,22 @@ Most heavy data (media, databases) is mapped to an external USB drive mounted at
 -   **Immich:** Requires a significant amount of RAM for machine learning tasks.
 
 -   **Extended Documentation:** Detailed architecture diagrams in `.drawio` and `.svg` formats can be found in the `docs/` directory.
+
+## ✅ Validation
+
+Run these checks before and after config changes:
+
+```bash
+docker compose config
+docker compose config --no-interpolate
+bash scripts/audit-config.sh
+```
+
+For Caddy changes, validate with the project image because it includes the Cloudflare DNS and Sablier modules:
+
+```bash
+docker compose build caddy
+docker compose run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile
+```
+
+Use `git status --short --ignored` to confirm runtime files remain ignored.
