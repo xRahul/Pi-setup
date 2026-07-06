@@ -127,7 +127,7 @@ services:
     #   - 51413:51413
     networks:
       wg-easy:
-        ipv4_address: 10.8.1.23
+        ipv4_address: 10.8.1.69
 
 
 
@@ -163,7 +163,7 @@ services:
       - 8.8.8.8
     networks:
       wg-easy:
-        ipv4_address: 10.8.1.46
+        ipv4_address: 10.8.1.70
 
 
 
@@ -763,7 +763,7 @@ services:
       - 8.8.8.8
     networks:
       wg-easy:
-        ipv4_address: 10.8.1.37
+        ipv4_address: 10.8.1.71
 
 
   chrome:

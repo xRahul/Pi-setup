@@ -96,6 +96,7 @@ services:
     network_mode: service:tailscale
     container_name: dnscrypt-proxy
     restart: unless-stopped
+    logging: *default-logging
     environment:
       - TZ=${DEFAULT_TZ}
     security_opt:
@@ -147,6 +148,8 @@ services:
 
 
   filebrowser:
+    profiles:
+      - lazy
     cap_drop:
       - ALL
     user: "1000:1000"
@@ -233,6 +236,8 @@ services:
 
 
   immich-redis:
+    profiles:
+      - lazy
     cap_drop:
       - ALL
     user: "999:999"
@@ -257,6 +262,8 @@ services:
         ipv4_address: 10.8.1.9
 
   homepage:
+    profiles:
+      - lazy
     cap_drop:
       - ALL
     user: "1000:1000"
@@ -307,6 +314,8 @@ services:
       read-proxy-net:
 
   firefly:
+    profiles:
+      - lazy
     cap_add:
       - CHOWN
       - SETUID
@@ -321,10 +330,16 @@ services:
       - "sablier.enable=true"
       - "sablier.group=firefly"
       - "sablier.running-hours=02:30-04:30"
-    restart: always
+    restart: unless-stopped
     logging: *default-logging
     security_opt:
       - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     volumes:
       - ${FIREFLY_UPLOAD_PATH}:/var/www/html/storage/upload
       - ${FIREFLY_DB_PATH}:/var/www/html/storage/database
@@ -344,7 +359,8 @@ services:
       - STATIC_CRON_TOKEN=${FIREFLY_STATIC_CRON_TOKEN}
       - TZ=${DEFAULT_TZ}
     depends_on:
-      - firefly-redis
+      firefly-redis:
+        condition: service_healthy
     dns:
       - 10.8.1.48
       - 1.1.1.1
@@ -354,6 +370,8 @@ services:
         ipv4_address: 10.8.1.43
 
   firefly-importer:
+    profiles:
+      - lazy
     cap_add:
       - CHOWN
       - SETUID
@@ -368,13 +386,21 @@ services:
       - "sablier.enable=true"
       - "sablier.group=firefly"
       - "sablier.running-hours=02:30-04:30"
-    restart: always
+    restart: unless-stopped
     logging: *default-logging
     security_opt:
       - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:8080/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     depends_on:
-      - firefly
-      - immich-redis
+      firefly:
+        condition: service_healthy
+      immich-redis:
+        condition: service_healthy
     environment:
       - FIREFLY_III_URL=http://firefly:8080
       - VANITY_URL=https://firefly.pi.rahulja.in
@@ -394,6 +420,8 @@ services:
         ipv4_address: 10.8.1.44
 
   firefly-cron:
+    profiles:
+      - lazy
     cap_add:
       - CHOWN
       - SETUID
@@ -407,7 +435,7 @@ services:
       - "sablier.enable=true"
       - "sablier.group=firefly-cron"
       - "sablier.running-hours=02:30-04:30"
-    restart: always
+    restart: unless-stopped
     logging: *default-logging
     security_opt:
       - no-new-privileges:true
@@ -430,6 +458,8 @@ services:
 
 
   portainer:
+    profiles:
+      - lazy
     cap_drop:
       - ALL
     user: "1000:1000"
@@ -446,6 +476,12 @@ services:
     logging: *default-logging
     security_opt:
       - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:9000/api/status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     environment:
       - TZ=${DEFAULT_TZ}
     volumes:
@@ -456,6 +492,8 @@ services:
       portainer-proxy-net:
 
   immich-server:
+    profiles:
+      - lazy
     cap_drop:
       - ALL
     user: "1000:1000"
@@ -487,9 +525,11 @@ services:
       retries: 3
       start_period: 60s
     depends_on:
-      - gramps-redis
-      - immich-database
-    restart: always
+      immich-redis:
+        condition: service_healthy
+      immich-database:
+        condition: service_healthy
+    restart: unless-stopped
     dns:
       - 10.8.1.48
       - 1.1.1.1
@@ -498,6 +538,8 @@ services:
         ipv4_address: 10.8.1.6
 
   immich-machine-learning:
+    profiles:
+      - lazy
     cap_drop:
       - ALL
     user: "1000:1000"
@@ -529,7 +571,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
-    restart: always
+    restart: unless-stopped
     dns:
       - 10.8.1.48
       - 1.1.1.1
@@ -538,6 +580,8 @@ services:
         ipv4_address: 10.8.1.8
 
   immich-database:
+    profiles:
+      - lazy
     cap_drop:
       - ALL
     user: "999:999"
@@ -563,12 +607,14 @@ services:
     volumes:
       - ${IMMICH_DB_DATA_LOCATION}:/var/lib/postgresql/data
     shm_size: 128mb
-    restart: always
+    restart: unless-stopped
     networks:
       wg-easy:
         ipv4_address: 10.8.1.10
 
   stirling-pdf:
+    profiles:
+      - lazy
     cap_drop:
       - ALL
     image: stirlingtools/stirling-pdf:2.14.0-ultra-lite
@@ -656,6 +702,12 @@ services:
       - ALLOW_STOP=1
       - PING=1
       - VERSION=1
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:2375/_ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     networks:
       - read-proxy-net
     logging: *default-logging
@@ -663,6 +715,8 @@ services:
       - no-new-privileges:true
 
   socket-proxy-admin:
+    profiles:
+      - lazy
     cap_add:
       - CHOWN
       - SETUID
@@ -697,6 +751,12 @@ services:
       - ALLOW_UNPAUSE=1
       - PING=1
       - VERSION=1
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:2375/_ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     networks:
       - portainer-proxy-net
     logging: *default-logging
@@ -704,7 +764,7 @@ services:
       - no-new-privileges:true
 
   jellyfin:
-    image: lscr.io/linuxserver/jellyfin:latest
+    image: lscr.io/linuxserver/jellyfin:10.11.11
     container_name: jellyfin
     restart: unless-stopped
     logging: *default-logging
@@ -716,6 +776,12 @@ services:
       - CHOWN
       - SETUID
       - SETGID
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8096/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     environment:
       - PUID=1000
       - PGID=1000
@@ -753,6 +819,8 @@ services:
       - ${JELLYFIN_MUSIC_USB_LOCATION}:/data/music_usb:ro
 
   memos:
+    profiles:
+      - lazy
     cap_drop:
       - ALL
     user: "1000:1000"
@@ -772,6 +840,12 @@ services:
       - MEMOS_DSN=${MEMOS_DSN}
       - MEMOS_INSTANCE_URL=https://memos.pi.rahulja.in
       - TZ=${DEFAULT_TZ}
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:5230/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     volumes:
       - ${MEMOS_DATA_PATH}:/var/opt/memos
     labels:
@@ -782,11 +856,14 @@ services:
         ipv4_address: 10.8.1.41
 
   miniflux:
+    profiles:
+      - lazy
     image: miniflux/miniflux:2.3.2-distroless
     container_name: miniflux
     restart: unless-stopped
     depends_on:
-      - miniflux_db
+      miniflux_db:
+        condition: service_healthy
     labels:
       - "sablier.enable=true"
       - "sablier.group=miniflux"
@@ -828,6 +905,8 @@ services:
         ipv4_address: 10.8.1.28
 
   miniflux_db:
+    profiles:
+      - lazy
     image: postgres:18.4-alpine3.24
     container_name: miniflux-db
     restart: unless-stopped
@@ -859,7 +938,7 @@ services:
   miniflux-cron:
     image: alpine:3.24.1
     container_name: miniflux-cron
-    restart: always
+    restart: unless-stopped
     logging: *default-logging
     security_opt:
       - no-new-privileges:true
@@ -881,6 +960,8 @@ services:
         ipv4_address: 10.8.1.46
 
   archivebox:
+    profiles:
+      - lazy
     # cap_drop:
     #   - ALL
     # user: "1000:1000"
@@ -928,9 +1009,15 @@ services:
         ipv4_address: 10.8.1.17
 
   ntfy:
+    profiles:
+      - lazy
     image: binwiederhier/ntfy:v2.25.0
     container_name: ntfy
     restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
     command:
       - serve
     environment:
@@ -952,6 +1039,12 @@ services:
     labels:
       - "sablier.enable=true"
       - "sablier.group=ntfy"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:8000/v1/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     volumes:
       - ${NTFY_CACHE}:/var/cache/ntfy
       - ${NTFY_ETC}:/etc/ntfy
@@ -966,6 +1059,8 @@ services:
     logging: *default-logging
 
   resume-db:
+    profiles:
+      - lazy
     image: postgres:18.4-alpine3.24
     container_name: resume-db
     restart: unless-stopped
@@ -1004,11 +1099,14 @@ services:
           memory: 256M
 
   resume:
+    profiles:
+      - lazy
     image: amruthpillai/reactive-resume:v5.2.0
     container_name: resume
     restart: unless-stopped
     depends_on:
-      - resume-db
+      resume-db:
+        condition: service_healthy
     labels:
       - "sablier.enable=true"
       - "sablier.group=resume"
@@ -1018,6 +1116,12 @@ services:
     security_opt:
       - no-new-privileges:true
     logging: *default-logging
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     environment:
       - TZ=${DEFAULT_TZ}
       - PORT=3000
@@ -1041,6 +1145,8 @@ services:
           memory: 256M
 
   cyberchef:
+    profiles:
+      - lazy
     image: ghcr.io/gchq/cyberchef:11.2.0
     container_name: cyberchef
     restart: unless-stopped
@@ -1052,6 +1158,12 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:8080/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     read_only: true
     tmpfs:
       - /tmp
@@ -1066,6 +1178,8 @@ services:
         ipv4_address: 10.8.1.36
 
   grampsweb:
+    profiles:
+      - lazy
     image: ghcr.io/gramps-project/grampsweb:26.6.2
     container_name: grampsweb
     restart: unless-stopped
@@ -1078,6 +1192,12 @@ services:
     cap_drop:
       - ALL
     user: "1000:1000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:5000/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     environment:
       GRAMPSWEB_TREE: "My Family Tree"
       GRAMPSWEB_CELERY_CONFIG__broker_url: "redis://gramps-redis:6379/0"
@@ -1090,7 +1210,8 @@ services:
       HOME: /app/cache
       TZ: ${DEFAULT_TZ}
     depends_on:
-      - gramps-redis
+      gramps-redis:
+        condition: service_healthy
     volumes:
       - ${GRAMPS_USERS}:/app/users
       - ${GRAMPS_INDEX}:/app/indexdir
@@ -1113,6 +1234,8 @@ services:
           memory: 512M
 
   grampsweb_celery:
+    profiles:
+      - lazy
     image: ghcr.io/gramps-project/grampsweb:26.6.2
     container_name: grampsweb_celery
     restart: unless-stopped
@@ -1138,7 +1261,8 @@ services:
       HOME: /app/cache
       TZ: ${DEFAULT_TZ}
     depends_on:
-      - gramps-redis
+      gramps-redis:
+        condition: service_healthy
     volumes:
       - ${GRAMPS_USERS}:/app/users
       - ${GRAMPS_INDEX}:/app/indexdir
@@ -1162,6 +1286,8 @@ services:
           memory: 512M
 
   paperless-db:
+    profiles:
+      - lazy
     image: postgres:18.4-alpine3.24
     container_name: paperless-db
     restart: unless-stopped
@@ -1195,6 +1321,8 @@ services:
       retries: 5
 
   paperless-redis:
+    profiles:
+      - lazy
     image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
     container_name: paperless-redis
     restart: unless-stopped
@@ -1222,6 +1350,8 @@ services:
       retries: 5
 
   paperless-tika:
+    profiles:
+      - lazy
     image: apache/tika:3.3.1.0
     container_name: paperless-tika
     restart: unless-stopped
@@ -1244,6 +1374,8 @@ services:
       retries: 5
 
   paperless-gotenberg:
+    profiles:
+      - lazy
     image: gotenberg/gotenberg:8.34.0
     container_name: paperless-gotenberg
     restart: unless-stopped
@@ -1270,18 +1402,28 @@ services:
       retries: 5
 
   paperless-ngx:
+    profiles:
+      - lazy
     image: ghcr.io/paperless-ngx/paperless-ngx:2.20.15
     container_name: paperless-ngx
     restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
     labels:
       - "sablier.enable=true"
       - "sablier.group=paperless"
     logging: *default-logging
     depends_on:
-      - paperless-db
-      - paperless-redis
-      - paperless-tika
-      - paperless-gotenberg
+      paperless-db:
+        condition: service_healthy
+      paperless-redis:
+        condition: service_healthy
+      paperless-tika:
+        condition: service_healthy
+      paperless-gotenberg:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://127.0.0.1:8000/"]
       interval: 30s
@@ -1314,6 +1456,8 @@ services:
         ipv4_address: 10.8.1.32
 
   firefly-redis:
+    profiles:
+      - lazy
     image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
     container_name: firefly_redis
     restart: unless-stopped
@@ -1341,6 +1485,8 @@ services:
       retries: 5
 
   gramps-redis:
+    profiles:
+      - lazy
     image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
     container_name: gramps_redis
     restart: unless-stopped
@@ -1367,7 +1513,7 @@ services:
       timeout: 5s
       retries: 5
 
-# Booked 10.8.1.2 - 10.8.1.62 # remember to add to .env of local dns pihole
+# Booked 10.8.1.2 - 10.8.1.68 # remember to add to .env of local dns pihole
 
 
 networks:
