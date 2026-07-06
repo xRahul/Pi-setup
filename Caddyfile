@@ -286,6 +286,21 @@ cyberchef.pi.rahulja.in {
 	import cloudflare
 }
 
+actual.pi.rahulja.in {
+	route {
+		sablier http://sablier:10000 {
+			group actual
+			session_duration 30m
+			dynamic {
+				display_name "Actual Budget"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.3:5006
+	}
+	import cloudflare
+}
+
 minio.pi.rahulja.in {
 	reverse_proxy * 10.8.1.37:35507
 	import cloudflare

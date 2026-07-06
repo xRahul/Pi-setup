@@ -86,6 +86,7 @@ The following services are configured with static IPs in the `10.8.1.0/24` subne
 | **Transmission** | `10.8.1.23` | `trans.pi.rahulja.in` | Torrent Client |
 | **Paperless-ngx** | `10.8.1.32` | `pngx.pi.rahulja.in` | Document Management System |
 | **Filebrowser** | `10.8.1.34` | `filebrowser.pi.rahulja.in` | Web-based File Manager |
+| **Actual Budget** | `10.8.1.3` | `actual.pi.rahulja.in` | Personal Budgeting |
 | **Tailscale** | `10.8.1.48` | N/A | VPN Mesh Network |
 | **Web Test** | `10.8.1.49` | `webtest.pi.rahulja.in` | Connectivity Test (Whoami) |
 | **N8n** | `10.8.1.53` | `n8n.pi.rahulja.in` | Workflow Automation |
