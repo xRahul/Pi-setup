@@ -398,7 +398,7 @@ services:
     depends_on:
       firefly:
         condition: service_healthy
-      immich-redis:
+      firefly-redis:
         condition: service_healthy
     environment:
       - FIREFLY_III_URL=http://firefly:8080
@@ -407,7 +407,7 @@ services:
       - TRUSTED_PROXIES=**
       - CACHE_DRIVER=redis
       - SESSION_DRIVER=redis
-      - REDIS_HOST=immich-redis
+      - REDIS_HOST=firefly-redis
       - REDIS_PORT=6379
       - TZ=${DEFAULT_TZ}
     dns:
