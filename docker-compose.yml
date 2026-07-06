@@ -886,6 +886,50 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.3
 
+  ezbookkeeping:
+    profiles:
+      - lazy
+    user: "1000:1000"
+    image: mayswind/ezbookkeeping:SNAPSHOT-20260705
+    container_name: ezbookkeeping
+    hostname: ezbookkeeping
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=ezbookkeeping"
+    logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - EBK_SERVER_DOMAIN=ezbookkeeping.pi.rahulja.in
+      - EBK_SERVER_ROOT_URL=https://ezbookkeeping.pi.rahulja.in/
+      - EBK_SERVER_ENABLE_GZIP=true
+      - EBK_DATABASE_TYPE=sqlite3
+      - EBK_DATABASE_DB_PATH=/ezbookkeeping/data/ezbookkeeping.db
+      - EBK_STORAGE_TYPE=local_filesystem
+      - EBK_STORAGE_LOCAL_FILESYSTEM_PATH=/ezbookkeeping/storage/
+      - EBK_LOG_MODE=console file
+      - EBK_SECURITY_SECRET_KEY=${EZBOOKKEEPING_SECRET_KEY}
+    volumes:
+      - ${EZBOOKKEEPING_DATA_PATH}:/ezbookkeeping/data
+      - ${EZBOOKKEEPING_STORAGE_PATH}:/ezbookkeeping/storage
+      - ${EZBOOKKEEPING_LOG_PATH}:/ezbookkeeping/log
+      - /etc/localtime:/etc/localtime:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:8080/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.19
+
   miniflux:
     profiles:
       - lazy
@@ -1745,7 +1789,7 @@ services:
       retries: 5
 
 # Booked 10.8.1.2 - 10.8.1.68 # remember to add to .env of local dns pihole
-# Free after Caddy sink: 10.8.1.19-20, 10.8.1.22, 10.8.1.24-25, 10.8.1.27, 10.8.1.31, 10.8.1.33, 10.8.1.40, 10.8.1.42, 10.8.1.49-51, 10.8.1.54-56
+# Free after Caddy sink: 10.8.1.20, 10.8.1.22, 10.8.1.24-25, 10.8.1.27, 10.8.1.31, 10.8.1.33, 10.8.1.40, 10.8.1.42, 10.8.1.49-51, 10.8.1.54-56
 # Reserved, not free: 10.8.1.1 Jellyfin host route; 10.8.1.53 n8n; 10.8.1.254 Caddy sink
 
 

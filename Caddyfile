@@ -364,6 +364,37 @@ sure.pi.rahulja.in {
 	import cloudflare
 }
 
+ezbookkeeping.pi.rahulja.in {
+	@api {
+		path /api/* /avatar/* /pictures/* /qrcode/* /oauth2/* /mcp*
+	}
+
+	route @api {
+		sablier http://sablier:10000 {
+			group ezbookkeeping
+			session_duration 30m
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.19:8080
+	}
+
+	route {
+		sablier http://sablier:10000 {
+			group ezbookkeeping
+			session_duration 30m
+			dynamic {
+				display_name "ezBookkeeping"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.19:8080
+	}
+
+	import cloudflare
+}
+
 
 languagetool.pi.rahulja.in {
 	reverse_proxy * 10.8.1.254:8010
