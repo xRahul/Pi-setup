@@ -328,7 +328,7 @@ services:
     container_name: firefly
     labels:
       - "sablier.enable=true"
-      - "sablier.group=firefly"
+      - "sablier.group=firefly,firefly-importer"
       - "sablier.running-hours=02:30-04:30"
     restart: unless-stopped
     logging: *default-logging
@@ -384,8 +384,7 @@ services:
     container_name: firefly-importer
     labels:
       - "sablier.enable=true"
-      - "sablier.group=firefly"
-      - "sablier.running-hours=02:30-04:30"
+      - "sablier.group=firefly-importer"
     restart: unless-stopped
     logging: *default-logging
     security_opt:
@@ -1472,7 +1471,7 @@ services:
     restart: unless-stopped
     labels:
       - "sablier.enable=true"
-      - "sablier.group=firefly"
+      - "sablier.group=firefly,firefly-importer"
       - "sablier.ready-on-start=true"
     cap_drop:
       - ALL

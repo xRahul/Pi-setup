@@ -365,7 +365,7 @@ firefly.pi.rahulja.in {
 fireflyimporter.pi.rahulja.in {
 	route {
 		sablier http://sablier:10000 {
-			group firefly
+			group firefly-importer
 			session_duration 30m
 			dynamic {
 				display_name "Firefly Importer"
