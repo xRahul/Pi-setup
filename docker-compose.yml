@@ -1147,6 +1147,196 @@ services:
         limits:
           memory: 256M
 
+  sure-db:
+    profiles:
+      - lazy
+    image: postgres:18.4-alpine3.24
+    container_name: sure-db
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=sure"
+      - "sablier.running-hours=02:55-05:15,21:55-22:20"
+      - "sablier.ready-on-start=true"
+    cap_drop:
+      - ALL
+    user: "999:999"
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - POSTGRES_USER=${SURE_DB_USER}
+      - POSTGRES_PASSWORD=${SURE_DB_PASS}
+      - POSTGRES_DB=${SURE_DB_NAME}
+    volumes:
+      - ${SURE_DB_DATA_PATH}:/var/lib/postgresql
+    command: ["-c", "shared_buffers=16MB", "-c", "max_connections=15", "-c", "work_mem=1MB", "-c", "maintenance_work_mem=8MB", "-c", "temp_buffers=2MB", "-c", "effective_cache_size=64MB"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${SURE_DB_USER} -d ${SURE_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.13
+
+  sure-redis:
+    profiles:
+      - lazy
+    image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
+    container_name: sure-redis
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=sure"
+      - "sablier.running-hours=02:55-05:15,21:55-22:20"
+      - "sablier.ready-on-start=true"
+    cap_drop:
+      - ALL
+    user: "999:999"
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    environment:
+      - TZ=${DEFAULT_TZ}
+    volumes:
+      - ${SURE_REDIS_DATA_PATH}:/data
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.14
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  sure:
+    profiles:
+      - lazy
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+      - DAC_OVERRIDE
+    cap_drop:
+      - ALL
+    image: ghcr.io/we-promise/sure:0.7.3-alpha.1
+    container_name: sure
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=sure"
+      - "sablier.running-hours=02:55-05:15,21:55-22:20"
+      - "homepage.group=Productivity"
+      - "homepage.name=Sure"
+      - "homepage.icon=mdi-cash-multiple"
+      - "homepage.href=https://sure.pi.rahulja.in"
+      - "homepage.description=Personal Finance (Sablier)"
+      - "homepage.siteMonitor=http://10.8.1.2:3000"
+    depends_on:
+      sure-db:
+        condition: service_healthy
+      sure-redis:
+        condition: service_healthy
+    logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+    pids_limit: 256
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - SECRET_KEY_BASE=${SURE_SECRET_KEY_BASE}
+      - SELF_HOSTED=true
+      - ONBOARDING_STATE=open
+      - RAILS_ASSUME_SSL=true
+      - RAILS_FORCE_SSL=false
+      - APP_DOMAIN=sure.pi.rahulja.in
+      - WEBAUTHN_RP_ID=sure.pi.rahulja.in
+      - WEBAUTHN_ALLOWED_ORIGINS=https://sure.pi.rahulja.in
+      - POSTGRES_USER=${SURE_DB_USER}
+      - POSTGRES_PASSWORD=${SURE_DB_PASS}
+      - POSTGRES_DB=${SURE_DB_NAME}
+      - DB_HOST=sure-db
+      - DB_PORT=5432
+      - REDIS_URL=redis://sure-redis:6379/1
+      - WEB_CONCURRENCY=1
+      - RAILS_MAX_THREADS=2
+      - MALLOC_ARENA_MAX=2
+    volumes:
+      - ${SURE_STORAGE_PATH}:/rails/storage
+    healthcheck:
+      test: ["CMD-SHELL", "ruby -rnet/http -e \"Net::HTTP.start('127.0.0.1', 3000, open_timeout: 2, read_timeout: 2) { |h| r = h.head('/'); exit(r.code.to_i < 500 ? 0 : 1) }\""]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.2
+
+  sure-worker:
+    profiles:
+      - lazy
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+      - DAC_OVERRIDE
+    cap_drop:
+      - ALL
+    image: ghcr.io/we-promise/sure:0.7.3-alpha.1
+    container_name: sure-worker
+    command: bundle exec sidekiq
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=sure"
+      - "sablier.running-hours=02:55-05:15,21:55-22:20"
+    depends_on:
+      sure-db:
+        condition: service_healthy
+      sure-redis:
+        condition: service_healthy
+    logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 384m
+    pids_limit: 256
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - SECRET_KEY_BASE=${SURE_SECRET_KEY_BASE}
+      - SELF_HOSTED=true
+      - ONBOARDING_STATE=open
+      - RAILS_ASSUME_SSL=true
+      - RAILS_FORCE_SSL=false
+      - APP_DOMAIN=sure.pi.rahulja.in
+      - WEBAUTHN_RP_ID=sure.pi.rahulja.in
+      - WEBAUTHN_ALLOWED_ORIGINS=https://sure.pi.rahulja.in
+      - POSTGRES_USER=${SURE_DB_USER}
+      - POSTGRES_PASSWORD=${SURE_DB_PASS}
+      - POSTGRES_DB=${SURE_DB_NAME}
+      - DB_HOST=sure-db
+      - DB_PORT=5432
+      - REDIS_URL=redis://sure-redis:6379/1
+      - RAILS_MAX_THREADS=2
+      - MALLOC_ARENA_MAX=2
+    volumes:
+      - ${SURE_STORAGE_PATH}:/rails/storage
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.15
+
   cyberchef:
     profiles:
       - lazy
@@ -1522,7 +1712,7 @@ services:
       retries: 5
 
 # Booked 10.8.1.2 - 10.8.1.68 # remember to add to .env of local dns pihole
-# Free after Caddy sink: 10.8.1.2, 10.8.1.13-15, 10.8.1.19-20, 10.8.1.22, 10.8.1.24-25, 10.8.1.27, 10.8.1.31, 10.8.1.33, 10.8.1.40, 10.8.1.42, 10.8.1.49-51, 10.8.1.54-56
+# Free after Caddy sink: 10.8.1.19-20, 10.8.1.22, 10.8.1.24-25, 10.8.1.27, 10.8.1.31, 10.8.1.33, 10.8.1.40, 10.8.1.42, 10.8.1.49-51, 10.8.1.54-56
 # Reserved, not free: 10.8.1.1 Jellyfin host route; 10.8.1.53 n8n; 10.8.1.254 Caddy sink
 
 
