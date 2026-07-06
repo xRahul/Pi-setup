@@ -15,7 +15,7 @@ pihole.pi.rahulja.in {
 }
 
 wg.pi.rahulja.in {
-	reverse_proxy * 10.8.1.2:51821
+	reverse_proxy * 10.8.1.254:51821
 	import cloudflare
 }
 
@@ -66,17 +66,17 @@ pngx.pi.rahulja.in {
 }
 
 watchtower.pi.rahulja.in {
-	reverse_proxy * 10.8.1.13:8080
+	reverse_proxy * 10.8.1.254:8080
 	import cloudflare
 }
 
 navidrome.pi.rahulja.in {
-	reverse_proxy * 10.8.1.14:4533
+	reverse_proxy * 10.8.1.254:4533
 	import cloudflare
 }
 
 mikochi.pi.rahulja.in {
-	reverse_proxy * 10.8.1.15:8080
+	reverse_proxy * 10.8.1.254:8080
 	import cloudflare
 }
 
@@ -101,17 +101,17 @@ archivebox.pi.rahulja.in {
 }
 
 prometheus.pi.rahulja.in {
-	reverse_proxy * 10.8.1.19:9090
+	reverse_proxy * 10.8.1.254:9090
 	import cloudflare
 }
 
 grafana.pi.rahulja.in {
-	reverse_proxy * 10.8.1.20:3000
+	reverse_proxy * 10.8.1.254:3000
 	import cloudflare
 }
 
 wallabag.pi.rahulja.in {
-	reverse_proxy * 10.8.1.22:80
+	reverse_proxy * 10.8.1.254:80
 	import cloudflare
 }
 
@@ -126,12 +126,12 @@ prowlarr.pi.rahulja.in {
 }
 
 flame.pi.rahulja.in {
-	reverse_proxy * 10.8.1.24:5005
+	reverse_proxy * 10.8.1.254:5005
 	import cloudflare
 }
 
 plex.pi.rahulja.in {
-	reverse_proxy * 10.8.1.25:32400
+	reverse_proxy * 10.8.1.254:32400
 	import cloudflare
 }
 
@@ -169,7 +169,7 @@ ntfy.pi.rahulja.in {
 
 
 freshrss.pi.rahulja.in {
-	reverse_proxy * 10.8.1.27:80
+	reverse_proxy * 10.8.1.254:80
 	import cloudflare
 }
 
@@ -203,12 +203,12 @@ miniflux.pi.rahulja.in {
 }
 
 shiori.pi.rahulja.in {
-	reverse_proxy * 10.8.1.31:8080
+	reverse_proxy * 10.8.1.254:8080
 	import cloudflare
 }
 
 grocy.pi.rahulja.in {
-	reverse_proxy * 10.8.1.33:80
+	reverse_proxy * 10.8.1.254:80
 	import cloudflare
 }
 
@@ -322,12 +322,12 @@ resume.pi.rahulja.in {
 
 
 languagetool.pi.rahulja.in {
-	reverse_proxy * 10.8.1.40:8010
+	reverse_proxy * 10.8.1.254:8010
 	import cloudflare
 }
 
 linkding.pi.rahulja.in {
-	reverse_proxy * 10.8.1.42:9090
+	reverse_proxy * 10.8.1.254:9090
 	import cloudflare
 }
 
@@ -412,17 +412,17 @@ gramps.pi.rahulja.in {
 }
 
 webtest.pi.rahulja.in {
-	reverse_proxy * 10.8.1.49:80
+	reverse_proxy * 10.8.1.254:80
 	import cloudflare
 }
 
 openproject.pi.rahulja.in {
-	reverse_proxy * 10.8.1.50:8080
+	reverse_proxy * 10.8.1.254:8080
 	import cloudflare
 }
 
 nc.pi.rahulja.in {
-	reverse_proxy * 10.8.1.51:11000
+	reverse_proxy * 10.8.1.254:11000
 	import cloudflare
 }
 
@@ -434,19 +434,19 @@ n8n.pi.rahulja.in {
 }
 
 searxng.pi.rahulja.in {
-	reverse_proxy * 10.8.1.54:8080
+	reverse_proxy * 10.8.1.254:8080
 	import cloudflare
 }
 
 storyteller.pi.rahulja.in {
-	reverse_proxy * 10.8.1.55:8001 {
+	reverse_proxy * 10.8.1.254:8001 {
 		flush_interval -1
 	}
 	import cloudflare
 }
 
 paisa.pi.rahulja.in {
-	reverse_proxy * 10.8.1.56:7500
+	reverse_proxy * 10.8.1.254:7500
 	import cloudflare
 }
 
@@ -526,5 +526,4 @@ portainer.pi.rahulja.in {
 	}
 	import cloudflare
 }
-
 

@@ -1522,6 +1522,8 @@ services:
       retries: 5
 
 # Booked 10.8.1.2 - 10.8.1.68 # remember to add to .env of local dns pihole
+# Free after Caddy sink: 10.8.1.2, 10.8.1.13-15, 10.8.1.19-20, 10.8.1.22, 10.8.1.24-25, 10.8.1.27, 10.8.1.31, 10.8.1.33, 10.8.1.40, 10.8.1.42, 10.8.1.49-51, 10.8.1.54-56
+# Reserved, not free: 10.8.1.1 Jellyfin host route; 10.8.1.53 n8n; 10.8.1.254 Caddy sink
 
 
 networks:
