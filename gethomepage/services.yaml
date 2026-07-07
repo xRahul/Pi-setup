@@ -39,6 +39,13 @@
       server: my-docker
       container: memos
       siteMonitor: http://10.8.1.41:5230
+  - n8n:
+      icon: n8n.png
+      href: https://n8n.pi.rahulja.in
+      description: Workflow Automation
+      server: my-docker
+      container: n8n
+      siteMonitor: http://10.8.1.53:5678/healthz
   - Firefly III:
       icon: firefly.png
       href: https://firefly.pi.rahulja.in

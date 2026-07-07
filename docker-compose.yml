@@ -10,7 +10,7 @@ services:
 
 
   tailscale:
-    image: tailscale/tailscale:v1.98.4
+    image: tailscale/tailscale:v1.98.8
     container_name: tailscale
     restart: unless-stopped
     entrypoint:
@@ -55,7 +55,7 @@ services:
         ipv4_address: 10.8.1.48
 
   pihole:
-    image: pihole/pihole:2026.06.0
+    image: pihole/pihole:2026.07.2
     network_mode: service:tailscale
     container_name: pihole
     restart: unless-stopped
@@ -153,7 +153,7 @@ services:
     cap_drop:
       - ALL
     user: "1000:1000"
-    image: filebrowser/filebrowser:v2.63.17
+    image: filebrowser/filebrowser:v2.63.18
     container_name: filebrowser
     labels:
       - "sablier.enable=true"
@@ -308,6 +308,100 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.57
       read-proxy-net:
+
+  n8n:
+    cap_drop:
+      - ALL
+    image: n8nio/n8n:2.29.7
+    container_name: n8n
+    restart: unless-stopped
+    mem_limit: 768m
+    mem_reservation: 256m
+    logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - GENERIC_TIMEZONE=${DEFAULT_TZ}
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_HOST=n8n.pi.rahulja.in
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - WEBHOOK_URL=https://n8n.pi.rahulja.in/
+      - N8N_EDITOR_BASE_URL=https://n8n.pi.rahulja.in
+      - N8N_PROXY_HOPS=1
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - EXECUTIONS_MODE=regular
+      - N8N_RUNNERS_MODE=external
+      - N8N_RUNNERS_BROKER_LISTEN_ADDRESS=0.0.0.0
+      - N8N_RUNNERS_AUTH_TOKEN=${N8N_RUNNERS_AUTH_TOKEN}
+      - N8N_RUNNERS_MAX_CONCURRENCY=2
+      - N8N_RUNNERS_MAX_OLD_SPACE_SIZE=128
+      - N8N_CONCURRENCY_PRODUCTION_LIMIT=2
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
+      - N8N_MIGRATE_FS_STORAGE_PATH=true
+      - EXECUTIONS_DATA_SAVE_ON_SUCCESS=none
+      - EXECUTIONS_DATA_SAVE_ON_ERROR=all
+      - EXECUTIONS_DATA_SAVE_ON_PROGRESS=false
+      - EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS=false
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=168
+      - EXECUTIONS_DATA_PRUNE_MAX_COUNT=5000
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_VERSION_NOTIFICATIONS_ENABLED=false
+      - N8N_TEMPLATES_ENABLED=false
+      - EXTERNAL_FRONTEND_HOOKS_URLS=
+      - N8N_DIAGNOSTICS_CONFIG_FRONTEND=
+      - N8N_DIAGNOSTICS_CONFIG_BACKEND=
+      - N8N_PERSONALIZATION_ENABLED=false
+      - N8N_HIRING_BANNER_ENABLED=false
+      - N8N_LOG_LEVEL=warn
+      - NODE_OPTIONS=--max-old-space-size=512
+    volumes:
+      - ${N8N_DATA_FOLDER}:/home/node/.n8n
+      - ${N8N_LOCAL_FILES_FOLDER}/files:/files
+    healthcheck:
+      test: ["CMD", "node", "-e", "const http=require('http');const req=http.request('http://127.0.0.1:5678/healthz',{timeout:3000},res=>process.exit(res.statusCode>=200&&res.statusCode<400?0:1));req.on('error',()=>process.exit(1));req.end();"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.53
+
+  n8n-runners:
+    cap_drop:
+      - ALL
+    image: n8nio/runners:2.29.7
+    container_name: n8n-runners
+    restart: unless-stopped
+    mem_limit: 256m
+    mem_reservation: 64m
+    logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      n8n:
+        condition: service_healthy
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - N8N_RUNNERS_AUTH_TOKEN=${N8N_RUNNERS_AUTH_TOKEN}
+      - N8N_RUNNERS_TASK_BROKER_URI=http://n8n:5679
+      - N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT=15
+      - N8N_RUNNERS_MAX_CONCURRENCY=2
+      - N8N_RUNNERS_MAX_OLD_SPACE_SIZE=128
+      - N8N_RUNNERS_LAUNCHER_LOG_LEVEL=warn
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      - wg-easy
 
   firefly:
     profiles:
@@ -568,6 +662,7 @@ services:
     cap_drop:
       - ALL
     user: "1000:1000"
+    # Use LTS tag, not STS.
     image: portainer/portainer-ce:2.39.4
     container_name: portainer
     depends_on:
@@ -789,7 +884,7 @@ services:
       - SETGID
     cap_drop:
       - ALL
-    image: lscr.io/linuxserver/socket-proxy:3.4.1-r0-ls87
+    image: lscr.io/linuxserver/socket-proxy:3.4.2-r0-ls88
     container_name: socket-proxy-read
     restart: unless-stopped
     read_only: true
@@ -826,7 +921,7 @@ services:
       - SETGID
     cap_drop:
       - ALL
-    image: lscr.io/linuxserver/socket-proxy:3.4.1-r0-ls87
+    image: lscr.io/linuxserver/socket-proxy:3.4.2-r0-ls88
     container_name: socket-proxy-admin
     labels:
       - "sablier.enable=true"
@@ -995,7 +1090,7 @@ services:
     profiles:
       - lazy
     user: "1000:1000"
-    image: mayswind/ezbookkeeping:SNAPSHOT-20260705
+    image: mayswind/ezbookkeeping:SNAPSHOT-20260706
     container_name: ezbookkeeping
     hostname: ezbookkeeping
     restart: unless-stopped
@@ -1288,7 +1383,7 @@ services:
   resume:
     profiles:
       - lazy
-    image: amruthpillai/reactive-resume:v5.2.0
+    image: amruthpillai/reactive-resume:v5.2.1
     container_name: resume
     restart: unless-stopped
     depends_on:
