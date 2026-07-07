@@ -81,3 +81,31 @@ div[class*="DateTime_"] {
 div[class*="Search_"] {
     margin-top: 2.5rem !important;
 }
+
+/* Service name filter */
+.homepage-service-filter {
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+}
+
+.homepage-service-filter input {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5) !important;
+    color: inherit;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(8px);
+    border-radius: 99px;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.homepage-service-filter input:focus {
+    background: rgba(0, 0, 0, 0.7) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 0 15px rgba(255,255,255,0.1);
+}
+
+.homepage-service-filter-hidden {
+    display: none !important;
+}
