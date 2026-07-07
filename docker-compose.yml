@@ -365,6 +365,105 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.43
 
+  ghostfolio:
+    image: ghostfolio/ghostfolio:3.21.0
+    container_name: ghostfolio
+    init: true
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=ghostfolio"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    environment:
+      - DATABASE_URL=${GHOSTFOLIO_DATABASE_URL}
+      - DIRECT_URL=${GHOSTFOLIO_DIRECT_URL}
+      - ACCESS_TOKEN_SALT=${GHOSTFOLIO_ACCESS_TOKEN_SALT}
+      - JWT_SECRET_KEY=${GHOSTFOLIO_JWT_SECRET_KEY}
+      - ROOT_URL=${GHOSTFOLIO_ROOT_URL}
+      - API_KEY_COINGECKO_DEMO=${GHOSTFOLIO_API_KEY_COINGECKO_DEMO}
+      - REDIS_HOST=${GHOSTFOLIO_REDIS_HOST}
+      - REDIS_PORT=${GHOSTFOLIO_REDIS_PORT}
+      - REDIS_DB=${GHOSTFOLIO_REDIS_DB}
+      - TZ=${DEFAULT_TZ}
+    depends_on:
+      ghostfolio-db:
+        condition: service_healthy
+      ghostfolio-valkey:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3333/api/v1/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+      - 8.8.8.8
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.4
+
+  ghostfolio-db:
+    image: postgres:18.4-alpine3.24
+    container_name: ghostfolio-db
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=ghostfolio"
+      - "sablier.ready-on-start=true"
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - POSTGRES_USER=${GHOSTFOLIO_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${GHOSTFOLIO_POSTGRES_PASSWORD}
+      - POSTGRES_DB=${GHOSTFOLIO_POSTGRES_DB}
+    volumes:
+      - ${GHOSTFOLIO_DB_DATA_PATH}:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${GHOSTFOLIO_POSTGRES_USER} -d ${GHOSTFOLIO_POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.7
+
+  ghostfolio-valkey:
+    image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
+    container_name: ghostfolio-valkey
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=ghostfolio"
+      - "sablier.ready-on-start=true"
+    cap_drop:
+      - ALL
+    user: "999:999"
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    environment:
+      - TZ=${DEFAULT_TZ}
+    volumes:
+      - ${GHOSTFOLIO_VALKEY_DATA_PATH}:/data
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.11
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   firefly-importer:
     profiles:
       - lazy

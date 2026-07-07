@@ -429,6 +429,36 @@ firefly.pi.rahulja.in {
 	import cloudflare
 }
 
+ghostfolio.pi.rahulja.in {
+	# API endpoints need blocking wake-up, not the browser loading page
+	@api {
+		path /api/*
+	}
+	route @api {
+		sablier http://sablier:10000 {
+			group ghostfolio
+			session_duration 30m
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.4:3333
+	}
+
+	route {
+		sablier http://sablier:10000 {
+			group ghostfolio
+			session_duration 30m
+			dynamic {
+				display_name "Ghostfolio"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.4:3333
+	}
+	import cloudflare
+}
+
 fireflyimporter.pi.rahulja.in {
 	route {
 		sablier http://sablier:10000 {
