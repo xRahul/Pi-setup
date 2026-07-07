@@ -1509,12 +1509,6 @@ services:
       - "sablier.enable=true"
       - "sablier.group=sure"
       - "sablier.running-hours=02:55-05:15"
-      - "homepage.group=Productivity"
-      - "homepage.name=Sure"
-      - "homepage.icon=mdi-cash-multiple"
-      - "homepage.href=https://sure.pi.rahulja.in"
-      - "homepage.description=Personal Finance (Sablier)"
-      - "homepage.siteMonitor=http://10.8.1.2:3000"
     depends_on:
       sure-db:
         condition: service_healthy

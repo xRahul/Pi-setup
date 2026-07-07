@@ -9,19 +9,84 @@ background:
 theme: dark
 color: slate
 headerStyle: clean
-cardSize: large
-useEqualHeights: true
+fullWidth: true
+cardSize: small
+useEqualHeights: false
 hideVersion: true
 target: _blank
 # statusStyle: dot
 showStats: true
+quicklaunch:
+  searchDescriptions: true
+  hideInternetSearch: false
+  showSearchSuggestions: false
 layout:
-  Productivity:
+  Sablier Guide:
+    tab: Home
+    style: row
+    columns: 2
+  Daily Apps:
+    tab: Home
     style: row
     columns: 3
-  Media:
+  Daily Media:
+    tab: Home
     style: row
     columns: 3
-  System:
+  Daily Finance:
+    tab: Home
     style: row
     columns: 3
+  Documents & Tools:
+    tab: Documents
+    style: row
+    columns: 4
+  Document Backends:
+    tab: Backends
+    style: row
+    columns: 4
+    initiallyCollapsed: true
+  Finance Apps:
+    tab: Finance
+    style: row
+    columns: 3
+  Finance Backends:
+    tab: Backends
+    style: row
+    columns: 4
+    initiallyCollapsed: true
+  Photos:
+    tab: Media
+    style: row
+    columns: 3
+  Media Backends:
+    tab: Backends
+    style: row
+    columns: 4
+    initiallyCollapsed: true
+  Automation Backends:
+    tab: Automation
+    style: row
+    columns: 4
+    initiallyCollapsed: true
+  Family Tree:
+    tab: Family
+    style: row
+    columns: 3
+  Family Backends:
+    tab: Family
+    style: row
+    columns: 4
+    initiallyCollapsed: true
+  Network:
+    tab: Ops
+    style: row
+    columns: 4
+  Admin:
+    tab: Ops
+    style: row
+    columns: 4
+  Docker Access:
+    tab: Ops
+    style: row
+    columns: 4
