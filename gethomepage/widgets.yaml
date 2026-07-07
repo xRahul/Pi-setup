@@ -17,11 +17,6 @@
       month: long
     timezone: Asia/Kolkata
     locale: en-IN
-- search:
-    provider: duckduckgo
-    target: _blank
-    focus: true
-    showSearchButton: true
 - openmeteo:
     label: Bangalore
     latitude: 12.9716

@@ -18,7 +18,7 @@ target: _blank
 showStats: true
 quicklaunch:
   searchDescriptions: true
-  hideInternetSearch: false
+  hideVisitURL: true
   showSearchSuggestions: false
 layout:
   Sablier Guide:
