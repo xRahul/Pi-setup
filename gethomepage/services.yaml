@@ -1,0 +1,284 @@
+- Productivity:
+  - Paperless-ngx:
+      icon: paperless.png
+      href: https://pngx.pi.rahulja.in
+      description: Document Management (Sablier)
+      server: my-docker
+      container: paperless-ngx
+      widget:
+        type: paperless
+        url: http://10.8.1.32:8000
+        key: "{{HOMEPAGE_VAR_PAPERLESS_API_KEY}}"
+  - Filebrowser:
+      icon: filebrowser.png
+      href: https://filebrowser.pi.rahulja.in
+      description: File Manager (Sablier)
+      server: my-docker
+      container: filebrowser
+      widget:
+        type: filebrowser
+        url: http://10.8.1.34:80
+        username: "{{HOMEPAGE_VAR_FILEBROWSER_USERNAME}}"
+        password: "{{HOMEPAGE_VAR_FILEBROWSER_PASSWORD}}"
+  - Stirling-PDF:
+      icon: stirling-pdf.png
+      href: https://pdf.pi.rahulja.in
+      description: PDF Tools (Sablier)
+      server: my-docker
+      container: stirling-pdf
+  - CyberChef:
+      icon: cyberchef.png
+      href: https://cyberchef.pi.rahulja.in
+      description: Web Swiss Army Knife (Sablier)
+      server: my-docker
+      container: cyberchef
+  - Memos:
+      icon: memos.png
+      href: https://memos.pi.rahulja.in
+      description: Privacy-first Notes (Sablier)
+      server: my-docker
+      container: memos
+      siteMonitor: http://10.8.1.41:5230
+  - Firefly III:
+      icon: firefly.png
+      href: https://firefly.pi.rahulja.in
+      description: Personal Finance (Sablier)
+      server: my-docker
+      container: firefly
+      widget:
+        type: firefly
+        url: http://10.8.1.43:8080
+        key: "{{HOMEPAGE_VAR_FIREFLY_API_KEY}}"
+        fields: ["networth", "budget"]
+  - Ghostfolio:
+      icon: mdi-chart-line
+      href: https://ghostfolio.pi.rahulja.in
+      description: Wealth Management (Sablier)
+      server: my-docker
+      container: ghostfolio
+  - Actual Budget:
+      icon: mdi-cash-register
+      href: https://actual.pi.rahulja.in
+      description: Personal Budgeting (Sablier)
+      server: my-docker
+      container: actual
+  - ezBookkeeping:
+      icon: mdi-cash-clock
+      href: https://ezbookkeeping.pi.rahulja.in
+      description: Personal Finance (Sablier)
+      server: my-docker
+      container: ezbookkeeping
+  - Sure:
+      icon: mdi-cash-multiple
+      href: https://sure.pi.rahulja.in
+      description: Personal Finance (Sablier)
+      server: my-docker
+      container: sure
+      siteMonitor: http://10.8.1.2:3000
+  - Firefly Importer:
+      icon: firefly.png
+      href: https://fireflyimporter.pi.rahulja.in
+      description: Data Importer (Sablier)
+      server: my-docker
+      container: firefly-importer
+  - Miniflux:
+      icon: miniflux.png
+      href: https://miniflux.pi.rahulja.in
+      description: RSS Feed Reader
+      server: my-docker
+      container: miniflux
+  - ArchiveBox:
+      icon: archivebox.png
+      href: https://archivebox.pi.rahulja.in
+      description: Personal Web Archiving (Sablier)
+      server: my-docker
+      container: archivebox
+  - Reactive Resume:
+      icon: reactive-resume.png
+      href: https://resume.pi.rahulja.in
+      description: Resume Builder (Sablier)
+      server: my-docker
+      container: resume
+  - Gramps Web:
+      icon: gramps.png
+      href: https://gramps.pi.rahulja.in
+      description: Family Tree Genealogy (Sablier)
+      server: my-docker
+      container: grampsweb
+- Media:
+  - Immich:
+      icon: immich.png
+      href: https://immich.pi.rahulja.in
+      description: Photo Backup (Sablier)
+      server: my-docker
+      container: immich_server
+  - Immich ML:
+      icon: immich.png
+      href: https://immich.pi.rahulja.in
+      description: ML Acceleration (Sablier)
+      server: my-docker
+      container: immich_machine_learning
+  - Transmission:
+      icon: transmission.png
+      href: https://trans.pi.rahulja.in
+      description: Torrent Client
+      server: my-docker
+      container: transmission
+      widget:
+        type: transmission
+        url: http://10.8.1.23:9091
+        username: "{{HOMEPAGE_VAR_TRANSMISSION_USERNAME}}"
+        password: "{{HOMEPAGE_VAR_TRANSMISSION_PASSWORD}}"
+  - Jellyfin:
+      icon: jellyfin.png
+      href: https://jellyfin.pi.rahulja.in
+      description: Media Server
+      server: my-docker
+      container: jellyfin
+      siteMonitor: http://10.8.1.1:8096/health
+- System:
+  - Pi-hole:
+      icon: pi-hole.png
+      href: https://pihole.pi.rahulja.in/admin
+      description: DNS Sinkhole
+      server: my-docker
+      container: pihole
+      widget:
+        type: pihole
+        url: http://10.8.1.48:8080
+        key: "{{HOMEPAGE_VAR_PIHOLE_API_TOKEN}}"
+        version: 6
+        cache: 60000
+  - Tailscale:
+      icon: tailscale.png
+      href: https://login.tailscale.com/admin/machines
+      description: VPN Overlay
+      server: my-docker
+      container: tailscale
+      widget:
+        type: tailscale
+        deviceid: "{{HOMEPAGE_VAR_TAILSCALE_DEVICE_ID}}"
+        key: "{{HOMEPAGE_VAR_TAILSCALE_API_KEY}}"
+  - DNSCrypt-Proxy:
+      icon: https://upload.wikimedia.org/wikipedia/commons/6/6e/Dnscrypt-proxy_logo.svg
+      href: "#"
+      description: Encrypted DNS Upstream
+      server: my-docker
+      container: dnscrypt-proxy
+  - Caddy:
+      icon: caddy.png
+      href: https://dash.pi.rahulja.in
+      description: Reverse Proxy
+      server: my-docker
+      container: caddy
+  - Portainer:
+      icon: portainer.png
+      href: https://portainer.pi.rahulja.in
+      description: Container Management (Sablier)
+      server: my-docker
+      container: portainer
+  - Sablier:
+      icon: https://raw.githubusercontent.com/sablier-labs/branding/main/icon/svg/icon.svg
+      href: "#"
+      description: Scale-to-Zero Coordinator
+      server: my-docker
+      container: sablier
+      siteMonitor: http://10.8.1.60:10000/health
+  - Socket Proxy Read:
+      icon: haproxy.png
+      href: "#"
+      description: Read-Only Docker Socket Proxy
+      server: my-docker
+      container: socket-proxy-read
+  - Socket Proxy Admin:
+      icon: haproxy.png
+      href: "#"
+      description: Admin Docker Socket Proxy
+      server: my-docker
+      container: socket-proxy-admin
+  - Ntfy:
+      icon: ntfy.png
+      href: https://ntfy.pi.rahulja.in
+      description: Push Notifications (Sablier)
+      server: my-docker
+      container: ntfy
+  - Sure-DB:
+      icon: postgresql.png
+      description: Sure Postgres Database (Sablier)
+      server: my-docker
+      container: sure-db
+  - Sure-Redis:
+      icon: redis.png
+      description: Sure Valkey Cache (Sablier)
+      server: my-docker
+      container: sure-redis
+  - Sure-Worker:
+      icon: mdi-briefcase-clock
+      description: Sure Sidekiq Worker (Sablier)
+      server: my-docker
+      container: sure-worker
+  - Paperless-DB:
+      icon: postgresql.png
+      description: Postgres Database (Sablier)
+      server: my-docker
+      container: paperless-db
+  - Paperless-Redis:
+      icon: redis.png
+      description: Valkey Cache (Sablier)
+      server: my-docker
+      container: paperless-redis
+  - Paperless-Tika:
+      icon: tika.png
+      description: Tika Document Extractor (Sablier)
+      server: my-docker
+      container: paperless-tika
+  - Paperless-Gotenberg:
+      icon: gotenberg.png
+      description: Gotenberg Converter (Sablier)
+      server: my-docker
+      container: paperless-gotenberg
+  - Firefly-Redis:
+      icon: redis.png
+      description: Valkey Session Store for Firefly (Sablier)
+      server: my-docker
+      container: firefly-redis
+  - Gramps-Redis:
+      icon: redis.png
+      description: Valkey Broker/Cache for Gramps (Sablier)
+      server: my-docker
+      container: gramps-redis
+  - Immich-Redis:
+      icon: redis.png
+      description: Valkey Cache for Immich (Sablier)
+      server: my-docker
+      container: immich_redis
+  - Immich-Database:
+      icon: postgresql.png
+      description: Postgres + VectorChord for Immich (Sablier)
+      server: my-docker
+      container: immich_postgres
+  - Miniflux-DB:
+      icon: postgresql.png
+      description: Postgres for Miniflux (Sablier)
+      server: my-docker
+      container: miniflux-db
+  - Miniflux-Cron:
+      icon: miniflux.png
+      description: Miniflux Feed Refresh Cron
+      server: my-docker
+      container: miniflux-cron
+  - Gramps-Celery:
+      icon: gramps.png
+      description: Gramps Async Worker (Sablier)
+      server: my-docker
+      container: grampsweb_celery
+  - Resume-DB:
+      icon: postgresql.png
+      description: Postgres for Reactive Resume (Sablier)
+      server: my-docker
+      container: resume-db
+  - Firefly-Cron:
+      icon: firefly.png
+      description: Firefly III Cron Trigger (Sablier)
+      server: my-docker
+      container: firefly-cron

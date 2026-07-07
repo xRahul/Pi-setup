@@ -1,0 +1,3 @@
+my-docker:
+  host: socket-proxy-read
+  port: 2375

@@ -1,0 +1,34 @@
+- Developer:
+    - GitHub:
+        - href: https://github.com/
+          icon: github.png
+    - Docker Hub:
+        - href: https://hub.docker.com/
+          icon: docker.png
+    - Regex101:
+        - href: https://regex101.com/
+          icon: https://regex101.com/logo.png
+    - ChatGPT:
+        - href: https://chatgpt.com/
+          icon: https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg
+    - Claude:
+        - href: https://claude.ai/
+          icon: https://upload.wikimedia.org/wikipedia/commons/d/d4/Claude_AI_logo.svg
+- News & Media:
+    - Hacker News:
+        - href: https://news.ycombinator.com/
+          icon: y-combinator.png
+    - Reddit:
+        - href: https://www.reddit.com/
+          icon: reddit.png
+    - YouTube:
+        - href: https://www.youtube.com/
+          icon: youtube.png
+- Admin Consoles:
+    - Tailscale Admin:
+        - href: https://login.tailscale.com/admin/machines
+          icon: tailscale.png
+    - Pi-hole Admin:
+        - href: https://pihole.pi.rahulja.in/admin
+          icon: pi-hole.png
+

@@ -1,0 +1,27 @@
+title: Raspberry Pi Home Lab
+description: Managed via Docker Compose (10.8.1.0/24)
+language: en
+background:
+  image: https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=2074&auto=format&fit=crop
+  brightness: 25
+  blur: md
+  saturate: 50
+theme: dark
+color: slate
+headerStyle: clean
+cardSize: large
+useEqualHeights: true
+hideVersion: true
+target: _blank
+# statusStyle: dot
+showStats: true
+layout:
+  Productivity:
+    style: row
+    columns: 3
+  Media:
+    style: row
+    columns: 3
+  System:
+    style: row
+    columns: 3

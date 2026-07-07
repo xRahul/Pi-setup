@@ -1,0 +1,41 @@
+- greeting:
+    text: Welcome Home, Rahul
+    text_size: 4xl
+- datetime:
+    text_size: 9xl
+    format:
+      hour: "2-digit"
+      minute: "2-digit"
+      hourCycle: h23
+    timezone: Asia/Kolkata
+    locale: en-IN
+- datetime:
+    text_size: xl
+    format:
+      weekday: long
+      day: numeric
+      month: long
+    timezone: Asia/Kolkata
+    locale: en-IN
+- search:
+    provider: duckduckgo
+    target: _blank
+    focus: true
+    showSearchButton: true
+- openmeteo:
+    label: Bangalore
+    latitude: 12.9716
+    longitude: 77.5946
+    timezone: Asia/Kolkata
+    units: metric
+    cache: 5
+- resources:
+    cpu: true
+    memory: true
+    cputemp: true
+    uptime: true
+    units: metric
+    disk:
+      - /host
+      - /storage
+    expanded: true

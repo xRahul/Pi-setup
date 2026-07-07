@@ -21,3 +21,5 @@
 !unused_docker_compose.yml
 !searxng
 !searxng/**
+!gethomepage
+!gethomepage/**
