@@ -611,6 +611,10 @@ services:
       - lazy
     cap_drop:
       - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
     image: stirlingtools/stirling-pdf:2.14.0-ultra-lite
     container_name: stirling-pdf
     labels:
@@ -950,11 +954,7 @@ services:
       - CREATE_ADMIN=1
       - ADMIN_USERNAME=${MINIFLUX_ADMIN_USER}
       - ADMIN_PASSWORD=${MINIFLUX_ADMIN_PASS}
-      - POLLING_FREQUENCY=120
-      - POLLING_SCHEDULER=entry_frequency
-      - SCHEDULER_ENTRY_FREQUENCY_MAX_INTERVAL=1440
-      - SCHEDULER_ENTRY_FREQUENCY_MIN_INTERVAL=120
-      - SCHEDULER_ROUND_ROBIN_MIN_INTERVAL=120
+      - DISABLE_SCHEDULER_SERVICE=1
       - CLEANUP_ARCHIVE_READ_DAYS=0
       - CLEANUP_ARCHIVE_UNREAD_DAYS=-1
       - WEBAUTHN=true
@@ -1007,9 +1007,15 @@ services:
         ipv4_address: 10.8.1.29
 
   miniflux-cron:
+    profiles:
+      - lazy
     image: alpine:3.24.1
     container_name: miniflux-cron
     restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=miniflux-cron"
+      - "sablier.running-hours=02:30-05:30"
     logging: *default-logging
     security_opt:
       - no-new-privileges:true
@@ -1020,7 +1026,7 @@ services:
       - MINIFLUX_API_KEY=${MINIFLUX_API_KEY}
     command: ["sh", "-c", "apk add --no-cache tzdata curl && \
       (ln -s /usr/share/zoneinfo/$$TZ /etc/localtime || true) && \
-      echo \"0 3,15 * * * curl -s -X POST -H \\\"X-Auth-Token: $$MINIFLUX_API_KEY\\\" https://miniflux.pi.rahulja.in/v1/feeds/refresh;echo\" \
+      echo \"0 3 * * * curl -fsS -X PUT -H \\\"X-Auth-Token: $$MINIFLUX_API_KEY\\\" https://miniflux.pi.rahulja.in/v1/feeds/refresh;echo\" \
       | crontab - && \
       crond -f -L /dev/stdout"]
     dns:
