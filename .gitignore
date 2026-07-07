@@ -23,3 +23,6 @@
 !searxng/**
 !gethomepage
 !gethomepage/**
+
+# ignore this afterwards
+gethomepage/logs

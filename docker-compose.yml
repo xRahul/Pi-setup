@@ -366,6 +366,8 @@ services:
         ipv4_address: 10.8.1.43
 
   ghostfolio:
+    profiles:
+      - lazy
     image: ghostfolio/ghostfolio:3.21.0
     container_name: ghostfolio
     init: true
@@ -409,6 +411,8 @@ services:
         ipv4_address: 10.8.1.4
 
   ghostfolio-db:
+    profiles:
+      - lazy
     image: postgres:18.4-alpine3.24
     container_name: ghostfolio-db
     restart: unless-stopped
@@ -437,6 +441,8 @@ services:
         ipv4_address: 10.8.1.7
 
   ghostfolio-valkey:
+    profiles:
+      - lazy
     image: docker.io/valkey/valkey:9@sha256:4963247afc4cd33c7d3b2d2816b9f7f8eeebab148d29056c2ca4d7cbc966f2d9
     container_name: ghostfolio-valkey
     restart: unless-stopped
