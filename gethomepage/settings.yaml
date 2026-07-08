@@ -14,62 +14,54 @@ cardSize: small
 useEqualHeights: false
 hideVersion: true
 target: _blank
-# statusStyle: dot
-showStats: true
+statusStyle: dot
+showStats: false
 quicklaunch:
   searchDescriptions: true
   hideVisitURL: true
   showSearchSuggestions: false
 layout:
-  Sablier Guide:
+  Home:
     tab: Home
     style: row
-    columns: 2
-  Daily Apps:
-    tab: Home
-    style: row
-    columns: 3
-  Daily Media:
-    tab: Home
-    style: row
-    columns: 3
-  Daily Finance:
-    tab: Home
-    style: row
-    columns: 3
-  Documents & Tools:
+    columns: 4
+  Documents:
     tab: Documents
     style: row
     columns: 4
   Document Backends:
-    tab: Backends
+    tab: Documents
     style: row
     columns: 4
     initiallyCollapsed: true
-  Finance Apps:
+  Finance:
     tab: Finance
     style: row
     columns: 3
   Finance Backends:
-    tab: Backends
+    tab: Finance
     style: row
     columns: 4
     initiallyCollapsed: true
-  Photos:
+  Media:
     tab: Media
     style: row
     columns: 3
   Media Backends:
-    tab: Backends
+    tab: Media
     style: row
     columns: 4
     initiallyCollapsed: true
+  Automation:
+    tab: Automation
+    style: row
+    columns: 4
   Automation Backends:
     tab: Automation
     style: row
     columns: 4
     initiallyCollapsed: true
-  Family Tree:
+  Family:
     tab: Family
     style: row
     columns: 3
@@ -78,11 +70,7 @@ layout:
     style: row
     columns: 4
     initiallyCollapsed: true
-  Network:
-    tab: Ops
-    style: row
-    columns: 4
-  Admin:
+  Ops:
     tab: Ops
     style: row
     columns: 4

@@ -167,7 +167,6 @@ ntfy.pi.rahulja.in {
 	import cloudflare
 }
 
-
 freshrss.pi.rahulja.in {
 	reverse_proxy * 10.8.1.254:80
 	import cloudflare
@@ -386,7 +385,6 @@ ezbookkeeping.pi.rahulja.in {
 
 	import cloudflare
 }
-
 
 languagetool.pi.rahulja.in {
 	reverse_proxy * 10.8.1.254:8010

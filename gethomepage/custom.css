@@ -1,16 +1,14 @@
-/* Glassmorphism for Service Cards - Darker & More Opaque */
+/* Service cards */
 .services .service-card {
     background: rgba(15, 23, 42, 0.85) !important;
-    backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.45);
+    transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
 }
 
-/* Hover effect */
 .services .service-card:hover {
     background: rgba(15, 23, 42, 0.95) !important;
     transform: translateY(-2px);
-    transition: all 0.2s ease-in-out;
     border-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -39,9 +37,8 @@ div[class*="Search_"] {
 div[class*="Search_"] input {
     background: rgba(0, 0, 0, 0.5) !important;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    backdrop-filter: blur(8px);
     border-radius: 99px; /* Pill shape */
-    transition: all 0.3s ease;
+    transition: background 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
 }
 div[class*="Search_"] input:focus {
     background: rgba(0, 0, 0, 0.7) !important;
@@ -53,13 +50,12 @@ div[class*="Search_"] input:focus {
 div[class*="OpenMeteo_"], 
 div[class*="Resources_"] {
     background: rgba(15, 23, 42, 0.7) !important;
-    backdrop-filter: blur(12px);
     border-radius: 16px;
     border: 1px solid rgba(255,255,255,0.08);
     padding: 1rem;
     margin: 0.5rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    transition: transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
 }
 
 div[class*="OpenMeteo_"]:hover, 
@@ -93,11 +89,10 @@ div[class*="Search_"] {
     background: rgba(0, 0, 0, 0.5) !important;
     color: inherit;
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    backdrop-filter: blur(8px);
     border-radius: 99px;
     padding: 0.75rem 1rem;
     outline: none;
-    transition: all 0.3s ease;
+    transition: background 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
 }
 
 .homepage-service-filter input:focus {

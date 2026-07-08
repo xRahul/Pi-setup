@@ -23,7 +23,7 @@
     longitude: 77.5946
     timezone: Asia/Kolkata
     units: metric
-    cache: 5
+    cache: 30
 - resources:
     cpu: true
     memory: true

@@ -7,13 +7,13 @@
           icon: docker.png
     - Regex101:
         - href: https://regex101.com/
-          icon: https://regex101.com/logo.png
+          icon: mdi-regex
     - ChatGPT:
         - href: https://chatgpt.com/
-          icon: https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg
+          icon: mdi-robot-outline
     - Claude:
         - href: https://claude.ai/
-          icon: https://upload.wikimedia.org/wikipedia/commons/d/d4/Claude_AI_logo.svg
+          icon: mdi-brain
 - News & Media:
     - Hacker News:
         - href: https://news.ycombinator.com/
@@ -31,4 +31,3 @@
     - Pi-hole Admin:
         - href: https://pihole.pi.rahulja.in/admin
           icon: pi-hole.png
-

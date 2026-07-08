@@ -6,6 +6,7 @@
   const cardSelector = ".services .service-card";
   let query = "";
   let applying = false;
+  let scheduled = 0;
 
   function serviceCards() {
     return Array.from(document.querySelectorAll(cardSelector));
@@ -58,6 +59,11 @@
     applying = false;
   }
 
+  function scheduleFilter() {
+    window.clearTimeout(scheduled);
+    scheduled = window.setTimeout(applyFilter, 80);
+  }
+
   function ensureFilter() {
     const cards = serviceCards();
     if (!cards.length || document.getElementById(filterId)) return;
@@ -78,7 +84,7 @@
 
     input.addEventListener("input", () => {
       query = input.value;
-      applyFilter();
+      scheduleFilter();
     });
 
     wrapper.appendChild(input);
@@ -88,7 +94,7 @@
 
   const observer = new MutationObserver(() => {
     ensureFilter();
-    applyFilter();
+    scheduleFilter();
   });
 
   function start() {
