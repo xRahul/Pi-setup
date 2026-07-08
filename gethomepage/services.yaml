@@ -328,7 +328,6 @@
 - Ops:
   - Sablier:
       icon: mdi-power-sleep
-      href: "#"
       description: Scale-to-zero and wake coordinator
       server: my-docker
       container: sablier
@@ -362,7 +361,6 @@
         hideErrors: true
   - DNSCrypt-Proxy:
       icon: mdi-dns
-      href: "#"
       description: Encrypted DNS upstream
       server: my-docker
       container: dnscrypt-proxy
@@ -387,14 +385,12 @@
 - Docker Access:
   - Socket Proxy Read:
       icon: haproxy.png
-      href: "#"
       description: Read-only Docker API for Homepage and Sablier
       server: my-docker
       container: socket-proxy-read
       showStats: true
   - Socket Proxy Admin:
       icon: haproxy.png
-      href: "#"
       description: Admin Docker API for Portainer (Sablier)
       server: my-docker
       container: socket-proxy-admin
