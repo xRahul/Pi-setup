@@ -857,29 +857,29 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.58
 
-#  sablier:
-#    cap_drop:
-#      - ALL
-#    user: "1000:1000"
-#    image: sablierapp/sablier:1.14.0
-#    container_name: sablier
-#    depends_on:
-#      - socket-proxy-read
-#    restart: unless-stopped
-#    command:
-#      - start
-#      - --provider.name=docker
-#      - --provider.auto-stop-externally-started
-#    environment:
-#      - TZ=${DEFAULT_TZ}
-#      - DOCKER_HOST=tcp://socket-proxy-read:2375
-#    networks:
-#      wg-easy:
-#        ipv4_address: 10.8.1.60
-#      read-proxy-net:
-#    logging: *default-logging
-#    security_opt:
-#      - no-new-privileges:true
+  sablier:
+    cap_drop:
+      - ALL
+    user: "1000:1000"
+    image: sablierapp/sablier:1.14.0
+    container_name: sablier
+    depends_on:
+      - socket-proxy-read
+    restart: unless-stopped
+    command:
+      - start
+      - --provider.name=docker
+      - --provider.auto-stop-externally-started
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - DOCKER_HOST=tcp://socket-proxy-read:2375
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.60
+      read-proxy-net:
+    logging: *default-logging
+    security_opt:
+      - no-new-privileges:true
 
   socket-proxy-read:
     cap_add:
@@ -1281,7 +1281,7 @@ services:
       - MEDIA_MAX_SIZE=1g
       - SAVE_ARCHIVE_DOT_ORG=False
     healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8000/ || exit 1"]
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8000/public/ || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -1526,6 +1526,9 @@ services:
     environment:
       - TZ=${DEFAULT_TZ}
       - SECRET_KEY_BASE=${SURE_SECRET_KEY_BASE}
+      - ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=${ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY}
+      - ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=${ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY}
+      - ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=${ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT}
       - SELF_HOSTED=true
       - ONBOARDING_STATE=open
       - RAILS_ASSUME_SSL=true
@@ -1589,6 +1592,9 @@ services:
     environment:
       - TZ=${DEFAULT_TZ}
       - SECRET_KEY_BASE=${SURE_SECRET_KEY_BASE}
+      - ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=${ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY}
+      - ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=${ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY}
+      - ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=${ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT}
       - SELF_HOSTED=true
       - ONBOARDING_STATE=open
       - RAILS_ASSUME_SSL=true

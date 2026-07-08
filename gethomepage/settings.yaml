@@ -15,7 +15,7 @@ useEqualHeights: false
 hideVersion: true
 target: _blank
 statusStyle: dot
-showStats: false
+showStats: true
 quicklaunch:
   searchDescriptions: true
   hideVisitURL: true
