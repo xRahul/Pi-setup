@@ -1998,7 +1998,35 @@ services:
       timeout: 5s
       retries: 5
 
-# Booked 10.8.1.2 - 10.8.1.68 # remember to add to .env of local dns pihole
+  burnrate:
+    profiles:
+      - lazy
+    image: pratik1235/burnrate:v0.4.0
+    container_name: burnrate
+    restart: unless-stopped
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=burnrate"
+    cap_drop:
+      - ALL
+    user: "1000:1000"
+    security_opt:
+      - no-new-privileges:true
+    logging: *default-logging
+    environment:
+      - BURNRATE_DATA_DIR=/data
+      - BURNRATE_STATIC_DIR=/app/static
+      - TZ=${DEFAULT_TZ}
+    volumes:
+      - ${BURNRATE_DATA_PATH}:/data
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.69
+
+# Booked 10.8.1.2 - 10.8.1.69 # remember to add to .env of local dns pihole
 # Free after Caddy sink: 10.8.1.22, 10.8.1.24-25, 10.8.1.27, 10.8.1.31, 10.8.1.33, 10.8.1.40, 10.8.1.42, 10.8.1.49-51, 10.8.1.54-56
 # Reserved, not free: 10.8.1.1 Jellyfin host route; 10.8.1.53 n8n; 10.8.1.254 Caddy sink
 

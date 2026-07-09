@@ -613,3 +613,34 @@ portainer.pi.rahulja.in {
 	}
 	import cloudflare
 }
+
+burnrate.pi.rahulja.in {
+	# API endpoints (need blocking strategy)
+	@api {
+		path /api/*
+	}
+	route @api {
+		sablier http://sablier:10000 {
+			group burnrate
+			session_duration 30m
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.69:8000
+	}
+
+	# Other requests (browsers) get the dynamic loading page
+	route {
+		sablier http://sablier:10000 {
+			group burnrate
+			session_duration 30m
+			dynamic {
+				display_name "Burnrate"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.69:8000
+	}
+	import cloudflare
+}

@@ -184,6 +184,14 @@
       description: Bank import workflow (Sablier)
       server: my-docker
       container: firefly-importer
+  - Burnrate:
+      icon: mdi-fire
+      href: https://burnrate.pi.rahulja.in
+      description: Personal finance bank statement analyzer (Sablier)
+      server: my-docker
+      container: burnrate
+      siteMonitor: http://10.8.1.69:8000/api/settings
+
 
 - Finance Backends:
   - Firefly-Redis:
