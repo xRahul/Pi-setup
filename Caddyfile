@@ -644,3 +644,36 @@ burnrate.pi.rahulja.in {
 	}
 	import cloudflare
 }
+
+firefox.pi.rahulja.in {
+	@api {
+		path /api/*
+	}
+	route @api {
+		sablier http://sablier:10000 {
+			group firefox
+			session_duration 3h
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.22:8080 {
+			flush_interval -1
+		}
+	}
+
+	route {
+		sablier http://sablier:10000 {
+			group firefox
+			session_duration 3h
+			dynamic {
+				display_name "Firefox"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.22:8080 {
+			flush_interval -1
+		}
+	}
+	import cloudflare
+}

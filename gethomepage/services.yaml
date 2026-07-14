@@ -81,6 +81,12 @@
       description: Finance tracking (Sablier)
       server: my-docker
       container: sure
+  - Firefox:
+      icon: firefox.png
+      href: https://firefox.pi.rahulja.in
+      description: Virtual Browser (Sablier)
+      server: my-docker
+      container: firefox
 
 - Documents:
   - Paperless-ngx:
