@@ -666,7 +666,7 @@ services:
       - ALL
     user: "1000:1000"
     # Use LTS tag, not STS.
-    image: portainer/portainer-ce:2.39.4
+    image: portainer/portainer-ce:2.43.0
     container_name: portainer
     depends_on:
       - socket-proxy-admin
