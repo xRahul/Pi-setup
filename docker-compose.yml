@@ -163,6 +163,7 @@ services:
       - no-new-privileges:true
     volumes:
       - ${FILEBROWSER_ROOT_PATH}:/srv
+      - ${FIREFOX_DOWNLOADS_PATH}:/srv/firefox-downloads
       - ${FILEBROWSER_DB_FILE_PATH}:/database/filebrowser.db
       - ${FILEBROWSER_CONFIG_SETTING_FILE_PATH}:/config/settings.json
     environment:
@@ -2031,9 +2032,15 @@ services:
       - lazy
     image: ghcr.io/m1k1o/neko/firefox:3.1.2
     container_name: firefox
-    network_mode: service:tailscale
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.22
+    dns:
+      - 10.8.1.48
     restart: unless-stopped
     shm_size: "2gb"
+    tmpfs:
+      - /tmp
     labels:
       - "sablier.enable=true"
       - "sablier.group=firefox"
@@ -2041,6 +2048,7 @@ services:
       - CHOWN
       - SETUID
       - SETGID
+      - SYS_PTRACE
     cap_drop:
       - ALL
     security_opt:
@@ -2056,18 +2064,19 @@ services:
       - NEKO_MEMBER_PROVIDER=multiuser
       - NEKO_MEMBER_MULTIUSER_USER_PASSWORD=${NEKO_MEMBER_MULTIUSER_USER_PASSWORD}
       - NEKO_MEMBER_MULTIUSER_ADMIN_PASSWORD=${NEKO_MEMBER_MULTIUSER_ADMIN_PASSWORD}
-      - NEKO_SERVER_BIND=127.0.0.1:8083
+      - NEKO_SERVER_BIND=0.0.0.0:8083
       - NEKO_WEBRTC_ICELITE=true
       - NEKO_WEBRTC_UDPMUX=59000
       - NEKO_WEBRTC_TCPMUX=59000
-      - NEKO_WEBRTC_NAT1TO1=100.109.192.17
+      - NEKO_WEBRTC_NAT1TO1=10.8.1.22
     volumes:
       - ${FIREFOX_PROFILE_PATH}:/home/neko/.mozilla/firefox/profile.default
       - ${FIREFOX_DOWNLOADS_PATH}:/home/neko/Downloads
       - ./neko/policies.json:/usr/lib/firefox/distribution/policies.json:ro
 
 # Booked 10.8.1.2 - 10.8.1.69 # remember to add to .env of local dns pihole
-# Free after Caddy sink: 10.8.1.22, 10.8.1.24-25, 10.8.1.27, 10.8.1.31, 10.8.1.33, 10.8.1.40, 10.8.1.42, 10.8.1.49-51, 10.8.1.54-56
+# Free after Caddy sink: 10.8.1.24-25, 10.8.1.27, 10.8.1.31, 10.8.1.33, 10.8.1.40, 10.8.1.42, 10.8.1.49-51, 10.8.1.54-56
+# 10.8.1.22: Firefox
 # Reserved, not free: 10.8.1.1 Jellyfin host route; 10.8.1.53 n8n; 10.8.1.254 Caddy sink
 
 
