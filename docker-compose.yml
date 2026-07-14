@@ -1387,7 +1387,7 @@ services:
   resume:
     profiles:
       - lazy
-    image: amruthpillai/reactive-resume:v5.2.1
+    image: amruthpillai/reactive-resume:v5.2.3
     container_name: resume
     restart: unless-stopped
     depends_on:
