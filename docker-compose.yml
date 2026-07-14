@@ -819,7 +819,7 @@ services:
       - CHOWN
       - SETUID
       - SETGID
-    image: stirlingtools/stirling-pdf:2.14.0-ultra-lite
+    image: stirlingtools/stirling-pdf:2.14.2-ultra-lite
     container_name: stirling-pdf
     labels:
       - "sablier.enable=true"
