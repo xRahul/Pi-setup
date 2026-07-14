@@ -378,7 +378,7 @@ services:
   n8n-runners:
     cap_drop:
       - ALL
-    image: n8nio/runners:2.29.7
+    image: n8nio/runners:2.31.0
     container_name: n8n-runners
     restart: unless-stopped
     mem_limit: 256m
