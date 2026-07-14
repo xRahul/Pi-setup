@@ -657,7 +657,7 @@ firefox.pi.rahulja.in {
 				timeout 1m
 			}
 		}
-		reverse_proxy * 10.8.1.22:8080 {
+		reverse_proxy * 127.0.0.1:8083 {
 			flush_interval -1
 		}
 	}
@@ -671,7 +671,7 @@ firefox.pi.rahulja.in {
 				theme hacker-terminal
 			}
 		}
-		reverse_proxy * 10.8.1.22:8080 {
+		reverse_proxy * 127.0.0.1:8083 {
 			flush_interval -1
 		}
 	}

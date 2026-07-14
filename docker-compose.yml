@@ -2031,6 +2031,7 @@ services:
       - lazy
     image: ghcr.io/m1k1o/neko/firefox:3.1.2
     container_name: firefox
+    network_mode: service:tailscale
     restart: unless-stopped
     shm_size: "2gb"
     labels:
@@ -2055,22 +2056,18 @@ services:
       - NEKO_MEMBER_PROVIDER=multiuser
       - NEKO_MEMBER_MULTIUSER_USER_PASSWORD=${NEKO_MEMBER_MULTIUSER_USER_PASSWORD}
       - NEKO_MEMBER_MULTIUSER_ADMIN_PASSWORD=${NEKO_MEMBER_MULTIUSER_ADMIN_PASSWORD}
+      - NEKO_SERVER_BIND=127.0.0.1:8083
       - NEKO_WEBRTC_ICELITE=true
-      - NEKO_WEBRTC_EPR=59000-59010
-      - NEKO_WEBRTC_NAT1TO1=10.8.1.22
+      - NEKO_WEBRTC_UDPMUX=59000
+      - NEKO_WEBRTC_TCPMUX=59000
+      - NEKO_WEBRTC_NAT1TO1=100.109.192.17
     volumes:
       - ${FIREFOX_PROFILE_PATH}:/home/neko/.mozilla/firefox/profile.default
       - ${FIREFOX_DOWNLOADS_PATH}:/home/neko/Downloads
       - ./neko/policies.json:/usr/lib/firefox/distribution/policies.json:ro
-    dns:
-      - 10.8.1.48
-      - 1.1.1.1
-    networks:
-      wg-easy:
-        ipv4_address: 10.8.1.22
 
 # Booked 10.8.1.2 - 10.8.1.69 # remember to add to .env of local dns pihole
-# Free after Caddy sink: 10.8.1.24-25, 10.8.1.27, 10.8.1.31, 10.8.1.33, 10.8.1.40, 10.8.1.42, 10.8.1.49-51, 10.8.1.54-56
+# Free after Caddy sink: 10.8.1.22, 10.8.1.24-25, 10.8.1.27, 10.8.1.31, 10.8.1.33, 10.8.1.40, 10.8.1.42, 10.8.1.49-51, 10.8.1.54-56
 # Reserved, not free: 10.8.1.1 Jellyfin host route; 10.8.1.53 n8n; 10.8.1.254 Caddy sink
 
 
