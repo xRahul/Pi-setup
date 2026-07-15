@@ -742,7 +742,7 @@ services:
       - ALL
     user: "1000:1000"
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:v3.0.2
+    image: ghcr.io/immich-app/immich-machine-learning:v3.0.3
     labels:
       - "sablier.enable=true"
       - "sablier.group=immich"
