@@ -652,7 +652,7 @@ firefox.pi.rahulja.in {
 	route @api {
 		sablier http://sablier:10000 {
 			group firefox
-			session_duration 5h
+			session_duration 12h
 			blocking {
 				timeout 1m
 			}
@@ -665,7 +665,7 @@ firefox.pi.rahulja.in {
 	route {
 		sablier http://sablier:10000 {
 			group firefox
-			session_duration 5h
+			session_duration 12h
 			dynamic {
 				display_name "Firefox"
 				theme hacker-terminal
