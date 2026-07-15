@@ -2057,7 +2057,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1536M
+          memory: 4096M
     environment:
       - TZ=${DEFAULT_TZ}
       - NEKO_SCREEN=1280x720@30
