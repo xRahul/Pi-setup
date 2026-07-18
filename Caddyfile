@@ -201,6 +201,21 @@ miniflux.pi.rahulja.in {
 	import cloudflare
 }
 
+drawio.pi.rahulja.in {
+	route {
+		sablier http://sablier:10000 {
+			group drawio
+			session_duration 30m
+			dynamic {
+				display_name "Draw.io"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.24:8080
+	}
+	import cloudflare
+}
+
 shiori.pi.rahulja.in {
 	reverse_proxy * 10.8.1.254:8080
 	import cloudflare
