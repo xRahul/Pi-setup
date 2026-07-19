@@ -92,7 +92,7 @@ services:
     cap_drop:
       - ALL
     user: "1000:1000"
-    image: klutchell/dnscrypt-proxy:2.1.16
+    image: klutchell/dnscrypt-proxy:2.1.18
     network_mode: service:tailscale
     container_name: dnscrypt-proxy
     restart: unless-stopped
