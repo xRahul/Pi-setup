@@ -2077,7 +2077,7 @@ services:
   drawio:
     profiles:
       - lazy
-    image: jgraph/drawio:24.7.17
+    image: jgraph/drawio:30.3.14
     container_name: drawio
     restart: unless-stopped
     labels:
