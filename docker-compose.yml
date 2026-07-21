@@ -1298,7 +1298,7 @@ services:
   ntfy:
     profiles:
       - lazy
-    image: binwiederhier/ntfy:v2.26.0
+    image: binwiederhier/ntfy:v2.26.3
     container_name: ntfy
     restart: unless-stopped
     cap_drop:
