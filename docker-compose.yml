@@ -1624,7 +1624,7 @@ services:
   cyberchef:
     profiles:
       - lazy
-    image: ghcr.io/gchq/cyberchef:11.2.0
+    image: ghcr.io/gchq/cyberchef:11.3.0
     container_name: cyberchef
     restart: unless-stopped
     logging: *default-logging
