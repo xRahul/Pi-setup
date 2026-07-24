@@ -1657,7 +1657,7 @@ services:
   grampsweb:
     profiles:
       - lazy
-    image: ghcr.io/gramps-project/grampsweb:26.6.2
+    image: ghcr.io/gramps-project/grampsweb:26.7.0
     container_name: grampsweb
     restart: unless-stopped
     logging: *default-logging
@@ -1713,7 +1713,7 @@ services:
   grampsweb_celery:
     profiles:
       - lazy
-    image: ghcr.io/gramps-project/grampsweb:26.6.2
+    image: ghcr.io/gramps-project/grampsweb:26.7.0
     container_name: grampsweb_celery
     restart: unless-stopped
     logging: *default-logging
