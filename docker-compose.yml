@@ -862,7 +862,7 @@ services:
     cap_drop:
       - ALL
     user: "1000:1000"
-    image: sablierapp/sablier:1.15.0
+    image: sablierapp/sablier:1.16.0
     container_name: sablier
     depends_on:
       - socket-proxy-read
