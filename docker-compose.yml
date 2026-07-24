@@ -1138,7 +1138,7 @@ services:
   miniflux:
     profiles:
       - lazy
-    image: miniflux/miniflux:2.3.2-distroless
+    image: miniflux/miniflux:2.3.3-distroless
     container_name: miniflux
     restart: unless-stopped
     depends_on:
