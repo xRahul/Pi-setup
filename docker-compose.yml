@@ -1886,7 +1886,7 @@ services:
   paperless-ngx:
     profiles:
       - lazy
-    image: ghcr.io/paperless-ngx/paperless-ngx:2.20.15
+    image: ghcr.io/paperless-ngx/paperless-ngx:3.0.2
     container_name: paperless-ngx
     restart: unless-stopped
     cap_drop:
