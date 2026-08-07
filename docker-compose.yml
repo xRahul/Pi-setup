@@ -1029,7 +1029,7 @@ services:
     user: "1000:1000"
     security_opt:
       - no-new-privileges:true
-    image: neosmemo/memos:0.29.1
+    image: neosmemo/memos:0.30.0
     container_name: memos
     restart: unless-stopped
     dns:
