@@ -1507,7 +1507,7 @@ services:
       - DAC_OVERRIDE
     cap_drop:
       - ALL
-    image: ghcr.io/we-promise/sure:0.7.3-alpha.1
+    image: ghcr.io/we-promise/sure:0.7.4-alpha.1
     container_name: sure
     restart: unless-stopped
     labels:
@@ -1572,7 +1572,7 @@ services:
       - DAC_OVERRIDE
     cap_drop:
       - ALL
-    image: ghcr.io/we-promise/sure:0.7.3-alpha.1
+    image: ghcr.io/we-promise/sure:0.7.4-alpha.1
     container_name: sure-worker
     command: bundle exec sidekiq
     restart: unless-stopped
