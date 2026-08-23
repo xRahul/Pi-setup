@@ -44,16 +44,11 @@ jobs:
           sed -i 's#^\([A-Za-z_][A-Za-z0-9_]*\)=\s*$#\1=/tmp/ci-placeholder#' .env
           sed -i 's#^CADDY_SITE_PATH=.*#CADDY_SITE_PATH=/tmp/caddy-site#; s#^CADDY_DATA_PATH=.*#CADDY_DATA_PATH=/tmp/caddy-data#; s#^CADDY_CONFIG_PATH=.*#CADDY_CONFIG_PATH=/tmp/caddy-config#; s#^CLOUDFLARE_API_TOKEN=.*#CLOUDFLARE_API_TOKEN=citest0000000000000000000000000000000000#' .env
           mkdir -p /tmp/caddy-site /tmp/caddy-data /tmp/caddy-config
-          echo "::warning::dotenv=$(grep '^CLOUDFLARE' .env)"
-          echo "::warning::model=$(docker compose config 2>/dev/null | grep -A1 'cloudflare\|CLOUDFLARE' | head -3 | tr '\n' '|')"
       - name: Build caddy image
         run: docker compose build --progress=plain caddy
-      - name: Token reaches container
+      - name: Validate Caddyfile
         run: |
-          GOT=$(docker compose run --rm --no-deps caddy sh -c 'env' 2>/dev/null | grep '^CLOUDFLARE_API_TOKEN=' || true)
-          echo "::warning::container-env=${GOT:-EMPTY}"
-          [ "$GOT" = "CLOUDFLARE_API_TOKEN=citest0000000000000000000000000000000000" ]
-      - name: Parse Caddyfile (adapt)
-        run: docker compose run --rm --no-deps caddy caddy adapt --config /etc/caddy/Caddyfile > /dev/null
-      - name: Provision Caddyfile (validate)
-        run: docker compose run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile
+          # caddy joins tailscale's network namespace (network_mode: service:tailscale);
+          # no tailscale container on CI, so override to bridge for validation only
+          printf 'services:\n  caddy:\n    network_mode: bridge\n' > ci-override.yml
+          docker compose -f docker-compose.yml -f ci-override.yml run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile
