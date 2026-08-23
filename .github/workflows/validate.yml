@@ -9,7 +9,7 @@ jobs:
   compose-config:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Validate compose files
         run: |
           cp example.env .env
@@ -21,8 +21,8 @@ jobs:
   config-audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.x"
       - name: Install deps
@@ -35,7 +35,7 @@ jobs:
   caddy-validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Prepare placeholder env
         run: |
           cp example.env .env
@@ -47,7 +47,7 @@ jobs:
       - name: Build caddy image
         run: docker compose build --progress=plain caddy
       - name: Token reaches container
-        run: docker compose run --rm --no-deps caddy sh -c 'test ${#CLOUDFLARE_API_TOKEN} -eq 40 && echo token-ok'
+        run: docker compose run --rm --no-deps caddy sh -c 'env | grep -q "^CLOUDFLARE_API_TOKEN=citest0000000000000000000000000000000000$"'
       - name: Parse Caddyfile (adapt)
         run: docker compose run --rm --no-deps caddy caddy adapt --config /etc/caddy/Caddyfile > /dev/null
       - name: Provision Caddyfile (validate)
