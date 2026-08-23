@@ -44,10 +44,15 @@ jobs:
           sed -i 's#^\([A-Za-z_][A-Za-z0-9_]*\)=\s*$#\1=/tmp/ci-placeholder#' .env
           sed -i 's#^CADDY_SITE_PATH=.*#CADDY_SITE_PATH=/tmp/caddy-site#; s#^CADDY_DATA_PATH=.*#CADDY_DATA_PATH=/tmp/caddy-data#; s#^CADDY_CONFIG_PATH=.*#CADDY_CONFIG_PATH=/tmp/caddy-config#; s#^CLOUDFLARE_API_TOKEN=.*#CLOUDFLARE_API_TOKEN=citest0000000000000000000000000000000000#' .env
           mkdir -p /tmp/caddy-site /tmp/caddy-data /tmp/caddy-config
+          echo "::warning::dotenv=$(grep '^CLOUDFLARE' .env)"
+          echo "::warning::model=$(docker compose config 2>/dev/null | grep -A1 'cloudflare\|CLOUDFLARE' | head -3 | tr '\n' '|')"
       - name: Build caddy image
         run: docker compose build --progress=plain caddy
       - name: Token reaches container
-        run: docker compose run --rm --no-deps caddy sh -c 'env | grep -q "^CLOUDFLARE_API_TOKEN=citest0000000000000000000000000000000000$"'
+        run: |
+          GOT=$(docker compose run --rm --no-deps caddy sh -c 'env' 2>/dev/null | grep '^CLOUDFLARE_API_TOKEN=' || true)
+          echo "::warning::container-env=${GOT:-EMPTY}"
+          [ "$GOT" = "CLOUDFLARE_API_TOKEN=citest0000000000000000000000000000000000" ]
       - name: Parse Caddyfile (adapt)
         run: docker compose run --rm --no-deps caddy caddy adapt --config /etc/caddy/Caddyfile > /dev/null
       - name: Provision Caddyfile (validate)
