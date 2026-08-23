@@ -42,6 +42,8 @@ jobs:
           cp example_pihole.env pihole.env
           sed -i 's#^\([A-Za-z_][A-Za-z0-9_]*\)=\s*$#\1=/tmp/ci-placeholder#' .env
           printf 'CADDY_SITE_PATH=/tmp/caddy-site\nCADDY_DATA_PATH=/tmp/caddy-data\nCADDY_CONFIG_PATH=/tmp/caddy-config\n' >> .env
+          # 40-char dummy: cloudflare DNS module validates token format at provision time
+          printf 'CLOUDFLARE_API_TOKEN=citest0000000000000000000000000000000000\n' >> .env
           mkdir -p /tmp/caddy-site /tmp/caddy-data /tmp/caddy-config
           docker compose build caddy
           docker compose run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile
