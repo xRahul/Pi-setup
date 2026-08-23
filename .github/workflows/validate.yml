@@ -13,6 +13,7 @@ jobs:
       - name: Validate compose files
         run: |
           cp example.env .env
+          cp example_pihole.env pihole.env
           sed -i 's#^\([A-Za-z_][A-Za-z0-9_]*\)=\s*$#\1=/tmp/ci-placeholder#' .env
           docker compose config -q
           docker compose config --no-interpolate -q
@@ -38,6 +39,7 @@ jobs:
       - name: Build and validate Caddy image/config
         run: |
           cp example.env .env
+          cp example_pihole.env pihole.env
           sed -i 's#^\([A-Za-z_][A-Za-z0-9_]*\)=\s*$#\1=/tmp/ci-placeholder#' .env
           printf 'CADDY_SITE_PATH=/tmp/caddy-site\nCADDY_DATA_PATH=/tmp/caddy-data\nCADDY_CONFIG_PATH=/tmp/caddy-config\n' >> .env
           mkdir -p /tmp/caddy-site /tmp/caddy-data /tmp/caddy-config
