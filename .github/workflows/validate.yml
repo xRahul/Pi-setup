@@ -1,0 +1,43 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  compose-config:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate compose files
+        run: |
+          cp example.env .env
+          docker compose config -q
+          docker compose config --no-interpolate -q
+
+  config-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install deps
+        run: pip install pyyaml
+      - name: Run config audit
+        run: |
+          cp example.env .env
+          bash scripts/audit-config.sh
+
+  caddy-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and validate Caddy image/config
+        run: |
+          cp example.env .env
+          printf 'CADDY_SITE_PATH=/tmp/caddy-site\nCADDY_DATA_PATH=/tmp/caddy-data\nCADDY_CONFIG_PATH=/tmp/caddy-config\n' >> .env
+          mkdir -p /tmp/caddy-site /tmp/caddy-data /tmp/caddy-config
+          docker compose build caddy
+          docker compose run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile

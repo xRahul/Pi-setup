@@ -89,14 +89,11 @@ The following services are configured with static IPs in the `10.8.1.0/24` subne
 | **Actual Budget** | `10.8.1.3` | `actual.pi.rahulja.in` | Personal Budgeting |
 | **ezBookkeeping** | `10.8.1.19` | `ezbookkeeping.pi.rahulja.in` | Personal Finance Manager |
 | **Tailscale** | `10.8.1.48` | N/A | VPN Mesh Network |
-| **Web Test** | `10.8.1.49` | `webtest.pi.rahulja.in` | Connectivity Test (Whoami) |
 | **N8n** | `10.8.1.53` | `n8n.pi.rahulja.in` | Workflow Automation |
-| **SearXNG** | `10.8.1.54` | `searxng.pi.rahulja.in` | Privacy-respecting Metasearch Engine |
-| **Paisa** | `10.8.1.56` | `paisa.pi.rahulja.in` | Personal Finance Manager |
 | **Homepage** | `10.8.1.57` | `homepage.pi.rahulja.in` | Modern Startpage |
 | **Stirling-PDF** | `10.8.1.58` | `pdf.pi.rahulja.in` | Powerful PDF Manipulation Tools |
 
-*Note: Immich auxiliary services (ML, Redis, DB) occupy IPs `10.8.1.8`, `10.8.1.9`, and `10.8.1.10` respectively.*
+*Note: Immich auxiliary services (ML, Redis, DB) occupy IPs `10.8.1.8`, `10.8.1.9`, and `10.8.1.10` respectively. Full IP bookings and free slots are tracked in the comment block at the bottom of `docker-compose.yml`.*
 
 ## ⚙️ Configuration
 
@@ -149,7 +146,7 @@ Most heavy data (media, databases) is mapped to an external USB drive mounted at
     ```
 
 4.  **Access Services:**
-    Open your browser and navigate to the configured domains (e.g., `https://homepage.pi.rahulja.in`). Ensure your DNS (likely Pi-hole) is correctly pointing these domains to your Nginx/Caddy instance or that you have local host entries if testing offline.
+    Open your browser and navigate to the configured domains (e.g., `https://homepage.pi.rahulja.in`). Ensure your DNS (likely Pi-hole) is correctly pointing these domains to your Caddy instance or that you have local host entries if testing offline.
 
 ## 📝 Notes
 

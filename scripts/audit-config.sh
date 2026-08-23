@@ -122,7 +122,7 @@ label_groups = set()
 for service in services.values():
     label_groups.update(sablier_groups(service))
 
-public_helper_groups = {"firefly-cron"}
+public_helper_groups = {"firefly-cron", "miniflux-cron"}
 missing_caddy_groups = sorted(label_groups - caddy_groups - public_helper_groups)
 if missing_caddy_groups:
     warnings.append("Sablier label groups not found in Caddy routes: " + ", ".join(missing_caddy_groups))
