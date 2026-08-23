@@ -5,6 +5,13 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   compose-config:
     runs-on: ubuntu-latest
@@ -12,9 +19,7 @@ jobs:
       - uses: actions/checkout@v7
       - name: Validate compose files
         run: |
-          cp example.env .env
-          cp example_pihole.env pihole.env
-          sed -i 's#^\([A-Za-z_][A-Za-z0-9_]*\)=\s*$#\1=/tmp/ci-placeholder#' .env
+          bash scripts/ci-env.sh
           docker compose config -q
           docker compose config --no-interpolate -q
 
@@ -29,7 +34,7 @@ jobs:
         run: pip install pyyaml
       - name: Run config audit
         run: |
-          cp example.env .env
+          bash scripts/ci-env.sh
           bash scripts/audit-config.sh
 
   caddy-validate:
@@ -37,18 +42,12 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Prepare placeholder env
-        run: |
-          cp example.env .env
-          cp example_pihole.env pihole.env
-          # fill empty placeholders, then replace (not append) to avoid duplicate-key dotenv ambiguity
-          sed -i 's#^\([A-Za-z_][A-Za-z0-9_]*\)=\s*$#\1=/tmp/ci-placeholder#' .env
-          sed -i 's#^CADDY_SITE_PATH=.*#CADDY_SITE_PATH=/tmp/caddy-site#; s#^CADDY_DATA_PATH=.*#CADDY_DATA_PATH=/tmp/caddy-data#; s#^CADDY_CONFIG_PATH=.*#CADDY_CONFIG_PATH=/tmp/caddy-config#; s#^CLOUDFLARE_API_TOKEN=.*#CLOUDFLARE_API_TOKEN=citest0000000000000000000000000000000000#' .env
-          mkdir -p /tmp/caddy-site /tmp/caddy-data /tmp/caddy-config
+        run: bash scripts/ci-env.sh
       - name: Build caddy image
         run: docker compose build --progress=plain caddy
       - name: Validate Caddyfile
         run: |
           # caddy joins tailscale's network namespace (network_mode: service:tailscale);
           # no tailscale container on CI, so override to bridge for validation only
-          printf 'services:\n  caddy:\n    network_mode: bridge\n' > ci-override.yml
-          docker compose -f docker-compose.yml -f ci-override.yml run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile
+          printf 'services:\n  caddy:\n    network_mode: bridge\n' > "$RUNNER_TEMP/ci-override.yml"
+          docker compose -f docker-compose.yml -f "$RUNNER_TEMP/ci-override.yml" run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile
