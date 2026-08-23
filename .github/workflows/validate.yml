@@ -40,10 +40,9 @@ jobs:
         run: |
           cp example.env .env
           cp example_pihole.env pihole.env
+          # fill empty placeholders, then replace (not append) to avoid duplicate-key dotenv ambiguity
           sed -i 's#^\([A-Za-z_][A-Za-z0-9_]*\)=\s*$#\1=/tmp/ci-placeholder#' .env
-          printf 'CADDY_SITE_PATH=/tmp/caddy-site\nCADDY_DATA_PATH=/tmp/caddy-data\nCADDY_CONFIG_PATH=/tmp/caddy-config\n' >> .env
-          # 40-char dummy: cloudflare DNS module validates token format at provision time
-          printf 'CLOUDFLARE_API_TOKEN=citest0000000000000000000000000000000000\n' >> .env
+          sed -i 's#^CADDY_SITE_PATH=.*#CADDY_SITE_PATH=/tmp/caddy-site#; s#^CADDY_DATA_PATH=.*#CADDY_DATA_PATH=/tmp/caddy-data#; s#^CADDY_CONFIG_PATH=.*#CADDY_CONFIG_PATH=/tmp/caddy-config#; s#^CLOUDFLARE_API_TOKEN=.*#CLOUDFLARE_API_TOKEN=citest0000000000000000000000000000000000#' .env
           mkdir -p /tmp/caddy-site /tmp/caddy-data /tmp/caddy-config
       - name: Build caddy image
         run: docker compose build --progress=plain caddy
