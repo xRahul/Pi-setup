@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Build and validate Caddy image/config
+      - name: Prepare placeholder env
         run: |
           cp example.env .env
           cp example_pihole.env pihole.env
@@ -45,5 +45,7 @@ jobs:
           # 40-char dummy: cloudflare DNS module validates token format at provision time
           printf 'CLOUDFLARE_API_TOKEN=citest0000000000000000000000000000000000\n' >> .env
           mkdir -p /tmp/caddy-site /tmp/caddy-data /tmp/caddy-config
-          docker compose build caddy
-          docker compose run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile
+      - name: Build caddy image
+        run: docker compose build --progress=plain caddy
+      - name: Validate Caddyfile
+        run: docker compose run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile
