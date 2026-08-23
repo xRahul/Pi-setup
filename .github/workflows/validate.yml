@@ -46,5 +46,9 @@ jobs:
           mkdir -p /tmp/caddy-site /tmp/caddy-data /tmp/caddy-config
       - name: Build caddy image
         run: docker compose build --progress=plain caddy
-      - name: Validate Caddyfile
+      - name: Token reaches container
+        run: docker compose run --rm --no-deps caddy sh -c 'test ${#CLOUDFLARE_API_TOKEN} -eq 40 && echo token-ok'
+      - name: Parse Caddyfile (adapt)
+        run: docker compose run --rm --no-deps caddy caddy adapt --config /etc/caddy/Caddyfile > /dev/null
+      - name: Provision Caddyfile (validate)
         run: docker compose run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile
