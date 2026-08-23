@@ -1066,7 +1066,7 @@ services:
     security_opt:
       - no-new-privileges:true
     user: "1000:1000"
-    image: actualbudget/actual-server:26.7.0-alpine
+    image: actualbudget/actual-server:26.8.1-alpine
     container_name: actual
     restart: unless-stopped
     dns:
