@@ -18,7 +18,8 @@
 !sonic.cfg
 !prometheus
 !sonic.Dockerfile
-!unused_docker_compose.yml
+!restart.sh
+!homepage_setup_instructions.md
 !searxng
 !searxng/**
 !gethomepage
