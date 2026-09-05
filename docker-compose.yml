@@ -310,7 +310,7 @@ services:
   n8n:
     cap_drop:
       - ALL
-    image: n8nio/n8n:2.36.5
+    image: n8nio/n8n:2.38.3
     container_name: n8n
     restart: unless-stopped
     mem_limit: 768m
