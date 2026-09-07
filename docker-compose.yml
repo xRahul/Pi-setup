@@ -239,7 +239,7 @@ services:
       - ALL
     user: "999:999"
     container_name: immich_redis
-    image: docker.io/valkey/valkey:9@sha256:8e8d64b405ce18f41b8e5ee20aa4687a8ed0022d1298f2ce31cdcf3a76e09411
+    image: docker.io/valkey/valkey:9@sha256:c123e3715db63d06d4ad6964884037aa0d5d4d703939b9929954112889708e1d
     labels:
       - "sablier.enable=true"
       - "sablier.group=immich"
@@ -536,7 +536,7 @@ services:
   ghostfolio-valkey:
     profiles:
       - lazy
-    image: docker.io/valkey/valkey:9@sha256:8e8d64b405ce18f41b8e5ee20aa4687a8ed0022d1298f2ce31cdcf3a76e09411
+    image: docker.io/valkey/valkey:9@sha256:c123e3715db63d06d4ad6964884037aa0d5d4d703939b9929954112889708e1d
     container_name: ghostfolio-valkey
     restart: unless-stopped
     labels:
@@ -1464,7 +1464,7 @@ services:
   sure-redis:
     profiles:
       - lazy
-    image: docker.io/valkey/valkey:9@sha256:8e8d64b405ce18f41b8e5ee20aa4687a8ed0022d1298f2ce31cdcf3a76e09411
+    image: docker.io/valkey/valkey:9@sha256:c123e3715db63d06d4ad6964884037aa0d5d4d703939b9929954112889708e1d
     container_name: sure-redis
     restart: unless-stopped
     labels:
@@ -1800,7 +1800,7 @@ services:
   paperless-redis:
     profiles:
       - lazy
-    image: docker.io/valkey/valkey:9@sha256:8e8d64b405ce18f41b8e5ee20aa4687a8ed0022d1298f2ce31cdcf3a76e09411
+    image: docker.io/valkey/valkey:9@sha256:c123e3715db63d06d4ad6964884037aa0d5d4d703939b9929954112889708e1d
     container_name: paperless-redis
     restart: unless-stopped
     labels:
@@ -1939,7 +1939,7 @@ services:
   firefly-redis:
     profiles:
       - lazy
-    image: docker.io/valkey/valkey:9@sha256:8e8d64b405ce18f41b8e5ee20aa4687a8ed0022d1298f2ce31cdcf3a76e09411
+    image: docker.io/valkey/valkey:9@sha256:c123e3715db63d06d4ad6964884037aa0d5d4d703939b9929954112889708e1d
     container_name: firefly_redis
     restart: unless-stopped
     labels:
@@ -1968,7 +1968,7 @@ services:
   gramps-redis:
     profiles:
       - lazy
-    image: docker.io/valkey/valkey:9@sha256:8e8d64b405ce18f41b8e5ee20aa4687a8ed0022d1298f2ce31cdcf3a76e09411
+    image: docker.io/valkey/valkey:9@sha256:c123e3715db63d06d4ad6964884037aa0d5d4d703939b9929954112889708e1d
     container_name: gramps_redis
     restart: unless-stopped
     labels:
