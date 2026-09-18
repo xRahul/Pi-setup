@@ -692,7 +692,7 @@ services:
       - ALL
     user: "1000:1000"
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v3.1.0
+    image: ghcr.io/immich-app/immich-server:v3.2.2
     labels:
       - "sablier.enable=true"
       - "sablier.group=immich"
