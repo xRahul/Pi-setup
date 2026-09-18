@@ -40,7 +40,7 @@ services:
       - net.ipv6.conf.all.forwarding=1
       - net.ipv4.conf.all.src_valid_mark=1
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     cap_add:
       - NET_ADMIN
       - NET_RAW
@@ -74,7 +74,7 @@ services:
       - FTLCONF_files_database=/pihole-db/pihole-FTL.db
       - FTLCONF_misc_check_disk=0
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     cap_add:
       - SYS_NICE
       - SYS_TIME
@@ -96,7 +96,7 @@ services:
     environment:
       - TZ=${DEFAULT_TZ}
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     volumes:
       - ./dnscrypt-proxy:/config
     depends_on:
@@ -106,6 +106,7 @@ services:
       - NET_BIND_SERVICE
     cap_drop:
       - ALL
+    user: "1000:1000"
     build:
       context: .
       dockerfile: caddy.Dockerfile
@@ -117,7 +118,7 @@ services:
     depends_on:
       - tailscale
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     environment:
       - TZ=${DEFAULT_TZ}
       - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
@@ -154,7 +155,7 @@ services:
       - "sablier.group=filebrowser"
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     volumes:
       - ${FILEBROWSER_ROOT_PATH}:/srv
       - ${FIREFOX_DOWNLOADS_PATH}:/srv/firefox-downloads
@@ -201,7 +202,7 @@ services:
     restart: unless-stopped
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     # network_mode: "service:gluetun"
     healthcheck:
       test: ["CMD", "nc", "-z", "127.0.0.1", "9091"]
@@ -246,7 +247,7 @@ services:
       - "sablier.ready-on-start=true"
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     environment:
       - TZ=${DEFAULT_TZ}
     healthcheck:
@@ -276,7 +277,7 @@ services:
     restart: unless-stopped
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     env_file:
       - .env
     environment:
@@ -317,7 +318,7 @@ services:
     mem_reservation: 256m
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     environment:
       - TZ=${DEFAULT_TZ}
       - GENERIC_TIMEZONE=${DEFAULT_TZ}
@@ -325,7 +326,7 @@ services:
       - N8N_HOST=n8n.pi.rahulja.in
       - N8N_PORT=5678
       - N8N_PROTOCOL=https
-      - WEBHOOK_URL=https://n8n.pi.rahulja.in/
+      - N8N_WEBHOOK_URL=https://n8n.pi.rahulja.in/
       - N8N_EDITOR_BASE_URL=https://n8n.pi.rahulja.in
       - N8N_PROXY_HOPS=1
       - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
@@ -382,7 +383,7 @@ services:
     mem_reservation: 64m
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     depends_on:
       n8n:
         condition: service_healthy
@@ -422,7 +423,7 @@ services:
     restart: unless-stopped
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://127.0.0.1:8080/health || exit 1"]
       interval: 30s
@@ -471,7 +472,7 @@ services:
     cap_drop:
       - ALL
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     environment:
       - DATABASE_URL=${GHOSTFOLIO_DATABASE_URL}
@@ -514,7 +515,7 @@ services:
       - "sablier.group=ghostfolio"
       - "sablier.ready-on-start=true"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     environment:
       - TZ=${DEFAULT_TZ}
@@ -547,7 +548,7 @@ services:
       - ALL
     user: "1000:1000"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     environment:
       - TZ=${DEFAULT_TZ}
@@ -582,7 +583,7 @@ services:
     restart: unless-stopped
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://127.0.0.1:8080/ || exit 1"]
       interval: 30s
@@ -631,7 +632,7 @@ services:
     restart: unless-stopped
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     depends_on:
       - firefly
     environment:
@@ -674,7 +675,7 @@ services:
     restart: unless-stopped
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     environment:
       - TZ=${DEFAULT_TZ}
     volumes:
@@ -697,7 +698,7 @@ services:
       - "sablier.group=immich"
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     volumes:
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
       - ${EXTERNAL_LIBRARY_LOCATION}:/usr/src/app/external:ro
@@ -744,7 +745,7 @@ services:
       - "sablier.ready-on-start=true"
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     volumes:
       - ${IMMICH_ML_MODEL_CACHE_LOCATION}:/cache
       - ${EXTERNAL_LIBRARY_LOCATION}:/usr/src/app/external:ro
@@ -786,7 +787,7 @@ services:
       - "sablier.group=immich"
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     environment:
       - TZ=${DEFAULT_TZ}
       - POSTGRES_PASSWORD=${IMMICH_DB_PASSWORD}
@@ -825,7 +826,7 @@ services:
     mem_limit: 512m
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     volumes:
       - ${STIRLING_PDF_DATA_PATH}/tessdata:/usr/share/tessdata
       - ${STIRLING_PDF_DATA_PATH}/configs:/configs
@@ -875,7 +876,7 @@ services:
       read-proxy-net:
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
 
   socket-proxy-read:
     cap_add:
@@ -910,7 +911,7 @@ services:
       - read-proxy-net
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
 
   socket-proxy-admin:
     profiles:
@@ -959,7 +960,7 @@ services:
       - portainer-proxy-net
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
 
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:10.11.11
@@ -968,7 +969,7 @@ services:
     restart: unless-stopped
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     cap_drop:
       - ALL
     cap_add:
@@ -1023,7 +1024,7 @@ services:
       - ALL
     user: "1000:1000"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     image: neosmemo/memos:0.30.0
     container_name: memos
     restart: unless-stopped
@@ -1059,7 +1060,7 @@ services:
     cap_drop:
       - ALL
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     user: "1000:1000"
     image: actualbudget/actual-server:26.8.1-alpine
     container_name: actual
@@ -1099,7 +1100,7 @@ services:
       - "sablier.group=ezbookkeeping"
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     environment:
       - TZ=${DEFAULT_TZ}
       - EBK_SERVER_DOMAIN=ezbookkeeping.pi.rahulja.in
@@ -1146,7 +1147,7 @@ services:
       - ALL
     user: "1000:1000"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     environment:
       - DATABASE_URL=${MINIFLUX_DB_URL}
@@ -1189,7 +1190,7 @@ services:
       - ALL
     user: "999:999"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     environment:
       - POSTGRES_USER=${MINIFLUX_DB_USER}
@@ -1218,7 +1219,7 @@ services:
       - "sablier.running-hours=02:30-05:30"
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     cap_drop:
       - ALL
     environment:
@@ -1257,7 +1258,7 @@ services:
       - "sablier.group=archivebox"
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     shm_size: "1gb"
     volumes:
       - ${ARCHIVEBOX_DATA_LOCATION}:/data
@@ -1299,7 +1300,7 @@ services:
     cap_drop:
       - ALL
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     command:
       - serve
     environment:
@@ -1354,7 +1355,7 @@ services:
       - ALL
     user: "999:999"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     environment:
       - TZ=${DEFAULT_TZ}
@@ -1396,7 +1397,7 @@ services:
       - ALL
     user: "1000:1000"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     healthcheck:
       test: ["CMD", "node", "-e", "const http = require('http'); const req = http.request('http://127.0.0.1:3000/', { method: 'HEAD', timeout: 2000 }, (res) => { if (res.statusCode >= 200 && res.statusCode < 400) { process.exit(0); } else { process.exit(1); } }); req.on('error', () => process.exit(1)); req.end();"]
@@ -1441,7 +1442,7 @@ services:
       - ALL
     user: "999:999"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     environment:
       - TZ=${DEFAULT_TZ}
@@ -1476,7 +1477,7 @@ services:
       - ALL
     user: "999:999"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     environment:
       - TZ=${DEFAULT_TZ}
@@ -1516,7 +1517,7 @@ services:
         condition: service_healthy
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     mem_limit: 512m
     pids_limit: 256
     environment:
@@ -1582,7 +1583,7 @@ services:
         condition: service_healthy
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     mem_limit: 384m
     pids_limit: 256
     environment:
@@ -1627,7 +1628,7 @@ services:
       - "sablier.enable=true"
       - "sablier.group=cyberchef"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     cap_drop:
       - ALL
     healthcheck:
@@ -1660,7 +1661,7 @@ services:
       - "sablier.enable=true"
       - "sablier.group=gramps"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     cap_drop:
       - ALL
     user: "1000:1000"
@@ -1717,7 +1718,7 @@ services:
       - "sablier.group=gramps"
       - "sablier.ready-on-start=true"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     cap_drop:
       - ALL
     user: "1000:1000"
@@ -1776,7 +1777,7 @@ services:
       - ALL
     user: "999:999"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     environment:
       - TZ=${DEFAULT_TZ}
@@ -1811,7 +1812,7 @@ services:
       - ALL
     user: "999:999"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     environment:
       - TZ=${DEFAULT_TZ}
@@ -1839,7 +1840,7 @@ services:
     cap_drop:
       - ALL
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     networks:
       wg-easy:
@@ -1863,7 +1864,7 @@ services:
     cap_drop:
       - ALL
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     command:
       - "gotenberg"
@@ -1891,7 +1892,7 @@ services:
       - SETUID
       - SETGID
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     labels:
       - "sablier.enable=true"
       - "sablier.group=paperless"
@@ -1950,7 +1951,7 @@ services:
       - ALL
     user: "999:999"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     environment:
       - TZ=${DEFAULT_TZ}
@@ -1979,7 +1980,7 @@ services:
       - ALL
     user: "999:999"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     environment:
       - TZ=${DEFAULT_TZ}
@@ -2007,7 +2008,7 @@ services:
       - ALL
     user: "1000:1000"
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     environment:
       - BURNRATE_DATA_DIR=/data
@@ -2047,7 +2048,7 @@ services:
     cap_drop:
       - ALL
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     logging: *default-logging
     deploy:
       resources:
@@ -2080,7 +2081,7 @@ services:
       - "sablier.group=drawio"
     logging: *default-logging
     security_opt:
-      - no-new-privileges:true
+      - no-new-privileges=true
     cap_drop:
       - ALL
     user: "1001:1001"
