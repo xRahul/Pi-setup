@@ -462,7 +462,7 @@ services:
   ghostfolio:
     profiles:
       - lazy
-    image: ghostfolio/ghostfolio:3.70.1
+    image: ghostfolio/ghostfolio:3.71.0
     container_name: ghostfolio
     init: true
     restart: unless-stopped
