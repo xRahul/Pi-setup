@@ -56,7 +56,7 @@ services:
         ipv4_address: 10.8.1.48
 
   pihole:
-    image: pihole/pihole:2026.07.2
+    image: pihole/pihole:2026.09.0
     network_mode: service:tailscale
     container_name: pihole
     mem_limit: 512m
@@ -263,7 +263,7 @@ services:
     cap_drop:
       - ALL
     user: "1000:1000"
-    image: ghcr.io/gethomepage/homepage:v2.2.0
+    image: ghcr.io/gethomepage/homepage:v2.4.0
     container_name: homepage
     mem_limit: 512m
     depends_on:
@@ -462,7 +462,7 @@ services:
   ghostfolio:
     profiles:
       - lazy
-    image: ghostfolio/ghostfolio:3.70.1
+    image: ghostfolio/ghostfolio:3.80.2
     container_name: ghostfolio
     init: true
     restart: unless-stopped
@@ -1025,7 +1025,7 @@ services:
     user: "1000:1000"
     security_opt:
       - no-new-privileges=true
-    image: neosmemo/memos:0.30.0
+    image: neosmemo/memos:0.31.0
     container_name: memos
     restart: unless-stopped
     dns:
@@ -1384,7 +1384,7 @@ services:
   resume:
     profiles:
       - lazy
-    image: amruthpillai/reactive-resume:v5.3.1
+    image: amruthpillai/reactive-resume:v5.3.2
     container_name: resume
     restart: unless-stopped
     depends_on:
@@ -1503,7 +1503,7 @@ services:
       - DAC_OVERRIDE
     cap_drop:
       - ALL
-    image: ghcr.io/we-promise/sure:0.7.3
+    image: ghcr.io/we-promise/sure:0.7.5
     container_name: sure
     restart: unless-stopped
     labels:
@@ -1568,7 +1568,7 @@ services:
       - DAC_OVERRIDE
     cap_drop:
       - ALL
-    image: ghcr.io/we-promise/sure:0.7.3
+    image: ghcr.io/we-promise/sure:0.7.5
     container_name: sure-worker
     command: bundle exec sidekiq
     restart: unless-stopped
@@ -1620,7 +1620,7 @@ services:
   cyberchef:
     profiles:
       - lazy
-    image: ghcr.io/gchq/cyberchef:11.4.0
+    image: ghcr.io/gchq/cyberchef:11.5.0
     container_name: cyberchef
     restart: unless-stopped
     logging: *default-logging
@@ -1653,7 +1653,7 @@ services:
   grampsweb:
     profiles:
       - lazy
-    image: ghcr.io/gramps-project/grampsweb:26.9.0
+    image: ghcr.io/gramps-project/grampsweb:26.10.0
     container_name: grampsweb
     restart: unless-stopped
     logging: *default-logging
@@ -1709,7 +1709,7 @@ services:
   grampsweb_celery:
     profiles:
       - lazy
-    image: ghcr.io/gramps-project/grampsweb:26.9.0
+    image: ghcr.io/gramps-project/grampsweb:26.10.0
     container_name: grampsweb_celery
     restart: unless-stopped
     logging: *default-logging
@@ -1882,7 +1882,7 @@ services:
   paperless-ngx:
     profiles:
       - lazy
-    image: ghcr.io/paperless-ngx/paperless-ngx:3.1.3
+    image: ghcr.io/paperless-ngx/paperless-ngx:3.3.0
     container_name: paperless-ngx
     restart: unless-stopped
     cap_drop:
