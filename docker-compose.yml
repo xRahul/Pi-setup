@@ -2026,7 +2026,7 @@ services:
   firefox:
     profiles:
       - lazy
-    image: ghcr.io/m1k1o/neko/firefox:3.1.5
+    image: ghcr.io/m1k1o/neko/firefox:3.1.6
     container_name: firefox
     networks:
       wg-easy:
