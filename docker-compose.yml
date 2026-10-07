@@ -1091,7 +1091,7 @@ services:
     profiles:
       - lazy
     user: "1000:1000"
-    image: mayswind/ezbookkeeping:2.0.0
+    image: mayswind/ezbookkeeping:2.0.1
     container_name: ezbookkeeping
     hostname: ezbookkeeping
     restart: unless-stopped
