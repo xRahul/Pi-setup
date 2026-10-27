@@ -240,7 +240,7 @@ services:
       - ALL
     user: "999:999"
     container_name: immich_redis
-    image: docker.io/valkey/valkey:9@sha256:8e8d64b405ce18f41b8e5ee20aa4687a8ed0022d1298f2ce31cdcf3a76e09411
+    image: docker.io/valkey/valkey:9@sha256:c123e3715db63d06d4ad6964884037aa0d5d4d703939b9929954112889708e1d
     labels:
       - "sablier.enable=true"
       - "sablier.group=immich"
@@ -692,7 +692,7 @@ services:
       - ALL
     user: "1000:1000"
     container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:v3.1.0
+    image: ghcr.io/immich-app/immich-server:v3.3.5
     labels:
       - "sablier.enable=true"
       - "sablier.group=immich"
@@ -700,7 +700,7 @@ services:
     security_opt:
       - no-new-privileges=true
     volumes:
-      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - ${UPLOAD_LOCATION}:/data
       - ${EXTERNAL_LIBRARY_LOCATION}:/usr/src/app/external:ro
       - /etc/localtime:/etc/localtime:ro
     env_file:
@@ -738,7 +738,7 @@ services:
       - ALL
     user: "1000:1000"
     container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:v3.1.0
+    image: ghcr.io/immich-app/immich-machine-learning:v3.3.5
     labels:
       - "sablier.enable=true"
       - "sablier.group=immich"
