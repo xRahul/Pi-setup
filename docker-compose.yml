@@ -1854,7 +1854,7 @@ services:
   paperless-gotenberg:
     profiles:
       - lazy
-    image: gotenberg/gotenberg:8.37.0
+    image: gotenberg/gotenberg:8.39.0
     container_name: paperless-gotenberg
     restart: unless-stopped
     labels:
