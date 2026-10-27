@@ -623,7 +623,7 @@ services:
       - DAC_OVERRIDE
     cap_drop:
       - ALL
-    image: alpine:3.24.2
+    image: alpine:3.24.3
     container_name: firefly-cron
     labels:
       - "sablier.enable=true"
@@ -1210,7 +1210,7 @@ services:
   miniflux-cron:
     profiles:
       - lazy
-    image: alpine:3.24.2
+    image: alpine:3.24.3
     container_name: miniflux-cron
     restart: unless-stopped
     labels:
