@@ -1208,7 +1208,7 @@ services:
     mem_limit: 128m
     profiles:
       - lazy
-    image: miniflux/miniflux:2.3.3-distroless
+    image: miniflux/miniflux:2.3.4-distroless
     container_name: miniflux
     restart: unless-stopped
     depends_on:
