@@ -1,151 +1,120 @@
 # Repo Architecture Notes
 
-This repo is a Docker Compose based Raspberry Pi / homelab stack. The main runtime definition is `docker-compose.yml`; local paths, credentials, versions, and dashboard API variables come from `.env`.
+This repository contains the Docker Compose based Raspberry Pi 5 homelab stack. The primary stack definition is [docker-compose.yml](file:///home/rahul/docker/docker-compose.yml); local paths, credentials, versions, and dashboard variables are supplied via `.env`.
 
-Do not paste secret values from `.env` into docs or chat. Refer to variable names only.
+Do not paste secret values from `.env` into documentation or commits. Refer strictly to environment variable keys.
 
-## Key Files
+---
 
-- `docker-compose.yml`: primary stack definition.
-- `.env`: real local configuration and secrets.
-- `example.env`: template for the main environment file.
-- `pihole.env`: Pi-hole local DNS host mapping via `FTLCONF_dns_hosts`.
-- `Caddyfile`: HTTPS reverse proxy config for `*.pi.rahulja.in`.
-- `caddy.Dockerfile`: custom Caddy image build.
-- `homepage_setup_instructions.md`: notes for enabling Homepage widgets.
-- `/home/rahul/docker_data/gethomepage`: live GetHomepage config mounted into the Homepage container.
+## Key Files & Configuration Map
 
-## Compose Layout
+- [docker-compose.yml](file:///home/rahul/docker/docker-compose.yml): Primary multi-container stack definition (54 services).
+- `.env`: Live host configuration, directory paths, and secret tokens (git-ignored).
+- `example.env`: Reference template with default path configurations and empty credential placeholders.
+- `pihole.env`: Live Pi-hole local DNS host mapping source (`FTLCONF_dns_hosts`).
+- [Caddyfile](file:///home/rahul/docker/Caddyfile): HTTPS reverse proxy configuration for `*.pi.rahulja.in`.
+- [caddy.Dockerfile](file:///home/rahul/docker/caddy.Dockerfile): Multi-stage custom Caddy build with Cloudflare DNS-01 and Sablier plugins.
+- [gethomepage/services.yaml](file:///home/rahul/docker/gethomepage/services.yaml): Dashboard layout, category groups, links, and widget definitions.
+- [scripts/audit-config.sh](file:///home/rahul/docker/scripts/audit-config.sh): Comprehensive static analysis script validating compose syntax, healthchecks, memory limits, and IP bindings.
+- [check_updates.py](file:///home/rahul/docker/check_updates.py): Dynamic image tag scraper querying Docker Hub, GitHub Container Registry (ghcr.io), and LinuxServer.io for updates.
 
-The stack has about 45 services. Most state is stored with bind mounts, not named Docker volumes. There are currently no named Compose volumes.
+---
 
-Important networks:
+## Compose Layout & Networking
 
-- `wg-easy`: bridge network named `wg-easy`, subnet `10.8.1.0/24`. Most proxied services use fixed `10.8.1.x` addresses here.
-- `read-proxy-net`: internal bridge network for read-only Docker socket proxy access.
-- `portainer-proxy-net`: internal bridge network for Portainer/admin socket access.
+The stack manages 54 services across custom bridge networks:
 
-Core/default services include:
+### Networks:
+1. `wg-easy`: Main Docker bridge network (`10.8.1.0/24`, gateway `10.8.1.1`).
+   - All proxied application containers reside here with static IP addresses.
+   - Primary DNS points to `10.8.1.48` (Pi-hole).
+2. `read-proxy-net`: Internal Docker network without host port bindings.
+   - Provides read-only access to `socket-proxy-read` for Homepage container metric scrapers.
+3. `portainer-proxy-net`: Internal Docker network.
+   - Provides admin-tier Docker socket access to `socket-proxy-admin` for Portainer.
 
-- `tailscale`
-- `pihole`
-- `dnscrypt-proxy`
-- `caddy`
-- `transmission`
-- `sablier`
-- `socket-proxy-read`
+### Network Namespace Sharing (`10.8.1.48`):
+The core infrastructure containers (`tailscale`, `caddy`, `pihole`, `dnscrypt-proxy`) share Tailscale's network namespace (`network_mode: service:tailscale`):
+- Operates as a single logical network node on the `wg-easy` bridge at IP `10.8.1.48`.
+- Caddy handles TLS termination directly on Tailscale's virtual network interface and forwards requests over `wg-easy` to application containers.
+- Pi-hole binds to local DNS queries on port 53 and forwards upstream queries to DNSCrypt-Proxy on `127.0.0.1:5053`.
 
-Many user apps are marked with the Compose profile `lazy`, including Homepage, Filebrowser, Immich, Firefly, Portainer, Stirling PDF, Memos, Miniflux, ntfy, Reactive Resume, Paperless, Gramps, and CyberChef.
+---
 
-## Persistent Data
+## Host Systemd Integrations
 
-Most persistent paths are configured in `.env`.
+The host Raspberry Pi 5 runs two persistent systemd background units supporting the container network:
 
-Common roots:
+### 1. `rpi-tailscale-hairpin.service`
+- **Location:** `/etc/systemd/system/rpi-tailscale-hairpin.service`
+- **Purpose:** Automatically runs `/sbin/ip route replace 100.64.0.0/10 via 10.8.1.48` on boot.
+- **Why it matters:** Pi-hole resolves `*.pi.rahulja.in` to the Tailscale IP `100.109.192.17`. Containers attempting to access other local services via HTTPS domain send packets to `100.109.192.17`. The hairpin route ensures the host kernel does a U-turn (hairpin) into Caddy (`10.8.1.48`) rather than routing them out the physical router where they would be dropped.
 
-- `/home/rahul/docker_data`: app data, databases, caches, and configs.
-- `/mnt/usb`: larger media/file storage.
-- `/home/rahul/docker`: repo-local config files for selected apps.
+### 2. `rpi5-udp-gro.service`
+- **Location:** `/etc/systemd/system/rpi5-udp-gro.service`
+- **Purpose:** Enables UDP Generic Receive Offload (GRO) forwarding on physical network interfaces (`eth0` and `wlan0`):
+  ```bash
+  ethtool -K eth0 rx-udp-gro-forwarding on rx-gro-list off
+  ```
+- **Why it matters:** Maximizes wire-speed throughput for WireGuard and Tailscale VPN tunnels on ARM64 Linux.
 
-Examples:
+---
 
-- Caddy data/config: `CADDY_SITE_PATH`, `CADDY_DATA_PATH`, `CADDY_CONFIG_PATH`.
-- Pi-hole data: `PIHOLE_ETC_PATH`, `PIHOLE_ETC_DNSMASQ_PATH`.
-- Homepage config: `HOMEPAGE_CONFIG_PATH`.
-- Immich: `UPLOAD_LOCATION`, `IMMICH_DB_DATA_LOCATION`, `IMMICH_ML_MODEL_CACHE_LOCATION`, `IMMICH_REDIS_DATA_PATH`, `EXTERNAL_LIBRARY_LOCATION`.
-- Paperless: `PAPERLESS_NGX_*`, `PAPERLESS_DB_*`, `PAPERLESS_REDIS_DATA_PATH`.
-- Filebrowser: `FILEBROWSER_ROOT_PATH`, `FILEBROWSER_DB_FILE_PATH`, `FILEBROWSER_CONFIG_SETTING_FILE_PATH`.
-- Jellyfin: `JELLYFIN_*`.
+## Reverse Proxy Architecture (Caddy)
 
-## Caddy
+Caddy terminates HTTPS for all homelab traffic using a single wildcard certificate:
+- **Wildcard Certificate:** Provisions `CN=*.pi.rahulja.in` via Cloudflare DNS-01 challenge. Eliminates Let's Encrypt rate limits and multiple certificate renewals.
+- **Security Headers:** Every web service route imports `(security_headers)` to enforce HSTS (1 year), MIME-type sniffing protection (`nosniff`), frame embedding restrictions (`SAMEORIGIN`), and header stripping (`-Server`).
+- **Decommissioned Route Sink (HTTP 410):** Historical or dormant service blocks (`wg`, `watchtower`, `navidrome`, `plex`, `freshrss`, `grocy`, etc.) return immediate `HTTP/2 410 Gone`. This keeps routing blocks preserved in `Caddyfile` for easy resurrection while preventing 30-second TCP hanging connections.
+- **Scale-to-Zero Coordination (Sablier):** Routes for lazy services use the `sablier` plugin middleware. If the backend container is stopped, Caddy triggers Sablier to boot the container, displays a loading screen (or blocks transparently up to 2m for heavy apps like Immich), and proxies traffic once healthy.
 
-Caddy is the public HTTPS reverse proxy. It is built from `caddy.Dockerfile`, mounts `Caddyfile` read-only, and uses Cloudflare DNS challenge via `CLOUDFLARE_API_TOKEN`.
+---
 
-Most routes point `*.pi.rahulja.in` hostnames to fixed `10.8.1.x` service IPs on the `wg-easy` network. Some routes use Sablier so Caddy can trigger lazy services and show/block while containers start.
+## Hardware Resource Governance (8GB Raspberry Pi 5)
 
-Example route pattern:
+To prevent Linux Out-Of-Memory (OOM) kernel lockups on the Raspberry Pi 5:
+- **100% `mem_limit` Coverage:** Every service in `docker-compose.yml` has an explicit cgroup memory ceiling.
+- **No Unbounded Memory:** Heavy stacks (Immich ML, Paperless Tika/Gotenberg, Transmission) are strictly bounded to prevent eating host OS page cache or killing `dockerd`.
+- **Dynamic Headroom:** Core always-on services consume ~1.7GB RAM; Debian host OS consumes ~1.0GB RAM; leaving ~5.3GB RAM dynamic headroom for scale-to-zero application stacks when woken.
 
-- `dash.pi.rahulja.in` proxies to Homepage at `10.8.1.57:3000`.
-- `immich.pi.rahulja.in` proxies to Immich at `10.8.1.6:2283`.
-- `pngx.pi.rahulja.in` proxies to Paperless at `10.8.1.32:8000`.
-- `pihole.pi.rahulja.in` proxies to Pi-hole on Caddy's local network path.
+---
 
-When adding or changing a service, keep the Compose static IP, Caddy upstream, Pi-hole local DNS entry, and Homepage dashboard entry aligned.
+## Storage Architecture
 
-## Homepage / GetHomepage
+Persistent data is partitioned strictly between fast NVMe SSD storage and bulk external USB storage:
 
-The Homepage service uses:
+### 1. NVMe SSD Storage (`/home/rahul/docker_data`)
+Used for all databases, state directories, container configuration, and search indexes:
+- Caddy certificate cache, Tailscale state, Pi-hole FTL database (`/home/rahul/docker/pihole-db`).
+- PostgreSQL databases (`immich-database`, `paperless-db`, `ghostfolio-db`, `sure-db`, `miniflux_db`, `resume-db`).
+- Valkey cache directories (`immich-redis`, `paperless-redis`, `firefly-redis`, etc.).
+- Homepage configuration files (`/home/rahul/docker/gethomepage`).
 
-- image: `ghcr.io/gethomepage/homepage:v2.7.0`
-- status: Core service (runs continuously; not scale-to-zero)
-- networks: `wg-easy` and `read-proxy-net`
-- fixed IP: `10.8.1.57`
-- config mount: `${HOMEPAGE_CONFIG_PATH}:/app/config` (points to `./gethomepage`)
-- host mounts for stats: `/proc`, `/sys`, `/`, and `/mnt/usb`
-- read-only Docker access through `socket-proxy-read`
+### 2. Bulk USB Storage (`/mnt/usb`)
+Formatted with `vfat` for bulk media and file storage:
+- Immich upload and external photo libraries (`UPLOAD_LOCATION`, `EXTERNAL_LIBRARY_LOCATION`).
+- Transmission torrent completed downloads.
+- Personal file shares (`Dad`, `Rahul`, `music`).
 
-Resolved live config path:
+---
 
-```text
-/home/rahul/docker/gethomepage
-```
+## Stack Operations & Maintenance
 
-Known config files there:
-
-- `settings.yaml`
-- `services.yaml`
-- `widgets.yaml`
-- `bookmarks.yaml`
-- `docker.yaml`
-- `kubernetes.yaml`
-- `proxmox.yaml`
-- `custom.css`
-- `custom.js`
-
-`services.yaml` is grouped roughly into:
-
-- `Productivity`: Paperless, Filebrowser, Stirling PDF, CyberChef, Memos, Firefly, Miniflux, ArchiveBox, Reactive Resume, Gramps.
-- `Media`: Immich, Immich ML, Transmission, Jellyfin.
-- `System`: Pi-hole, Tailscale, DNSCrypt, Caddy, and related infrastructure.
-
-Homepage widget credentials come from `.env` as `HOMEPAGE_VAR_*` variables. Keep real values in `.env`; dashboard YAML can reference the variables.
-
-## Environment Files
-
-`.env` is the central source for:
-
-- time zone
-- Tailscale auth/state
-- Cloudflare DNS API token
-- app data paths
-- database usernames/passwords
-- service secrets
-- Homepage widget API keys
-- selected app versions
-
-`pihole.env` separately stores Pi-hole local DNS host mappings via `FTLCONF_dns_hosts`.
-
-`example.env`, `example_pihole.env`, and `example_immich.env` are templates/samples and should not be treated as active runtime files unless Compose references them.
-
-## Operational Pattern
-
-Use Compose from the repo root.
-
-Typical operations:
+All operations are executed from the repository root:
 
 ```bash
+# Start core always-on stack
 docker compose up -d
+
+# Start lazy services on demand
 docker compose --profile lazy up -d <service>
-docker compose restart <service>
+
+# Check service logs
 docker compose logs -f <service>
+
+# Run configuration audit script
+./scripts/audit-config.sh
+
+# Check for newer upstream image tags
+python3 check_updates.py
 ```
-
-After changing Caddy config, reload/restart Caddy. After changing Homepage config, restart Homepage.
-
-When adding a new exposed app, update these together:
-
-1. `docker-compose.yml` service, network, static IP, mounts, env.
-2. `.env` path/secret variables.
-3. `Caddyfile` hostname and upstream.
-4. `pihole.env` local DNS mapping if needed.
-5. Homepage `services.yaml` entry and optional widget variables.
