@@ -81,7 +81,33 @@ mikochi.pi.rahulja.in {
 }
 
 jellyfin.pi.rahulja.in {
-	reverse_proxy * 10.8.1.1:8096
+	# API and client app endpoints (mobile, TV, web app sync)
+	@api {
+		path /System/* /Users/* /Items/* /Videos/* /Audio/* /Images/* /Sessions/* /DisplayPreferences/* /Playback/* /socket* /api/*
+	}
+	route @api {
+		sablier http://sablier:10000 {
+			group jellyfin
+			session_duration 3h
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.1:8096
+	}
+
+	# Interactive browser UI
+	route {
+		sablier http://sablier:10000 {
+			group jellyfin
+			session_duration 3h
+			dynamic {
+				display_name "Jellyfin"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.1:8096
+	}
 	import cloudflare
 }
 
@@ -116,7 +142,33 @@ wallabag.pi.rahulja.in {
 }
 
 trans.pi.rahulja.in {
-	reverse_proxy * 10.8.1.23:9091
+	# RPC endpoint for remote clients & automation
+	@rpc {
+		path /transmission/rpc*
+	}
+	route @rpc {
+		sablier http://sablier:10000 {
+			group transmission
+			session_duration 3h
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.23:9091
+	}
+
+	# Interactive web client
+	route {
+		sablier http://sablier:10000 {
+			group transmission
+			session_duration 3h
+			dynamic {
+				display_name "Transmission"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.23:9091
+	}
 	import cloudflare
 }
 
@@ -537,8 +589,36 @@ nc.pi.rahulja.in {
 }
 
 n8n.pi.rahulja.in {
-	reverse_proxy * 10.8.1.53:5678 {
-		flush_interval -1
+	# Webhooks and API endpoints
+	@api {
+		path /webhook/* /webhook-test/* /api/* /rest/*
+	}
+	route @api {
+		sablier http://sablier:10000 {
+			group n8n
+			session_duration 3h
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.53:5678 {
+			flush_interval -1
+		}
+	}
+
+	# Interactive editor UI
+	route {
+		sablier http://sablier:10000 {
+			group n8n
+			session_duration 3h
+			dynamic {
+				display_name "n8n"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.53:5678 {
+			flush_interval -1
+		}
 	}
 	import cloudflare
 }
@@ -692,3 +772,60 @@ firefox.pi.rahulja.in {
 	}
 	import cloudflare
 }
+
+opencode.pi.rahulja.in {
+	@browser {
+		method GET
+		header Accept *text/html*
+	}
+
+	# Browser interface (Embedded Web UI) loading page
+	route @browser {
+		sablier http://sablier:10000 {
+			group opencode
+			session_duration 1h
+			dynamic {
+				display_name "OpenCode v2"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.70:4096 {
+			flush_interval -1
+		}
+	}
+
+	# GUI clients, API, WebSocket, and SSE requests
+	route {
+		sablier http://sablier:10000 {
+			group opencode
+			session_duration 1h
+			blocking {
+				timeout 1m
+			}
+		}
+		reverse_proxy * 10.8.1.70:4096 {
+			flush_interval -1
+		}
+	}
+
+	import cloudflare
+}
+
+agy.pi.rahulja.in {
+	route {
+		sablier http://sablier:10000 {
+			group antigravity
+			session_duration 60m
+			dynamic {
+				display_name "Antigravity CLI"
+				theme hacker-terminal
+			}
+		}
+		reverse_proxy * 10.8.1.71:7681 {
+			flush_interval -1
+		}
+	}
+	import cloudflare
+}
+
+

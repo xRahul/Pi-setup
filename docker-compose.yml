@@ -189,6 +189,8 @@ services:
 
 
   transmission:
+    profiles:
+      - lazy
     cap_add:
       - CHOWN
       - SETUID
@@ -198,6 +200,9 @@ services:
       - ALL
     image: lscr.io/linuxserver/transmission:4.1.3-r0-ls362
     container_name: transmission
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=transmission"
     mem_limit: 512m
     restart: unless-stopped
     logging: *default-logging
@@ -309,10 +314,15 @@ services:
       read-proxy-net:
 
   n8n:
+    profiles:
+      - lazy
     cap_drop:
       - ALL
     image: n8nio/n8n:2.40.3
     container_name: n8n
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=n8n"
     restart: unless-stopped
     mem_limit: 768m
     mem_reservation: 256m
@@ -374,10 +384,16 @@ services:
         ipv4_address: 10.8.1.53
 
   n8n-runners:
+    profiles:
+      - lazy
     cap_drop:
       - ALL
     image: n8nio/runners:2.40.3
     container_name: n8n-runners
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=n8n"
+      - "sablier.ready-on-start=true"
     restart: unless-stopped
     mem_limit: 256m
     mem_reservation: 64m
@@ -963,8 +979,13 @@ services:
       - no-new-privileges=true
 
   jellyfin:
+    profiles:
+      - lazy
     image: lscr.io/linuxserver/jellyfin:10.11.11
     container_name: jellyfin
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=jellyfin"
     mem_limit: 1g
     restart: unless-stopped
     logging: *default-logging
@@ -2103,7 +2124,101 @@ services:
       retries: 3
       start_period: 15s
 
-# Booked 10.8.1.2 - 10.8.1.69 # remember to add to .env of local dns pihole
+  opencode:
+    cap_drop:
+      - ALL
+    user: "1000:1000"
+    security_opt:
+      - no-new-privileges=true
+    image: ghcr.io/anomalyco/opencode:2.1.4
+    container_name: opencode
+    command: ["serve", "--hostname", "0.0.0.0", "--port", "4096"]
+    restart: unless-stopped
+    logging: *default-logging
+    mem_limit: 1024m
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=opencode"
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - HOME=/home/opencode
+      - XDG_CONFIG_HOME=/home/opencode/.config
+      - XDG_DATA_HOME=/home/opencode/.local/share
+      - XDG_STATE_HOME=/home/opencode/.local/state
+      - XDG_CACHE_HOME=/home/opencode/.cache
+      - OPENCODE_SERVER_PASSWORD=${OPENCODE_SERVER_PASSWORD}
+      - OPENCODE_PASSWORD=${OPENCODE_SERVER_PASSWORD}
+    volumes:
+      - ${OPENCODE_DATA_DIR}:/home/opencode
+      - ${OPENCODE_WORKSPACE_DIR}:/workspace
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.70
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1:4096/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  antigravity:
+    profiles:
+      - lazy
+    build:
+      context: .
+      dockerfile: agy.Dockerfile
+    image: rahul/antigravity-web:1.4.8
+    container_name: antigravity
+    restart: unless-stopped
+    user: "1000:1000"
+    labels:
+      - "sablier.enable=true"
+      - "sablier.group=antigravity"
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges=true
+    logging: *default-logging
+    deploy:
+      resources:
+        limits:
+          memory: 1024M
+    environment:
+      - TZ=${DEFAULT_TZ}
+      - USER=rahul
+      - HOME=/home/rahul
+      - TERM=xterm-256color
+    volumes:
+      # Original authentic agy CLI binary from host
+      - /home/rahul/.local/bin/agy:/usr/local/bin/agy:ro
+      - /home/rahul/.local/bin/agy:/home/rahul/.local/bin/agy:ro
+      # Dedicated separate state directory for container
+      - ${ANTIGRAVITY_DATA_PATH}/.gemini/antigravity-cli:/home/rahul/.gemini/antigravity-cli
+      # Shared read-only rules & skills from host
+      - /home/rahul/.agents:/home/rahul/.agents:ro
+      - /home/rahul/.gemini/config:/home/rahul/.gemini/config:ro
+      # User identity
+      - /home/rahul/.gitconfig:/home/rahul/.gitconfig:ro
+      # Available project workspaces
+      - /home/rahul/docker:/home/rahul/docker
+      - /home/rahul/projects:/home/rahul/projects
+    dns:
+      - 10.8.1.48
+      - 1.1.1.1
+    networks:
+      wg-easy:
+        ipv4_address: 10.8.1.71
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:7681/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+# Booked 10.8.1.2 - 10.8.1.71 # remember to add to .env of local dns pihole
 # Free after Caddy sink: 10.8.1.25, 10.8.1.27, 10.8.1.31, 10.8.1.33, 10.8.1.40, 10.8.1.42, 10.8.1.49-51, 10.8.1.54-56
 # 10.8.1.22: Firefox
 # 10.8.1.24: Draw.io

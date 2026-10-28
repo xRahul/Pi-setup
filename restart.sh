@@ -12,6 +12,6 @@ echo "=== Creating containers (without starting) ==="
 docker compose --profile lazy up --no-start
 
 echo "=== Starting core services ==="
-docker compose up -d
+docker compose up -d --remove-orphans
 
 echo "=== Restart sequence completed successfully ==="
