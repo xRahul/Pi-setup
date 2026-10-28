@@ -1,0 +1,13 @@
+[Unit]
+Description=Route Tailscale CGNAT subnet (100.64.0.0/10) to Docker Tailscale Gateway
+After=docker.service
+BindsTo=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/sbin/ip route replace 100.64.0.0/10 via 10.8.1.48
+ExecStop=/sbin/ip route del 100.64.0.0/10 via 10.8.1.48 || true
+
+[Install]
+WantedBy=multi-user.target

@@ -192,45 +192,33 @@ All containers communicate over the `wg-easy` bridge (`10.8.1.0/24`) using Pi-ho
 
 ---
 
-## ⚙️ Host Requirements & Setup
+## ⚙️ Host Requirements & Turnkey Replication
 
-### 1. Systemd Persistent Hairpin Route
-Create `/etc/systemd/system/rpi-tailscale-hairpin.service`:
-```ini
-[Unit]
-Description=Route Tailscale CGNAT subnet (100.64.0.0/10) to Tailscale container
-After=network-online.target docker.service
-Wants=network-online.target
+For a complete from-scratch guide deploying this homelab on a new board, see the [Replication Guide](file:///home/rahul/docker/docs/replication-guide.md).
 
-[Service]
-Type=oneshot
-RemainAfterExit=yes
-ExecStart=/sbin/ip route replace 100.64.0.0/10 via 10.8.1.48
-ExecStop=/sbin/ip route del 100.64.0.0/10 via 10.8.1.48 || true
-
-[Install]
-WantedBy=multi-user.target
-```
-Enable and start the service:
+### 1. Automated Host Setup
+The repository includes tracked systemd units in `systemd/` for Tailscale hairpin routing and UDP GRO offload. Install and enable them with one command:
 ```bash
-sudo systemctl daemon-reload
-sudo systemctl enable --now rpi-tailscale-hairpin.service
+sudo bash scripts/setup-host.sh
 ```
+This automatically verifies dependencies (`ethtool`, `iproute2`), copies the unit files into `/etc/systemd/system/`, reloads systemd, and enables:
+- `rpi-tailscale-hairpin.service`: Ensures `100.64.0.0/10` routes to `10.8.1.48`.
+- `rpi5-udp-gro.service`: Enables hardware UDP GRO offload on `eth0` and `wlan0`.
 
 ### 2. Environment Setup
 ```bash
 cp example.env .env
 cp example_pihole.env pihole.env
-# Configure CLOUDFLARE_API_TOKEN, TAILSCALE_AUTH_KEY, and paths in .env
+# Configure CLOUDFLARE_API_TOKEN, TAILSCALE_AUTH_KEY, and data paths in .env
 ```
 
-### 3. Deploy Stack
+### 3. Build & Deploy Stack
 ```bash
-# Start core infrastructure
-docker compose up -d
+# Build custom Caddy reverse proxy image
+docker compose build caddy
 
-# Start specific lazy services on demand (or let Sablier trigger them)
-docker compose --profile lazy up -d <service-name>
+# Launch stack with pre-warmed lazy service configs
+bash restart.sh
 ```
 
 ---

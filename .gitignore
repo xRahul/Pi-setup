@@ -13,6 +13,8 @@
 !immich
 !scripts
 !scripts/**
+!systemd
+!systemd/**
 !caddy.Dockerfile
 !agy.Dockerfile
 !ttyd-index.html

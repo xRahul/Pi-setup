@@ -43,15 +43,15 @@ The core infrastructure containers (`tailscale`, `caddy`, `pihole`, `dnscrypt-pr
 
 ## Host Systemd Integrations
 
-The host Raspberry Pi 5 runs two persistent systemd background units supporting the container network:
+The host Raspberry Pi 5 runs two persistent systemd background units supporting the container network. Their unit definitions are version-controlled in the repository under `systemd/` and can be installed on any host using `sudo bash scripts/setup-host.sh`:
 
 ### 1. `rpi-tailscale-hairpin.service`
-- **Location:** `/etc/systemd/system/rpi-tailscale-hairpin.service`
+- **Tracked File:** `systemd/rpi-tailscale-hairpin.service` (installed to `/etc/systemd/system/`)
 - **Purpose:** Automatically runs `/sbin/ip route replace 100.64.0.0/10 via 10.8.1.48` on boot.
 - **Why it matters:** Pi-hole resolves `*.pi.rahulja.in` to the Tailscale IP `100.109.192.17`. Containers attempting to access other local services via HTTPS domain send packets to `100.109.192.17`. The hairpin route ensures the host kernel does a U-turn (hairpin) into Caddy (`10.8.1.48`) rather than routing them out the physical router where they would be dropped.
 
 ### 2. `rpi5-udp-gro.service`
-- **Location:** `/etc/systemd/system/rpi5-udp-gro.service`
+- **Tracked File:** `systemd/rpi5-udp-gro.service` (installed to `/etc/systemd/system/`)
 - **Purpose:** Enables UDP Generic Receive Offload (GRO) forwarding on physical network interfaces (`eth0` and `wlan0`):
   ```bash
   ethtool -K eth0 rx-udp-gro-forwarding on rx-gro-list off
