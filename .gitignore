@@ -24,6 +24,7 @@
 !sonic.Dockerfile
 !restart.sh
 !homepage_setup_instructions.md
+!check_updates.py
 !searxng
 !searxng/**
 !gethomepage

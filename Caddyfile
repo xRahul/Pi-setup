@@ -9,14 +9,28 @@
 	}
 }
 
+(security_headers) {
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+}
+
+*.pi.rahulja.in {
+	import cloudflare
+	respond "Service Not Found" 404
+}
+
 pihole.pi.rahulja.in {
 	reverse_proxy * localhost:8080
 	import cloudflare
 }
 
 wg.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:51821
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 immich.pi.rahulja.in {
@@ -29,7 +43,7 @@ immich.pi.rahulja.in {
 			group immich
 			session_duration 30m
 			blocking {
-				timeout 1m
+				timeout 2m
 			}
 		}
 		reverse_proxy * 10.8.1.6:2283
@@ -66,18 +80,15 @@ pngx.pi.rahulja.in {
 }
 
 watchtower.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:8080
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 navidrome.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:4533
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 mikochi.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:8080
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 jellyfin.pi.rahulja.in {
@@ -127,18 +138,15 @@ archivebox.pi.rahulja.in {
 }
 
 prometheus.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:9090
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 grafana.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:3000
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 wallabag.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:80
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 trans.pi.rahulja.in {
@@ -149,7 +157,7 @@ trans.pi.rahulja.in {
 	route @rpc {
 		sablier http://sablier:10000 {
 			group transmission
-			session_duration 3h
+			session_duration 12h
 			blocking {
 				timeout 1m
 			}
@@ -161,7 +169,7 @@ trans.pi.rahulja.in {
 	route {
 		sablier http://sablier:10000 {
 			group transmission
-			session_duration 3h
+			session_duration 12h
 			dynamic {
 				display_name "Transmission"
 				theme hacker-terminal
@@ -178,13 +186,11 @@ prowlarr.pi.rahulja.in {
 }
 
 flame.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:5005
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 plex.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:32400
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 ntfy.pi.rahulja.in {
@@ -220,8 +226,7 @@ ntfy.pi.rahulja.in {
 }
 
 freshrss.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:80
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 miniflux.pi.rahulja.in {
@@ -269,13 +274,11 @@ drawio.pi.rahulja.in {
 }
 
 shiori.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:8080
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 grocy.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:80
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 filebrowser.pi.rahulja.in {
@@ -454,13 +457,11 @@ ezbookkeeping.pi.rahulja.in {
 }
 
 languagetool.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:8010
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 linkding.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:9090
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 firefly.pi.rahulja.in {
@@ -504,7 +505,7 @@ ghostfolio.pi.rahulja.in {
 			group ghostfolio
 			session_duration 30m
 			blocking {
-				timeout 1m
+				timeout 2m
 			}
 		}
 		reverse_proxy * 10.8.1.4:3333
@@ -574,18 +575,15 @@ gramps.pi.rahulja.in {
 }
 
 webtest.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:80
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 openproject.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:8080
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 nc.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:11000
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 n8n.pi.rahulja.in {
@@ -624,20 +622,15 @@ n8n.pi.rahulja.in {
 }
 
 searxng.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:8080
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 storyteller.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:8001 {
-		flush_interval -1
-	}
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 paisa.pi.rahulja.in {
-	reverse_proxy * 10.8.1.254:7500
-	import cloudflare
+	respond "Service decommissioned" 410
 }
 
 homepage.pi.rahulja.in {
@@ -827,5 +820,3 @@ agy.pi.rahulja.in {
 	}
 	import cloudflare
 }
-
-

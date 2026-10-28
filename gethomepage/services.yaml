@@ -20,10 +20,9 @@
   - n8n:
       icon: n8n.png
       href: https://n8n.pi.rahulja.in
-      description: Workflow automation
+      description: Workflow automation (Sablier)
       server: my-docker
       container: n8n
-      siteMonitor: http://10.8.1.53:5678/healthz
   - Miniflux:
       icon: miniflux.png
       href: https://miniflux.pi.rahulja.in
@@ -36,6 +35,12 @@
       description: Push notifications (Sablier)
       server: my-docker
       container: ntfy
+  - OpenCode:
+      icon: vscode.png
+      href: https://opencode.pi.rahulja.in
+      description: AI code server and web IDE (Sablier)
+      server: my-docker
+      container: opencode
   - Immich:
       icon: immich.png
       href: https://immich.pi.rahulja.in
@@ -45,10 +50,9 @@
   - Jellyfin:
       icon: jellyfin.png
       href: https://jellyfin.pi.rahulja.in
-      description: Movies, shows, and music
+      description: Movies, shows, and music (Sablier)
       server: my-docker
       container: jellyfin
-      siteMonitor: http://10.8.1.1:8096/health
       showStats: true
   - Transmission:
       icon: transmission.png
@@ -87,6 +91,12 @@
       description: Virtual Browser (Sablier)
       server: my-docker
       container: firefox
+  - OpenCode:
+      icon: vscode.png
+      href: https://opencode.pi.rahulja.in
+      description: AI code server and web IDE (Sablier)
+      server: my-docker
+      container: opencode
 
 - Documents:
   - Paperless-ngx:
@@ -196,7 +206,6 @@
       description: Personal finance bank statement analyzer (Sablier)
       server: my-docker
       container: burnrate
-      siteMonitor: http://10.8.1.69:8000/api/settings
 
 
 - Finance Backends:
@@ -246,10 +255,9 @@
   - Jellyfin:
       icon: jellyfin.png
       href: https://jellyfin.pi.rahulja.in
-      description: Movies, shows, and music
+      description: Movies, shows, and music (Sablier)
       server: my-docker
       container: jellyfin
-      siteMonitor: http://10.8.1.1:8096/health
   - Transmission:
       icon: transmission.png
       href: https://trans.pi.rahulja.in
@@ -279,10 +287,9 @@
   - n8n:
       icon: n8n.png
       href: https://n8n.pi.rahulja.in
-      description: Workflow automation
+      description: Workflow automation (Sablier)
       server: my-docker
       container: n8n
-      siteMonitor: http://10.8.1.53:5678/healthz
   - Miniflux:
       icon: miniflux.png
       href: https://miniflux.pi.rahulja.in
@@ -301,6 +308,12 @@
       description: Push notifications (Sablier)
       server: my-docker
       container: ntfy
+  - OpenCode:
+      icon: vscode.png
+      href: https://opencode.pi.rahulja.in
+      description: AI code server and web IDE (Sablier)
+      server: my-docker
+      container: opencode
 
 - Automation Backends:
   - n8n Runners:
@@ -395,6 +408,12 @@
       description: Container management (Sablier)
       server: my-docker
       container: portainer
+  - Antigravity CLI:
+      icon: terminal.png
+      href: https://agy.pi.rahulja.in
+      description: Autonomous agent web terminal (Sablier)
+      server: my-docker
+      container: antigravity
 
 - Docker Access:
   - Socket Proxy Read:

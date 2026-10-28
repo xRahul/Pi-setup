@@ -100,6 +100,20 @@ for env_file in [".env", "example.env"]:
     if missing:
         errors.append(f"{env_file} missing compose variables: {', '.join(missing)}")
 
+missing_mem = [
+    name for name, s in services.items()
+    if not (s.get("mem_limit") or s.get("deploy", {}).get("resources", {}).get("limits", {}).get("memory"))
+]
+if missing_mem:
+    errors.append("Services missing mem_limit: " + ", ".join(sorted(missing_mem)))
+
+missing_hc = [
+    name for name, s in services.items()
+    if "healthcheck" not in s
+]
+if missing_hc:
+    errors.append("Services missing healthcheck: " + ", ".join(sorted(missing_hc)))
+
 for service_specific in ["example_immich.env", "example_pihole.env"]:
     if Path(service_specific).exists():
         print(f"INFO: {service_specific} treated as service-specific, not full-stack mirror")

@@ -18,7 +18,10 @@ services:
       - /bin/sh
       - -c
       - |
-        apk add --no-cache ethtool && ethtool -K eth0 rx-udp-gro-forwarding on rx-gro-list off || true
+        if ! command -v ethtool >/dev/null 2>&1; then
+          apk add --no-cache ethtool || true
+        fi
+        ethtool -K eth0 rx-udp-gro-forwarding on rx-gro-list off || true
         exec /usr/local/bin/containerboot
     logging: *default-logging
     environment:
@@ -56,6 +59,12 @@ services:
         ipv4_address: 10.8.1.48
 
   pihole:
+    healthcheck:
+      test: ["CMD-SHELL", "pihole status || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     image: pihole/pihole:2026.09.0
     network_mode: service:tailscale
     container_name: pihole
@@ -85,6 +94,13 @@ services:
     depends_on:
       - tailscale
   dnscrypt-proxy:
+    mem_limit: 64m
+    healthcheck:
+      test: ["CMD", "dnscrypt-proxy", "-check", "-config", "/config/dnscrypt-proxy.toml"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     cap_drop:
       - ALL
     user: "1000:1000"
@@ -143,6 +159,7 @@ services:
 
 
   filebrowser:
+    mem_limit: 256m
     profiles:
       - lazy
     cap_drop:
@@ -239,6 +256,7 @@ services:
 
 
   immich-redis:
+    mem_limit: 128m
     profiles:
       - lazy
     cap_drop:
@@ -249,6 +267,7 @@ services:
     labels:
       - "sablier.enable=true"
       - "sablier.group=immich"
+      - "sablier.ready-on-start=true"
       - "sablier.ready-on-start=true"
     logging: *default-logging
     security_opt:
@@ -273,12 +292,6 @@ services:
     mem_limit: 512m
     depends_on:
       - socket-proxy-read
-    extra_hosts:
-      - "dash.pi.rahulja.in:10.8.1.48"
-      - "pihole.pi.rahulja.in:10.8.1.48"
-      - "immich.pi.rahulja.in:10.8.1.48"
-      - "homepage.pi.rahulja.in:10.8.1.48"
-      - "sure.pi.rahulja.in:10.8.1.48"
     restart: unless-stopped
     logging: *default-logging
     security_opt:
@@ -384,6 +397,12 @@ services:
         ipv4_address: 10.8.1.53
 
   n8n-runners:
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://127.0.0.1:5680/healthz || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     profiles:
       - lazy
     cap_drop:
@@ -420,6 +439,7 @@ services:
         ipv4_address: 10.8.1.20
 
   firefly:
+    mem_limit: 512m
     profiles:
       - lazy
     cap_add:
@@ -476,6 +496,7 @@ services:
         ipv4_address: 10.8.1.43
 
   ghostfolio:
+    mem_limit: 512m
     profiles:
       - lazy
     image: ghostfolio/ghostfolio:3.93.0
@@ -521,6 +542,7 @@ services:
         ipv4_address: 10.8.1.4
 
   ghostfolio-db:
+    mem_limit: 256m
     profiles:
       - lazy
     image: postgres:18.6-alpine3.24
@@ -551,6 +573,7 @@ services:
         ipv4_address: 10.8.1.7
 
   ghostfolio-valkey:
+    mem_limit: 128m
     profiles:
       - lazy
     image: docker.io/valkey/valkey:9@sha256:8e8d64b405ce18f41b8e5ee20aa4687a8ed0022d1298f2ce31cdcf3a76e09411
@@ -581,6 +604,7 @@ services:
       start_period: 10s
 
   firefly-importer:
+    mem_limit: 256m
     profiles:
       - lazy
     cap_add:
@@ -630,6 +654,7 @@ services:
         ipv4_address: 10.8.1.44
 
   firefly-cron:
+    mem_limit: 64m
     profiles:
       - lazy
     cap_add:
@@ -673,6 +698,13 @@ services:
 
 
   portainer:
+    mem_limit: 128m
+    healthcheck:
+      test: ["CMD", "/portainer", "--version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     profiles:
       - lazy
     cap_drop:
@@ -702,6 +734,7 @@ services:
       portainer-proxy-net:
 
   immich-server:
+    mem_limit: 1536m
     profiles:
       - lazy
     cap_drop:
@@ -748,6 +781,7 @@ services:
         ipv4_address: 10.8.1.6
 
   immich-machine-learning:
+    mem_limit: 1024m
     profiles:
       - lazy
     cap_drop:
@@ -758,6 +792,7 @@ services:
     labels:
       - "sablier.enable=true"
       - "sablier.group=immich"
+      - "sablier.ready-on-start=true"
       - "sablier.ready-on-start=true"
     logging: *default-logging
     security_opt:
@@ -791,6 +826,7 @@ services:
         ipv4_address: 10.8.1.8
 
   immich-database:
+    mem_limit: 512m
     profiles:
       - lazy
     cap_drop:
@@ -801,6 +837,7 @@ services:
     labels:
       - "sablier.enable=true"
       - "sablier.group=immich"
+      - "sablier.ready-on-start=true"
     logging: *default-logging
     security_opt:
       - no-new-privileges=true
@@ -871,6 +908,13 @@ services:
         ipv4_address: 10.8.1.58
 
   sablier:
+    mem_limit: 64m
+    healthcheck:
+      test: ["CMD", "sablier", "health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     cap_drop:
       - ALL
     user: "1000:1000"
@@ -895,6 +939,7 @@ services:
       - no-new-privileges=true
 
   socket-proxy-read:
+    mem_limit: 64m
     cap_add:
       - CHOWN
       - SETUID
@@ -930,6 +975,7 @@ services:
       - no-new-privileges=true
 
   socket-proxy-admin:
+    mem_limit: 64m
     profiles:
       - lazy
     cap_add:
@@ -1039,6 +1085,7 @@ services:
       - ${JELLYFIN_MUSIC_USB_LOCATION}:/data/music_usb:ro
 
   memos:
+    mem_limit: 256m
     profiles:
       - lazy
     cap_drop:
@@ -1076,6 +1123,7 @@ services:
         ipv4_address: 10.8.1.41
 
   actual:
+    mem_limit: 256m
     profiles:
       - lazy
     cap_drop:
@@ -1109,6 +1157,7 @@ services:
         ipv4_address: 10.8.1.3
 
   ezbookkeeping:
+    mem_limit: 256m
     profiles:
       - lazy
     user: "1000:1000"
@@ -1153,6 +1202,7 @@ services:
         ipv4_address: 10.8.1.19
 
   miniflux:
+    mem_limit: 128m
     profiles:
       - lazy
     image: miniflux/miniflux:2.3.3-distroless
@@ -1198,6 +1248,7 @@ services:
         ipv4_address: 10.8.1.28
 
   miniflux_db:
+    mem_limit: 256m
     profiles:
       - lazy
     image: postgres:18.6-alpine3.24
@@ -1229,6 +1280,7 @@ services:
         ipv4_address: 10.8.1.29
 
   miniflux-cron:
+    mem_limit: 64m
     profiles:
       - lazy
     image: alpine:3.24.2
@@ -1313,6 +1365,7 @@ services:
         ipv4_address: 10.8.1.17
 
   ntfy:
+    mem_limit: 128m
     profiles:
       - lazy
     image: binwiederhier/ntfy:v2.34.0
@@ -1449,6 +1502,7 @@ services:
           memory: 256M
 
   sure-db:
+    mem_limit: 256m
     profiles:
       - lazy
     image: postgres:18.6-alpine3.24
@@ -1484,6 +1538,7 @@ services:
         ipv4_address: 10.8.1.13
 
   sure-redis:
+    mem_limit: 128m
     profiles:
       - lazy
     image: docker.io/valkey/valkey:9@sha256:8e8d64b405ce18f41b8e5ee20aa4687a8ed0022d1298f2ce31cdcf3a76e09411
@@ -1580,6 +1635,12 @@ services:
         ipv4_address: 10.8.1.2
 
   sure-worker:
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f sidekiq || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     profiles:
       - lazy
     cap_add:
@@ -1639,6 +1700,7 @@ services:
         ipv4_address: 10.8.1.15
 
   cyberchef:
+    mem_limit: 128m
     profiles:
       - lazy
     image: ghcr.io/gchq/cyberchef:11.5.0
@@ -1785,6 +1847,7 @@ services:
           memory: 512M
 
   paperless-db:
+    mem_limit: 256m
     profiles:
       - lazy
     image: postgres:18.6-alpine3.24
@@ -1820,6 +1883,7 @@ services:
       retries: 5
 
   paperless-redis:
+    mem_limit: 128m
     profiles:
       - lazy
     image: docker.io/valkey/valkey:9@sha256:8e8d64b405ce18f41b8e5ee20aa4687a8ed0022d1298f2ce31cdcf3a76e09411
@@ -1849,6 +1913,7 @@ services:
       retries: 5
 
   paperless-tika:
+    mem_limit: 512m
     profiles:
       - lazy
     image: apache/tika:3.3.1.0
@@ -1873,6 +1938,7 @@ services:
       retries: 5
 
   paperless-gotenberg:
+    mem_limit: 512m
     profiles:
       - lazy
     image: gotenberg/gotenberg:8.37.0
@@ -1901,6 +1967,7 @@ services:
       retries: 5
 
   paperless-ngx:
+    mem_limit: 1024m
     profiles:
       - lazy
     image: ghcr.io/paperless-ngx/paperless-ngx:3.3.0
@@ -1959,6 +2026,7 @@ services:
         ipv4_address: 10.8.1.32
 
   firefly-redis:
+    mem_limit: 128m
     profiles:
       - lazy
     image: docker.io/valkey/valkey:9@sha256:8e8d64b405ce18f41b8e5ee20aa4687a8ed0022d1298f2ce31cdcf3a76e09411
@@ -1988,6 +2056,7 @@ services:
       retries: 5
 
   gramps-redis:
+    mem_limit: 128m
     profiles:
       - lazy
     image: docker.io/valkey/valkey:9@sha256:8e8d64b405ce18f41b8e5ee20aa4687a8ed0022d1298f2ce31cdcf3a76e09411
@@ -2017,6 +2086,13 @@ services:
       retries: 5
 
   burnrate:
+    mem_limit: 256m
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/settings')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
     profiles:
       - lazy
     image: pratik1235/burnrate:v0.4.0
@@ -2045,6 +2121,12 @@ services:
         ipv4_address: 10.8.1.69
 
   firefox:
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://127.0.0.1:8083/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     profiles:
       - lazy
     image: ghcr.io/m1k1o/neko/firefox:3.2.0
@@ -2092,6 +2174,7 @@ services:
       - ./neko/policies.json:/usr/lib/firefox/distribution/policies.json:ro
 
   drawio:
+    mem_limit: 512m
     profiles:
       - lazy
     image: jgraph/drawio:31.4.6
