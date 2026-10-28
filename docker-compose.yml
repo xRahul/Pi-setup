@@ -1269,7 +1269,7 @@ services:
     # cap_drop:
     #   - ALL
     # user: "1000:1000"
-    image: archivebox/archivebox:0.9.73
+    image: archivebox/archivebox:0.9.77
     container_name: archivebox
     platform: "linux/arm64"
     restart: unless-stopped
