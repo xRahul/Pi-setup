@@ -1961,7 +1961,7 @@ services:
     mem_limit: 1024m
     profiles:
       - lazy
-    image: ghcr.io/paperless-ngx/paperless-ngx:3.3.0
+    image: ghcr.io/paperless-ngx/paperless-ngx:3.4.1
     container_name: paperless-ngx
     restart: unless-stopped
     cap_drop:
