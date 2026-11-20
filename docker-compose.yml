@@ -176,6 +176,7 @@ services:
     volumes:
       - ${FILEBROWSER_ROOT_PATH}:/srv
       - ${FIREFOX_DOWNLOADS_PATH}:/srv/firefox-downloads
+      - ${PROJECTS_PATH:-/home/rahul/projects}:/srv/projects
       - ${FILEBROWSER_DB_FILE_PATH}:/database/filebrowser.db
       - ${FILEBROWSER_CONFIG_SETTING_FILE_PATH}:/config/settings.json
     environment:
@@ -2222,6 +2223,7 @@ services:
     volumes:
       - ${OPENCODE_DATA_DIR}:/home/opencode
       - ${OPENCODE_WORKSPACE_DIR}:/workspace
+      - ${SUPERPOWERS_PATH:-/home/rahul/.gemini/config/plugins/superpowers}:/opt/plugins/superpowers:ro
     dns:
       - 10.8.1.48
       - 1.1.1.1
@@ -2242,7 +2244,7 @@ services:
     build:
       context: .
       dockerfile: agy.Dockerfile
-    image: rahul/antigravity-web:1.4.8
+    image: rahul/antigravity-web:1.5.0
     container_name: antigravity
     restart: unless-stopped
     user: "1000:1000"
@@ -2263,16 +2265,20 @@ services:
       # Original authentic agy CLI binary from host
       - /home/rahul/.local/bin/agy:/usr/local/bin/agy:ro
       - /home/rahul/.local/bin/agy:/home/rahul/.local/bin/agy:ro
+      # Host rtk token compressor
+      - /home/rahul/.local/bin/rtk:/usr/local/bin/rtk:ro
+      - /home/rahul/.local/bin/rtk:/home/rahul/.local/bin/rtk:ro
       # Dedicated separate state directory for container
       - ${ANTIGRAVITY_DATA_PATH}/.gemini/antigravity-cli:/home/rahul/.gemini/antigravity-cli
       # Shared read-only rules & skills from host
       - /home/rahul/.agents:/home/rahul/.agents:ro
       - /home/rahul/.gemini/config:/home/rahul/.gemini/config:ro
+      - /home/rahul/.gemini/AGENTS.md:/home/rahul/.gemini/AGENTS.md:ro
       # User identity
       - /home/rahul/.gitconfig:/home/rahul/.gitconfig:ro
       # Available project workspaces
       - /home/rahul/docker:/home/rahul/docker
-      - /home/rahul/projects:/home/rahul/projects
+      - ${PROJECTS_PATH:-/home/rahul/projects}:/home/rahul/projects
     dns:
       - 10.8.1.48
       - 1.1.1.1

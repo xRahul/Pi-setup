@@ -2,13 +2,24 @@ FROM debian:trixie-slim
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Minimal runtime essentials for terminal and git operations
+# Copy verified static uv and uvx binaries (aarch64)
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+
+# Runtime essentials for python, node, terminal, and git operations
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     git \
     tmux \
     locales \
+    procps \
+    python3 \
+    python3-venv \
+    python3-pip \
+    nodejs \
+    npm \
+    ripgrep \
+    jq \
     && rm -rf /var/lib/apt/lists/*
 
 # Generate UTF-8 locale for terminal box-drawing characters
