@@ -453,7 +453,7 @@ services:
       - DAC_OVERRIDE
     cap_drop:
       - ALL
-    image: fireflyiii/core:version-6.7.2
+    image: fireflyiii/core:version-6.7.9
     hostname: firefly
     container_name: firefly
     labels:
@@ -503,7 +503,7 @@ services:
     mem_limit: 512m
     profiles:
       - lazy
-    image: ghostfolio/ghostfolio:3.93.0
+    image: ghostfolio/ghostfolio:3.100.0
     container_name: ghostfolio
     init: true
     restart: unless-stopped
@@ -618,7 +618,7 @@ services:
       - DAC_OVERRIDE
     cap_drop:
       - ALL
-    image: fireflyiii/data-importer:version-2.3.4
+    image: fireflyiii/data-importer:version-2.3.5
     hostname: firefly-importer
     container_name: firefly-importer
     labels:
@@ -1577,7 +1577,7 @@ services:
       - DAC_OVERRIDE
     cap_drop:
       - ALL
-    image: ghcr.io/we-promise/sure:0.7.5
+    image: ghcr.io/we-promise/sure:0.7.6-hotfix.1
     container_name: sure
     restart: unless-stopped
     labels:
@@ -1648,7 +1648,7 @@ services:
       - DAC_OVERRIDE
     cap_drop:
       - ALL
-    image: ghcr.io/we-promise/sure:0.7.5
+    image: ghcr.io/we-promise/sure:0.7.6-hotfix.1
     container_name: sure-worker
     command: bundle exec sidekiq
     restart: unless-stopped
@@ -2087,7 +2087,7 @@ services:
       start_period: 15s
     profiles:
       - lazy
-    image: pratik1235/burnrate:v0.4.0
+    image: pratik1235/burnrate:v0.5.2
     container_name: burnrate
     restart: unless-stopped
     labels:
