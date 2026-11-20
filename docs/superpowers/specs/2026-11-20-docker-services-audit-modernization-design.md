@@ -27,12 +27,14 @@ The goal is to harden, upgrade, and optimize all 54 services in place without di
 5. **Configuration Alignment:** Synchronize `.env` with `example.env`, strip deprecated variables, and document required new environment variables (such as `TRUSTED_PROXIES` for Reactive Resume v6).
 
 ### Non-Goals
+- **Immich Stack Upgrades:** The Immich stack (`immich-server`, `immich-machine-learning`, `immich-database`, `immich-redis`) is explicitly excluded from upgrades in this cycle and remains pinned to prevent vector DB schema drift.
 - **Stack Consolidation / Retirement:** The user explicitly selected in-place modernization, keeping all 54 services isolated. We will NOT deprecate or prune overlapping finance applications (`actual`, `firefly`, `ezbookkeeping`, `ghostfolio`, `sure`, `burnrate`).
 - **Database Merging:** We will NOT consolidate separate Postgres or Valkey instances into a shared cluster, preserving individual Sablier group lifecycle isolation (starting/stopping instances only with their parent service).
 - **Network Architecture Overhaul:** Retain the unified Tailscale/Caddy/Pi-hole network namespace (`10.8.1.48`) and bridge subnet (`10.8.1.0/24`).
 
 ### Anti-Goals
-- Never use mutable or floating tags (`latest`, `main`, `stable`) in `docker-compose.yml`.
+- Never use mutable or floating tags (`latest`, `main`, `stable`) in `docker-compose.yml`. Always pin specific semantic version tags.
+- Never grant elevated privileges to `sablier` (eBPF is disabled; runs strictly unprivileged with Caddy middleware handling session heartbeats).
 - Never execute upgrades on database-backed services without verifiable schema migration pathways.
 - Never grant unnecessary root permissions or Docker socket mounts to client containers.
 
