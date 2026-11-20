@@ -19,6 +19,7 @@
 !agy.Dockerfile
 !ttyd-index.html
 !docs
+!docs/**
 !.github
 !.github/**
 !sonic.cfg
