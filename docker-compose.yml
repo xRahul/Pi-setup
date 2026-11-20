@@ -2244,7 +2244,7 @@ services:
     build:
       context: .
       dockerfile: agy.Dockerfile
-    image: rahul/antigravity-web:1.5.0
+    image: rahul/antigravity-web:1.5.1
     container_name: antigravity
     restart: unless-stopped
     user: "1000:1000"
