@@ -1735,7 +1735,7 @@ services:
     mem_limit: 512m
     profiles:
       - lazy
-    image: ghcr.io/gramps-project/grampsweb:26.10.0
+    image: ghcr.io/gramps-project/grampsweb:26.11.3
     container_name: grampsweb
     restart: unless-stopped
     logging: *default-logging
@@ -1788,7 +1788,7 @@ services:
     mem_limit: 512m
     profiles:
       - lazy
-    image: ghcr.io/gramps-project/grampsweb:26.10.0
+    image: ghcr.io/gramps-project/grampsweb:26.11.3
     container_name: grampsweb_celery
     restart: unless-stopped
     logging: *default-logging
