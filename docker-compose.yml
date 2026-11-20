@@ -873,7 +873,7 @@ services:
       - CHOWN
       - SETUID
       - SETGID
-    image: stirlingtools/stirling-pdf:2.14.3-ultra-lite
+    image: stirlingtools/stirling-pdf:3.4.0-ultra-lite
     container_name: stirling-pdf
     labels:
       - "sablier.enable=true"
@@ -894,7 +894,6 @@ services:
       - PGID=1000
       - SECURITY_ENABLELOGIN=false
       - LANGS=${STIRLING_PDF_LANGS:-en_GB}
-      - DOCKER_ENABLE_SECURITY=false
       - TZ=${DEFAULT_TZ}
       - SPRINGDOC_API_DOCS_ENABLED=false
       - SPRINGDOC_SWAGGER_UI_ENABLED=false
@@ -1097,7 +1096,7 @@ services:
     user: "1000:1000"
     security_opt:
       - no-new-privileges=true
-    image: neosmemo/memos:0.31.0
+    image: neosmemo/memos:26.11.1
     container_name: memos
     restart: unless-stopped
     dns:
@@ -1701,7 +1700,7 @@ services:
     mem_limit: 128m
     profiles:
       - lazy
-    image: ghcr.io/gchq/cyberchef:11.5.0
+    image: ghcr.io/gchq/cyberchef:11.6.0
     container_name: cyberchef
     restart: unless-stopped
     logging: *default-logging
@@ -2166,7 +2165,7 @@ services:
     mem_limit: 512m
     profiles:
       - lazy
-    image: jgraph/drawio:31.7.0
+    image: jgraph/drawio:32.7.4
     container_name: drawio
     restart: unless-stopped
     labels:
