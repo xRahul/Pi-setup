@@ -335,7 +335,7 @@ services:
       - lazy
     cap_drop:
       - ALL
-    image: n8nio/n8n:2.40.3
+    image: n8nio/n8n:2.49.3
     container_name: n8n
     labels:
       - "sablier.enable=true"
@@ -411,7 +411,7 @@ services:
       - lazy
     cap_drop:
       - ALL
-    image: n8nio/runners:2.40.3
+    image: n8nio/runners:2.49.3
     container_name: n8n-runners
     labels:
       - "sablier.enable=true"
@@ -1371,7 +1371,7 @@ services:
     mem_limit: 128m
     profiles:
       - lazy
-    image: binwiederhier/ntfy:v2.34.0
+    image: binwiederhier/ntfy:v2.38.1
     container_name: ntfy
     restart: unless-stopped
     cap_drop:
