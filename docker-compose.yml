@@ -1134,7 +1134,7 @@ services:
     security_opt:
       - no-new-privileges=true
     user: "1000:1000"
-    image: actualbudget/actual-server:26.10.0-alpine
+    image: actualbudget/actual-server:26.11.0-alpine
     container_name: actual
     restart: unless-stopped
     dns:
@@ -1459,7 +1459,7 @@ services:
     mem_limit: 256m
     profiles:
       - lazy
-    image: amruthpillai/reactive-resume:v5.3.2
+    image: amruthpillai/reactive-resume:v6.1.1
     container_name: resume
     restart: unless-stopped
     depends_on:
@@ -1488,6 +1488,7 @@ services:
       - DATABASE_URL=postgresql://${RESUME_DB_USER}:${RESUME_DB_PASS}@10.8.1.37:5432/${RESUME_DB_NAME}
       - AUTH_SECRET=${RESUME_AUTH_SECRET}
       - ENCRYPTION_SECRET=${RESUME_ENCRYPTION_SECRET}
+      - TRUSTED_PROXIES=10.8.1.48
     volumes:
       - ${RESUME_DATA_PATH}:/app/data
     dns:
