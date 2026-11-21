@@ -1933,7 +1933,7 @@ services:
     mem_limit: 512m
     profiles:
       - lazy
-    image: gotenberg/gotenberg:8.40.0
+    image: gotenberg/gotenberg:9.9.1
     container_name: paperless-gotenberg
     restart: unless-stopped
     labels:
