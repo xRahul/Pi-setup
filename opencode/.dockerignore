@@ -1,0 +1,4 @@
+config
+superpowers
+*.bak
+*.tgz

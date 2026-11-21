@@ -1,0 +1,85 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugins": [
+    "~/.local/share/opencode/superpowers",
+    "@cortexkit/opencode-magic-context@0.49.68",
+    "@dietrichgebert/ponytail@5.3.3",
+    "context-mode@2.2.1",
+    "opencode-deja@0.24.3"
+  ],
+  "mcp": {
+    "servers": {
+      "donsetch": {
+        "type": "local",
+        "command": [
+          "donsetch",
+          "mcp",
+          "--supervised"
+        ]
+      },
+      "caveman": {
+        "type": "local",
+        "command": [
+          "caveman-mcp"
+        ]
+      }
+    }
+  },
+  "websearch": false,
+  "permissions": [
+    {
+      "action": "read",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "glob",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "grep",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "edit",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "skill",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "webfetch",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "donsetch_*",
+      "resource": "*",
+      "effect": "allow"
+    },
+    {
+      "action": "shell",
+      "resource": "rm *",
+      "effect": "ask"
+    },
+    {
+      "action": "shell",
+      "resource": "sudo *",
+      "effect": "ask"
+    }
+  ],
+  "compaction": {
+    "auto": false
+  },
+  "model": "opencode-go/deepseek-v4.1-flash"
+}

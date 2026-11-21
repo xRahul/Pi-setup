@@ -2197,23 +2197,34 @@ services:
       start_period: 15s
 
   opencode:
+    build:
+      context: ./opencode
+      dockerfile: Dockerfile
+      args:
+        OPENCODE_VERSION: ${OPENCODE_VERSION:-2.3.2}
+        DONSETCH_VERSION: ${DONSETCH_VERSION:-5.5.7}
+        CAVEMAN_VERSION: ${CAVEMAN_VERSION:-4.1.0}
+    image: rahul/opencode:${OPENCODE_VERSION:-2.3.2}-rpi
     cap_drop:
       - ALL
     user: "1000:1000"
     security_opt:
       - no-new-privileges=true
-    image: ghcr.io/anomalyco/opencode:2.3.2
     container_name: opencode
     command: ["serve", "--hostname", "0.0.0.0", "--port", "4096"]
     restart: unless-stopped
     logging: *default-logging
-    mem_limit: 1024m
+    mem_limit: 2g
+    memswap_limit: 3g
+    pids_limit: 512
+    stop_grace_period: 30s
     labels:
       - "sablier.enable=true"
       - "sablier.group=opencode"
     environment:
       - TZ=${DEFAULT_TZ}
       - HOME=/home/opencode
+      - PATH=/home/opencode/.caveman/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
       - XDG_CONFIG_HOME=/home/opencode/.config
       - XDG_DATA_HOME=/home/opencode/.local/share
       - XDG_STATE_HOME=/home/opencode/.local/state
@@ -2223,7 +2234,9 @@ services:
     volumes:
       - ${OPENCODE_DATA_DIR}:/home/opencode
       - ${OPENCODE_WORKSPACE_DIR}:/workspace
-      - ${SUPERPOWERS_PATH:-/home/rahul/.gemini/config/plugins/superpowers}:/opt/plugins/superpowers:ro
+      - ./opencode/config:/home/opencode/.config/opencode
+      - ./opencode/superpowers:/home/opencode/.local/share/opencode/superpowers:ro
+      - ${RTK_PATH:-/home/rahul/.local/bin/rtk}:/usr/local/bin/rtk:ro
     dns:
       - 10.8.1.48
       - 1.1.1.1
@@ -2235,8 +2248,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 15s
-
+      start_period: 30s
   antigravity:
     mem_limit: 1024m
     profiles:

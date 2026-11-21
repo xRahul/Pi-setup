@@ -35,3 +35,15 @@
 
 # ignore this afterwards
 gethomepage/logs
+!opencode
+!opencode/**
+opencode/superpowers/
+opencode/config/service.json
+opencode/config/cli.json
+opencode/config/tui-preferences.jsonc
+opencode/config/.caveman-active
+opencode/config/.caveman-active.prev
+opencode/config/.caveman-mode-log.jsonl
+opencode/config/.caveman-opencode-ownership.json
+opencode/config/*.bak*
+opencode/config/**/__pycache__/

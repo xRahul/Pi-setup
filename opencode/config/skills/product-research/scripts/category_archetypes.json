@@ -1,0 +1,2046 @@
+{
+  "categories": {
+    "smartphones": {
+      "display_name": "Smartphones & Mobile Devices",
+      "weights": {
+        "performance": 0.25,
+        "display": 0.15,
+        "camera": 0.2,
+        "battery_charging": 0.15,
+        "build_durability": 0.1,
+        "software_support": 0.15
+      },
+      "dimension_mapping": {
+        "pricing_landing": "price",
+        "performance_sustained": "performance",
+        "display_lab": "display",
+        "camera_real_world": "camera",
+        "battery_charging": "battery_charging",
+        "defect_rate": "build_durability",
+        "local_service_tat": "irf",
+        "software_policy": "software_support"
+      },
+      "sub_metrics": {
+        "performance": {
+          "sustained_perf_percent": {
+            "name": "Sustained CPU/GPU Throttle Stability",
+            "unit": "%",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                50.0,
+                2.0
+              ],
+              [
+                65.0,
+                5.0
+              ],
+              [
+                80.0,
+                7.5
+              ],
+              [
+                90.0,
+                9.0
+              ],
+              [
+                98.0,
+                10.0
+              ]
+            ],
+            "weight": 0.4,
+            "description": "3DMark Wild Life / CPU Throttling Test sustained performance percentage"
+          },
+          "geekbench_multicore": {
+            "name": "Geekbench 6 Multi-Core Score",
+            "unit": "points",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                2000.0,
+                3.0
+              ],
+              [
+                4000.0,
+                6.0
+              ],
+              [
+                6000.0,
+                8.5
+              ],
+              [
+                7500.0,
+                10.0
+              ]
+            ],
+            "weight": 0.35,
+            "description": "Standardized CPU multi-core compute benchmark"
+          },
+          "thermal_peak_temp_c": {
+            "name": "Peak Surface Temperature Under Load",
+            "unit": "°C",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                37.0,
+                10.0
+              ],
+              [
+                40.0,
+                8.5
+              ],
+              [
+                43.0,
+                6.5
+              ],
+              [
+                46.0,
+                4.0
+              ],
+              [
+                50.0,
+                1.0
+              ]
+            ],
+            "weight": 0.25,
+            "description": "Peak rear chassis surface temperature under sustained load (lower is better)"
+          }
+        },
+        "display": {
+          "peak_brightness_nits": {
+            "name": "Measured Peak Full-Screen Brightness",
+            "unit": "nits",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                400.0,
+                3.0
+              ],
+              [
+                800.0,
+                6.0
+              ],
+              [
+                1200.0,
+                8.0
+              ],
+              [
+                1600.0,
+                9.5
+              ],
+              [
+                2400.0,
+                10.0
+              ]
+            ],
+            "weight": 0.4,
+            "description": "100% APL high brightness mode (HBM) outdoor sunlight readability"
+          },
+          "color_accuracy_delta_e": {
+            "name": "Color Accuracy Delta-E",
+            "unit": "Delta-E",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                0.8,
+                10.0
+              ],
+              [
+                1.5,
+                9.0
+              ],
+              [
+                2.5,
+                7.0
+              ],
+              [
+                4.0,
+                4.5
+              ],
+              [
+                6.0,
+                2.0
+              ]
+            ],
+            "weight": 0.3,
+            "description": "Average Delta-E color variance vs sRGB/DCI-P3 targets (lower is better)"
+          },
+          "pwm_dimming_hz": {
+            "name": "PWM Dimming Flicker Frequency",
+            "unit": "Hz",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                240.0,
+                3.0
+              ],
+              [
+                480.0,
+                5.0
+              ],
+              [
+                1440.0,
+                7.5
+              ],
+              [
+                2160.0,
+                9.0
+              ],
+              [
+                3840.0,
+                10.0
+              ]
+            ],
+            "weight": 0.3,
+            "description": "High-frequency PWM dimming to prevent eye strain and headaches"
+          }
+        },
+        "camera": {
+          "sensor_size_inch": {
+            "name": "Primary Sensor Optical Format",
+            "unit": "fractional_inch",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                0.5,
+                4.0
+              ],
+              [
+                0.64,
+                7.0
+              ],
+              [
+                0.77,
+                8.8
+              ],
+              [
+                1.0,
+                10.0
+              ]
+            ],
+            "weight": 0.35,
+            "description": "Main sensor optical format (e.g. 1/1.56\"=0.64, 1/1.3\"=0.77, 1-inch=1.0)"
+          },
+          "ois_stabilization": {
+            "name": "Hardware Optical Image Stabilization",
+            "unit": "boolean",
+            "curve": "discrete",
+            "options": {
+              "true": 10.0,
+              "false": 3.0,
+              "yes": 10.0,
+              "no": 3.0,
+              "1": 10.0,
+              "0": 3.0
+            },
+            "weight": 0.3,
+            "description": "Physical sensor-shift or lens OIS stabilization"
+          },
+          "dxomark_photo_score": {
+            "name": "Camera Lab Benchmark Score",
+            "unit": "score",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                90.0,
+                3.0
+              ],
+              [
+                115.0,
+                6.0
+              ],
+              [
+                135.0,
+                8.0
+              ],
+              [
+                155.0,
+                10.0
+              ]
+            ],
+            "weight": 0.35,
+            "description": "Standardized DXOMARK or lab photo quality score"
+          }
+        },
+        "battery_charging": {
+          "active_battery_runtime_hours": {
+            "name": "Standardized Active Use Runtime",
+            "unit": "hours",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                9.0,
+                3.0
+              ],
+              [
+                12.0,
+                6.0
+              ],
+              [
+                14.5,
+                8.5
+              ],
+              [
+                17.0,
+                10.0
+              ]
+            ],
+            "weight": 0.5,
+            "description": "Continuous web browsing / video playback test runtime"
+          },
+          "charging_time_minutes": {
+            "name": "Full Charge Time (0 to 100%)",
+            "unit": "minutes",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                20.0,
+                10.0
+              ],
+              [
+                30.0,
+                9.0
+              ],
+              [
+                50.0,
+                7.0
+              ],
+              [
+                80.0,
+                4.5
+              ],
+              [
+                120.0,
+                2.0
+              ]
+            ],
+            "weight": 0.35,
+            "description": "Minutes required for complete 0-100% wired charge (lower is better)"
+          },
+          "battery_capacity_mah": {
+            "name": "Rated Battery Capacity",
+            "unit": "mAh",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                4000.0,
+                4.0
+              ],
+              [
+                4800.0,
+                7.0
+              ],
+              [
+                5400.0,
+                9.0
+              ],
+              [
+                6000.0,
+                10.0
+              ]
+            ],
+            "weight": 0.15,
+            "description": "Total battery pack milliampere-hours"
+          }
+        },
+        "build_durability": {
+          "ip_rating": {
+            "name": "Ingress Protection (IP) Rating",
+            "unit": "rating",
+            "curve": "discrete",
+            "options": {
+              "ip68": 10.0,
+              "ip69": 10.0,
+              "ip67": 8.5,
+              "ip65": 7.5,
+              "ip54": 5.5,
+              "ip53": 4.5,
+              "none": 2.0
+            },
+            "weight": 0.4,
+            "description": "Dust and water immersion ingress protection certified"
+          },
+          "glass_protection": {
+            "name": "Cover Glass Impact Grade",
+            "unit": "grade",
+            "curve": "discrete",
+            "options": {
+              "ceramic_shield": 10.0,
+              "gorilla_armor": 10.0,
+              "gorilla_glass_victus_2": 9.5,
+              "gorilla_glass_victus": 8.5,
+              "gorilla_glass_5": 6.5,
+              "gorilla_glass_3": 5.0,
+              "panda_glass": 4.5,
+              "standard": 3.0
+            },
+            "weight": 0.3,
+            "description": "Front display cover glass scratch and shatter resistance"
+          },
+          "frame_material": {
+            "name": "Chassis Frame Material",
+            "unit": "material",
+            "curve": "discrete",
+            "options": {
+              "titanium": 10.0,
+              "stainless_steel": 9.5,
+              "aluminum": 8.5,
+              "plastic": 4.5,
+              "polycarbonate": 5.0
+            },
+            "weight": 0.3,
+            "description": "Chassis structural perimeter metallurgy"
+          }
+        },
+        "software_support": {
+          "os_updates_years": {
+            "name": "Major OS Upgrades Promised",
+            "unit": "years",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                2.0,
+                3.0
+              ],
+              [
+                3.0,
+                5.5
+              ],
+              [
+                4.0,
+                7.5
+              ],
+              [
+                5.0,
+                8.8
+              ],
+              [
+                7.0,
+                10.0
+              ]
+            ],
+            "weight": 0.5,
+            "description": "Guaranteed Android / iOS major platform release cycles"
+          },
+          "security_patches_years": {
+            "name": "Security Patch Lifespan",
+            "unit": "years",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                2.0,
+                3.0
+              ],
+              [
+                3.0,
+                5.0
+              ],
+              [
+                4.0,
+                7.0
+              ],
+              [
+                5.0,
+                8.5
+              ],
+              [
+                7.0,
+                10.0
+              ]
+            ],
+            "weight": 0.3,
+            "description": "Duration of promised vulnerability patch support"
+          },
+          "bloatware_cleanliness": {
+            "name": "Bloatware & Ad Cleanliness",
+            "unit": "score_10",
+            "curve": "direct_score",
+            "weight": 0.2,
+            "description": "Stock cleanly styled OS without spam notifications or bundled ads (1-10)"
+          }
+        }
+      }
+    },
+    "laptops": {
+      "display_name": "Laptops & Portable Workstations",
+      "weights": {
+        "performance": 0.3,
+        "display_accuracy": 0.15,
+        "battery_life": 0.15,
+        "cooling_thermals": 0.2,
+        "build_upgradeability": 0.2
+      },
+      "dimension_mapping": {
+        "pricing_landing": "price",
+        "thermals_sustained": "cooling_thermals",
+        "display_lab": "display_accuracy",
+        "build_repairability": "build_upgradeability",
+        "battery_runtime": "battery_life",
+        "defect_rate": "build_upgradeability",
+        "warranty_service_tat": "irf",
+        "performance_benchmark": "performance"
+      },
+      "sub_metrics": {
+        "performance": {
+          "cinebench_r23_multicore": {
+            "name": "Cinebench R23 Multi-Core (30-min loop)",
+            "unit": "points",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                6000.0,
+                3.0
+              ],
+              [
+                10000.0,
+                6.0
+              ],
+              [
+                15000.0,
+                8.0
+              ],
+              [
+                22000.0,
+                10.0
+              ]
+            ],
+            "weight": 0.45,
+            "description": "Sustained rendering CPU compute benchmark"
+          },
+          "cinebench_r23_singlecore": {
+            "name": "Cinebench R23 Single-Core",
+            "unit": "points",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                1100.0,
+                3.0
+              ],
+              [
+                1500.0,
+                6.5
+              ],
+              [
+                1800.0,
+                8.5
+              ],
+              [
+                2100.0,
+                10.0
+              ]
+            ],
+            "weight": 0.3,
+            "description": "Single-thread burst and app responsiveness performance"
+          },
+          "sustained_pl1_wattage": {
+            "name": "Sustained Package Power (PL1)",
+            "unit": "Watts",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                15.0,
+                3.0
+              ],
+              [
+                28.0,
+                6.0
+              ],
+              [
+                45.0,
+                8.5
+              ],
+              [
+                75.0,
+                10.0
+              ]
+            ],
+            "weight": 0.25,
+            "description": "Continuous CPU package wattage under heavy workflow"
+          }
+        },
+        "display_accuracy": {
+          "display_brightness_nits": {
+            "name": "Maximum Panel Brightness",
+            "unit": "nits",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                250.0,
+                3.0
+              ],
+              [
+                350.0,
+                6.0
+              ],
+              [
+                500.0,
+                8.5
+              ],
+              [
+                800.0,
+                10.0
+              ]
+            ],
+            "weight": 0.35,
+            "description": "Measured peak screen brightness"
+          },
+          "color_gamut_srgb_pct": {
+            "name": "sRGB Color Gamut Coverage",
+            "unit": "%",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                55.0,
+                2.5
+              ],
+              [
+                70.0,
+                4.5
+              ],
+              [
+                95.0,
+                8.0
+              ],
+              [
+                100.0,
+                10.0
+              ]
+            ],
+            "weight": 0.35,
+            "description": "sRGB color space coverage percentage"
+          },
+          "color_accuracy_delta_e": {
+            "name": "Factory Calibration Delta-E",
+            "unit": "Delta-E",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                0.8,
+                10.0
+              ],
+              [
+                1.5,
+                9.0
+              ],
+              [
+                2.5,
+                7.0
+              ],
+              [
+                4.5,
+                4.0
+              ],
+              [
+                7.0,
+                1.5
+              ]
+            ],
+            "weight": 0.3,
+            "description": "Color reproduction accuracy variance (lower is better)"
+          }
+        },
+        "battery_life": {
+          "web_browsing_runtime_hours": {
+            "name": "Standardized Web Browsing Runtime",
+            "unit": "hours",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                5.0,
+                3.0
+              ],
+              [
+                8.0,
+                6.0
+              ],
+              [
+                11.0,
+                8.5
+              ],
+              [
+                15.0,
+                10.0
+              ]
+            ],
+            "weight": 0.65,
+            "description": "Continuous web browsing loop battery life at 150 nits"
+          },
+          "battery_capacity_wh": {
+            "name": "Battery Capacity",
+            "unit": "Wh",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                45.0,
+                3.5
+              ],
+              [
+                60.0,
+                6.5
+              ],
+              [
+                75.0,
+                8.5
+              ],
+              [
+                95.0,
+                10.0
+              ]
+            ],
+            "weight": 0.35,
+            "description": "Internal battery capacity in Watt-hours"
+          }
+        },
+        "cooling_thermals": {
+          "keyboard_deck_temp_c": {
+            "name": "Surface Keyboard Deck Temperature",
+            "unit": "°C",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                35.0,
+                10.0
+              ],
+              [
+                39.0,
+                8.5
+              ],
+              [
+                43.0,
+                6.5
+              ],
+              [
+                47.0,
+                4.0
+              ],
+              [
+                52.0,
+                1.0
+              ]
+            ],
+            "weight": 0.4,
+            "description": "Keyboard deck surface temperature under load (lower is better)"
+          },
+          "fan_noise_dba": {
+            "name": "Full Load Fan Acoustic Noise",
+            "unit": "dBA",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                30.0,
+                10.0
+              ],
+              [
+                36.0,
+                8.5
+              ],
+              [
+                42.0,
+                6.5
+              ],
+              [
+                48.0,
+                4.0
+              ],
+              [
+                55.0,
+                1.5
+              ]
+            ],
+            "weight": 0.35,
+            "description": "Acoustic noise level at ear height under maximum fan load (lower is better)"
+          },
+          "thermal_throttle_pct": {
+            "name": "Sustained Thermal Throttle Drop",
+            "unit": "%",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                5.0,
+                10.0
+              ],
+              [
+                12.0,
+                8.0
+              ],
+              [
+                22.0,
+                5.5
+              ],
+              [
+                35.0,
+                3.0
+              ],
+              [
+                50.0,
+                1.0
+              ]
+            ],
+            "weight": 0.25,
+            "description": "Performance drop percentage from peak cold run to 30-min loop (lower is better)"
+          }
+        },
+        "build_upgradeability": {
+          "ram_upgradeability": {
+            "name": "RAM Expansion Architecture",
+            "unit": "type",
+            "curve": "discrete",
+            "options": {
+              "dual_sodimm": 10.0,
+              "single_sodimm_plus_soldered": 7.0,
+              "fully_soldered": 3.5
+            },
+            "weight": 0.4,
+            "description": "Removable dual SO-DIMM vs soldered memory"
+          },
+          "ssd_slots": {
+            "name": "M.2 NVMe Storage Expansion",
+            "unit": "slots",
+            "curve": "discrete",
+            "options": {
+              "2_slots": 10.0,
+              "2": 10.0,
+              "1_slot": 6.5,
+              "1": 6.5,
+              "soldered": 1.0
+            },
+            "weight": 0.3,
+            "description": "Number of accessible M.2 PCIe NVMe slots"
+          },
+          "hinge_chassis_durability": {
+            "name": "Hinge Durability & Chassis Rigidity",
+            "unit": "score_10",
+            "curve": "direct_score",
+            "weight": 0.3,
+            "description": "All-metal construction, one-finger opening, zero hinge creak/flex (1-10)"
+          }
+        }
+      }
+    },
+    "inverter_acs": {
+      "display_name": "Inverter Air Conditioners",
+      "weights": {
+        "cooling_efficiency_iseer": 0.35,
+        "condenser_coil_materials": 0.2,
+        "noise_levels": 0.15,
+        "air_filtration": 0.1,
+        "warranty_service": 0.2
+      },
+      "dimension_mapping": {
+        "iseer_efficiency": "cooling_efficiency_iseer",
+        "condenser_materials": "condenser_coil_materials",
+        "cooling_ambient_high": "cooling_efficiency_iseer",
+        "acoustic_noise_db": "noise_levels",
+        "pcb_warranty_terms": "warranty_service",
+        "service_tat_installation": "irf",
+        "stabilizer_voltage": "irf",
+        "air_filtration_health": "air_filtration"
+      },
+      "sub_metrics": {
+        "cooling_efficiency_iseer": {
+          "iseer_rating": {
+            "name": "BEE ISEER Efficiency Rating",
+            "unit": "ISEER",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                3.8,
+                3.0
+              ],
+              [
+                4.4,
+                6.0
+              ],
+              [
+                5.0,
+                8.5
+              ],
+              [
+                5.6,
+                9.5
+              ],
+              [
+                6.2,
+                10.0
+              ]
+            ],
+            "weight": 0.6,
+            "description": "Indian Seasonal Energy Efficiency Ratio statutory rating"
+          },
+          "ambient_cooling_derating_52c": {
+            "name": "52°C Ambient Capacity Retention",
+            "unit": "%",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                60.0,
+                3.0
+              ],
+              [
+                75.0,
+                6.0
+              ],
+              [
+                88.0,
+                8.5
+              ],
+              [
+                96.0,
+                10.0
+              ]
+            ],
+            "weight": 0.4,
+            "description": "Cooling capacity preserved in extreme 52°C tropical heatwave"
+          }
+        },
+        "condenser_coil_materials": {
+          "coil_material": {
+            "name": "Condenser Tube Metallurgy",
+            "unit": "material",
+            "curve": "discrete",
+            "options": {
+              "100%_grooved_copper": 10.0,
+              "copper": 9.5,
+              "100%_copper": 9.5,
+              "aluminum": 2.0,
+              "pfc_aluminum": 2.5
+            },
+            "weight": 0.5,
+            "description": "100% inner grooved copper vs aluminum micro-channel"
+          },
+          "anti_corrosion_coating": {
+            "name": "Fin Anti-Corrosion Protection",
+            "unit": "coating",
+            "curve": "discrete",
+            "options": {
+              "ocean_black_gold_fin": 10.0,
+              "gold_fin": 9.5,
+              "blue_fin": 8.0,
+              "epoxy_coated": 6.0,
+              "none": 2.0
+            },
+            "weight": 0.5,
+            "description": "Corrosion barrier protection for coastal and high-sulfur pollution zones"
+          }
+        },
+        "noise_levels": {
+          "indoor_silent_db": {
+            "name": "Indoor Unit Silent Mode Noise",
+            "unit": "dBA",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                20.0,
+                10.0
+              ],
+              [
+                25.0,
+                8.8
+              ],
+              [
+                30.0,
+                7.0
+              ],
+              [
+                36.0,
+                4.5
+              ],
+              [
+                44.0,
+                1.5
+              ]
+            ],
+            "weight": 0.6,
+            "description": "IDU sound pressure in low/silent fan mode (lower is better)"
+          },
+          "outdoor_compressor_db": {
+            "name": "Outdoor Compressor Acoustic Noise",
+            "unit": "dBA",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                48.0,
+                10.0
+              ],
+              [
+                53.0,
+                8.0
+              ],
+              [
+                58.0,
+                6.0
+              ],
+              [
+                64.0,
+                3.0
+              ]
+            ],
+            "weight": 0.4,
+            "description": "ODU sound pressure under full capacity load (lower is better)"
+          }
+        },
+        "air_filtration": {
+          "pm25_filter_ionizer": {
+            "name": "Air Purification Filtration",
+            "unit": "filtration",
+            "curve": "discrete",
+            "options": {
+              "pm25_hepa_ionizer": 10.0,
+              "pm25_filter": 8.0,
+              "hd_anti_bacterial": 6.0,
+              "basic_dust_mesh": 3.0
+            },
+            "weight": 0.6,
+            "description": "PM2.5 micro-allergen filtration and ionization technology"
+          },
+          "auto_clean_ice_wash": {
+            "name": "Evaporator Auto-Clean / Frost Wash",
+            "unit": "boolean",
+            "curve": "discrete",
+            "options": {
+              "true": 10.0,
+              "false": 3.0,
+              "yes": 10.0,
+              "no": 3.0,
+              "1": 10.0,
+              "0": 3.0
+            },
+            "weight": 0.4,
+            "description": "Automated dew frost wash and coil drying cycle"
+          }
+        },
+        "warranty_service": {
+          "pcb_warranty_years": {
+            "name": "Inverter PCB Controller Warranty",
+            "unit": "years",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                1.0,
+                3.0
+              ],
+              [
+                3.0,
+                6.0
+              ],
+              [
+                5.0,
+                9.0
+              ],
+              [
+                7.0,
+                10.0
+              ]
+            ],
+            "weight": 0.45,
+            "description": "Warranty coverage on expensive inverter electronic control boards"
+          },
+          "compressor_warranty_years": {
+            "name": "Compressor Warranty Duration",
+            "unit": "years",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                5.0,
+                4.0
+              ],
+              [
+                10.0,
+                9.0
+              ],
+              [
+                12.0,
+                10.0
+              ]
+            ],
+            "weight": 0.35,
+            "description": "Compressor manufacturer warranty term"
+          },
+          "comprehensive_warranty_years": {
+            "name": "Comprehensive Unit Warranty",
+            "unit": "years",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                1.0,
+                4.0
+              ],
+              [
+                2.0,
+                6.5
+              ],
+              [
+                5.0,
+                10.0
+              ]
+            ],
+            "weight": 0.2,
+            "description": "Full machine bumper-to-bumper warranty duration"
+          }
+        }
+      }
+    },
+    "washing_machines": {
+      "display_name": "Washing Machines (Front & Top Load)",
+      "weights": {
+        "wash_quality_motor": 0.3,
+        "energy_water_efficiency": 0.25,
+        "drum_tub_durability": 0.2,
+        "noise_vibration": 0.1,
+        "smart_programs": 0.15
+      },
+      "dimension_mapping": {
+        "motor_drum_architecture": "wash_quality_motor",
+        "water_energy_efficiency": "energy_water_efficiency",
+        "spin_noise_vibration": "noise_vibration",
+        "hard_water_resilience": "irf",
+        "spider_bearing_durability": "drum_tub_durability",
+        "service_tat_spares": "irf",
+        "smart_programs_heater": "smart_programs"
+      },
+      "sub_metrics": {
+        "wash_quality_motor": {
+          "motor_type": {
+            "name": "Motor Architecture & Drive System",
+            "unit": "type",
+            "curve": "discrete",
+            "options": {
+              "direct_drive_inverter": 10.0,
+              "bldc_inverter_belt": 8.0,
+              "standard_induction_belt": 4.0,
+              "direct_drive": 10.0,
+              "bldc_belt": 8.0
+            },
+            "weight": 0.5,
+            "description": "Inverter direct drive vs BLDC belt drive vs conventional motor"
+          },
+          "max_spin_speed_rpm": {
+            "name": "Maximum Spin Extraction Speed",
+            "unit": "RPM",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                700.0,
+                3.0
+              ],
+              [
+                1000.0,
+                6.0
+              ],
+              [
+                1200.0,
+                8.0
+              ],
+              [
+                1400.0,
+                9.5
+              ],
+              [
+                1600.0,
+                10.0
+              ]
+            ],
+            "weight": 0.5,
+            "description": "Centrifugal RPM for optimal moisture extraction"
+          }
+        },
+        "energy_water_efficiency": {
+          "bee_star_rating": {
+            "name": "BEE Star Energy Rating",
+            "unit": "stars",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                3.0,
+                5.0
+              ],
+              [
+                4.0,
+                7.5
+              ],
+              [
+                5.0,
+                10.0
+              ]
+            ],
+            "weight": 0.5,
+            "description": "BEE energy efficiency star rating certification"
+          },
+          "water_consumption_litres_per_kg": {
+            "name": "Water Consumption per kg",
+            "unit": "L/kg",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                5.0,
+                10.0
+              ],
+              [
+                8.0,
+                8.5
+              ],
+              [
+                12.0,
+                6.0
+              ],
+              [
+                18.0,
+                3.5
+              ],
+              [
+                25.0,
+                1.5
+              ]
+            ],
+            "weight": 0.5,
+            "description": "Standard cycle water usage in litres per kg load (lower is better)"
+          }
+        },
+        "drum_tub_durability": {
+          "drum_material": {
+            "name": "Drum Material & Embossing",
+            "unit": "material",
+            "curve": "discrete",
+            "options": {
+              "laser_welded_stainless_steel": 10.0,
+              "stainless_steel": 9.0,
+              "plastic_composite": 3.0
+            },
+            "weight": 0.5,
+            "description": "Drum metal composition and weld seam finish"
+          },
+          "spider_arm_corrosion_protection": {
+            "name": "Drum Spider Arm Corrosion Barrier",
+            "unit": "protection",
+            "curve": "discrete",
+            "options": {
+              "coated_galvanic_anti_corrosion": 10.0,
+              "reinforced_cast": 7.5,
+              "standard_cast_aluminum": 4.0
+            },
+            "weight": 0.5,
+            "description": "Spider bracket resistance to detergent buildup and galvanic etching"
+          }
+        },
+        "noise_vibration": {
+          "spin_noise_db": {
+            "name": "High-Speed Spin Acoustic Noise",
+            "unit": "dBA",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                62.0,
+                10.0
+              ],
+              [
+                68.0,
+                8.5
+              ],
+              [
+                74.0,
+                6.0
+              ],
+              [
+                80.0,
+                3.5
+              ],
+              [
+                86.0,
+                1.0
+              ]
+            ],
+            "weight": 0.6,
+            "description": "Acoustic decibels during maximum RPM spin cycle (lower is better)"
+          },
+          "anti_vibration_system": {
+            "name": "Vibration Dampening Architecture",
+            "unit": "score_10",
+            "curve": "direct_score",
+            "weight": 0.4,
+            "description": "Liquid balancing rings, 3-point suspension shock absorbers, anti-vibration sidewalls (1-10)"
+          }
+        },
+        "smart_programs": {
+          "inbuilt_heater_steam": {
+            "name": "Inbuilt Heater & Steam Sanitization",
+            "unit": "heater",
+            "curve": "discrete",
+            "options": {
+              "90c_steam_allergy": 10.0,
+              "60c_heater": 8.0,
+              "cold_wash_only": 3.0
+            },
+            "weight": 0.5,
+            "description": "Internal heating element for temperature control and steam hygiene"
+          },
+          "smart_connectivity_dosing": {
+            "name": "Smart Features & Auto Dosing",
+            "unit": "score_10",
+            "curve": "direct_score",
+            "weight": 0.5,
+            "description": "Auto detergent dispenser, WiFi diagnostics, hard water wash sensors (1-10)"
+          }
+        }
+      }
+    },
+    "skincare": {
+      "display_name": "Skincare & Dermatological Formulations",
+      "weights": {
+        "active_concentration_efficacy": 0.35,
+        "formulation_ph_stability": 0.25,
+        "safety_non_comedogenic": 0.2,
+        "texture_absorption": 0.1,
+        "packaging_preservation": 0.1
+      },
+      "dimension_mapping": {
+        "active_concentration": "active_concentration_efficacy",
+        "ph_formulation_stability": "formulation_ph_stability",
+        "safety_comedogenic": "safety_non_comedogenic",
+        "packaging_preservation": "packaging_preservation",
+        "clinical_evidence": "active_concentration_efficacy",
+        "authorized_channel_counterfeit": "irf",
+        "texture_absorption_feel": "texture_absorption"
+      },
+      "sub_metrics": {
+        "active_concentration_efficacy": {
+          "active_concentration_pct": {
+            "name": "Target Active Concentration % wt/vol",
+            "unit": "%",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                1.0,
+                3.0
+              ],
+              [
+                5.0,
+                6.5
+              ],
+              [
+                10.0,
+                9.0
+              ],
+              [
+                15.0,
+                10.0
+              ],
+              [
+                25.0,
+                8.0
+              ]
+            ],
+            "weight": 0.6,
+            "description": "Active ingredient percentage within proven therapeutic therapeutic window"
+          },
+          "clinical_trial_evidence": {
+            "name": "Independent Clinical Trial Validation",
+            "unit": "evidence",
+            "curve": "discrete",
+            "options": {
+              "double_blind_rct_published": 10.0,
+              "in_vivo_brand_clinical": 7.5,
+              "in_vitro_supplier_only": 5.0,
+              "none": 2.0
+            },
+            "weight": 0.4,
+            "description": "Peer-reviewed published clinical trials vs supplier spec sheet claims"
+          }
+        },
+        "formulation_ph_stability": {
+          "ph_target_optimality": {
+            "name": "Formulation pH Target Optimality",
+            "unit": "score_10",
+            "curve": "direct_score",
+            "weight": 0.6,
+            "description": "Alignment of product pH with active absorption window (e.g. 2.8-3.5 for L-Ascorbic)"
+          },
+          "stabilizing_synergists": {
+            "name": "Stabilization Co-Factors & Packaging",
+            "unit": "boolean",
+            "curve": "discrete",
+            "options": {
+              "true": 10.0,
+              "false": 4.0,
+              "yes": 10.0,
+              "no": 4.0,
+              "1": 10.0,
+              "0": 4.0
+            },
+            "weight": 0.4,
+            "description": "Synergistic stabilizers (e.g. Ferulic Acid + Vit E, encapsulated liposomes)"
+          }
+        },
+        "safety_non_comedogenic": {
+          "comedogenic_rating_max": {
+            "name": "Peak Comedogenic Rating Among Excipients",
+            "unit": "rating_0_5",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                0.0,
+                10.0
+              ],
+              [
+                1.0,
+                9.0
+              ],
+              [
+                2.0,
+                7.0
+              ],
+              [
+                3.0,
+                4.0
+              ],
+              [
+                5.0,
+                1.0
+              ]
+            ],
+            "weight": 0.6,
+            "description": "Worst comedogenic rating among inactive ingredients (0=pore-safe, 5=heavy clogger) (lower is better)"
+          },
+          "fragrance_free": {
+            "name": "100% Fragrance & Essential Oil Free",
+            "unit": "boolean",
+            "curve": "discrete",
+            "options": {
+              "true": 10.0,
+              "false": 4.0,
+              "yes": 10.0,
+              "no": 4.0,
+              "1": 10.0,
+              "0": 4.0
+            },
+            "weight": 0.4,
+            "description": "Absence of sensitizing synthetic parfum or essential oil irritants"
+          }
+        },
+        "texture_absorption": {
+          "absorption_speed_seconds": {
+            "name": "Full Absorption Speed",
+            "unit": "seconds",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                15.0,
+                10.0
+              ],
+              [
+                30.0,
+                8.5
+              ],
+              [
+                60.0,
+                6.5
+              ],
+              [
+                120.0,
+                4.0
+              ],
+              [
+                240.0,
+                1.5
+              ]
+            ],
+            "weight": 0.5,
+            "description": "Seconds until completely absorbed without tackiness (lower is better)"
+          },
+          "pilling_greasiness_score": {
+            "name": "Finish Quality & Zero Pilling",
+            "unit": "score_10",
+            "curve": "direct_score",
+            "weight": 0.5,
+            "description": "Elegant non-greasy matte finish that layers under sunscreen without balling up (1-10)"
+          }
+        },
+        "packaging_preservation": {
+          "container_type": {
+            "name": "Packaging Oxidation & UV Barrier",
+            "unit": "type",
+            "curve": "discrete",
+            "options": {
+              "opaque_airless_pump": 10.0,
+              "airless_pump": 10.0,
+              "amber_glass_dropper": 7.5,
+              "amber_dropper": 7.5,
+              "clear_glass_dropper": 4.0,
+              "clear_dropper": 4.0,
+              "open_jar": 1.5,
+              "jar": 1.5
+            },
+            "weight": 1.0,
+            "description": "Light and oxygen barrier preventing premature active oxidation"
+          }
+        }
+      }
+    },
+    "supplements": {
+      "display_name": "Dietary Supplements & Nutraceuticals",
+      "weights": {
+        "active_purity_potency": 0.35,
+        "zero_amino_spiking_heavy_metals": 0.25,
+        "digestibility_enzymes": 0.15,
+        "mixability_taste": 0.1,
+        "lab_transparency": 0.15
+      },
+      "dimension_mapping": {
+        "active_purity_potency": "active_purity_potency",
+        "zero_amino_spiking": "zero_amino_spiking_heavy_metals",
+        "lab_transparency_coa": "lab_transparency",
+        "digestibility_tolerance": "digestibility_enzymes",
+        "statutory_licensing": "irf",
+        "authenticity_verification": "irf",
+        "mixability_flavor": "mixability_taste"
+      },
+      "sub_metrics": {
+        "active_purity_potency": {
+          "protein_or_active_purity_pct": {
+            "name": "Active Substance Purity on Dry Basis",
+            "unit": "%",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                55.0,
+                3.0
+              ],
+              [
+                70.0,
+                6.5
+              ],
+              [
+                80.0,
+                8.5
+              ],
+              [
+                90.0,
+                10.0
+              ]
+            ],
+            "weight": 0.7,
+            "description": "Lab verified protein or active ingredient percentage per scoop dry basis"
+          },
+          "active_yield_per_serving_g": {
+            "name": "Active Delivered per Serving",
+            "unit": "grams",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                18.0,
+                4.0
+              ],
+              [
+                24.0,
+                7.5
+              ],
+              [
+                27.0,
+                9.0
+              ],
+              [
+                30.0,
+                10.0
+              ]
+            ],
+            "weight": 0.3,
+            "description": "Actual grams of active nutrient delivered in recommended single scoop"
+          }
+        },
+        "zero_amino_spiking_heavy_metals": {
+          "zero_amino_spiking_verified": {
+            "name": "Zero Free Amino Spiking Verified",
+            "unit": "boolean",
+            "curve": "discrete",
+            "options": {
+              "true": 10.0,
+              "false": 0.0,
+              "yes": 10.0,
+              "no": 0.0,
+              "1": 10.0,
+              "0": 0.0
+            },
+            "weight": 0.55,
+            "description": "Verified absence of glycine, taurine, or alanine nitrogen inflating protein count"
+          },
+          "heavy_metals_pass_standard": {
+            "name": "Heavy Metals Below Detection Limits",
+            "unit": "boolean",
+            "curve": "discrete",
+            "options": {
+              "true": 10.0,
+              "false": 0.0,
+              "yes": 10.0,
+              "no": 0.0,
+              "1": 10.0,
+              "0": 0.0
+            },
+            "weight": 0.45,
+            "description": "Screening for Lead, Arsenic, Cadmium, Mercury strictly within safety limits"
+          }
+        },
+        "digestibility_enzymes": {
+          "digestive_enzyme_complex": {
+            "name": "Multi-Enzyme Digestive Blend",
+            "unit": "complex",
+            "curve": "discrete",
+            "options": {
+              "multi_enzyme_digezyme": 10.0,
+              "basic_papain_bromelain": 7.0,
+              "none": 3.5
+            },
+            "weight": 0.6,
+            "description": "Inclusion of patented enzyme blend (e.g. DigeZyme, ProHydrolase) for absorption"
+          },
+          "bloating_complaint_rate_pct": {
+            "name": "GI Bloating User Complaint Rate",
+            "unit": "%",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                2.0,
+                10.0
+              ],
+              [
+                5.0,
+                8.5
+              ],
+              [
+                12.0,
+                6.0
+              ],
+              [
+                20.0,
+                3.0
+              ],
+              [
+                35.0,
+                1.0
+              ]
+            ],
+            "weight": 0.4,
+            "description": "Verified consumer reviews reporting gastric discomfort or bloating (lower is better)"
+          }
+        },
+        "mixability_taste": {
+          "mixability_clumping": {
+            "name": "Dissolution & Shaker Mixability",
+            "unit": "score_10",
+            "curve": "direct_score",
+            "weight": 0.6,
+            "description": "Dissolves in cold liquid without clumps, chalky sediment, or excessive froth (1-10)"
+          },
+          "taste_aftertaste_score": {
+            "name": "Flavor Naturalness & Aftertaste",
+            "unit": "score_10",
+            "curve": "direct_score",
+            "weight": 0.4,
+            "description": "Authentic flavor profile without bitter chemical artificial sweetener lingering (1-10)"
+          }
+        },
+        "lab_transparency": {
+          "third_party_testing_certification": {
+            "name": "Third-Party Purity Certification",
+            "unit": "certification",
+            "curve": "discrete",
+            "options": {
+              "informed_choice_nsf_cologne": 10.0,
+              "nabl_eurofins_batch_coa": 8.5,
+              "in_house_brand_testing": 4.0,
+              "no_public_coa": 1.0
+            },
+            "weight": 0.6,
+            "description": "Accredited third-party laboratory anti-doping and purity verification"
+          },
+          "batch_qr_transparency": {
+            "name": "Batch QR Code Direct COA Link",
+            "unit": "boolean",
+            "curve": "discrete",
+            "options": {
+              "true": 10.0,
+              "false": 3.0,
+              "yes": 10.0,
+              "no": 3.0,
+              "1": 10.0,
+              "0": 3.0
+            },
+            "weight": 0.4,
+            "description": "Every container has a scannable QR code resolving to its exact batch analysis"
+          }
+        }
+      }
+    },
+    "tws_audio": {
+      "display_name": "True Wireless Stereo (TWS) Earbuds & Audio",
+      "weights": {
+        "sound_quality": 0.3,
+        "anc_transparency": 0.25,
+        "mic_clarity": 0.15,
+        "battery_charging": 0.15,
+        "comfort_ip_rating": 0.15
+      },
+      "dimension_mapping": {
+        "frequency_response_sound": "sound_quality",
+        "anc_transparency_lab": "anc_transparency",
+        "codec_latency": "sound_quality",
+        "battery_degradation": "battery_charging",
+        "water_sweat_rating": "comfort_ip_rating",
+        "defect_rate_anc": "anc_transparency",
+        "mic_call_clarity": "mic_clarity"
+      },
+      "sub_metrics": {
+        "sound_quality": {
+          "harman_target_deviation_db": {
+            "name": "Harman Target RMS Deviation",
+            "unit": "dB",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                1.5,
+                10.0
+              ],
+              [
+                2.8,
+                8.5
+              ],
+              [
+                4.5,
+                6.5
+              ],
+              [
+                6.5,
+                4.0
+              ],
+              [
+                9.5,
+                1.5
+              ]
+            ],
+            "weight": 0.45,
+            "description": "RMS frequency response deviation from Harman target curve (lower is better)"
+          },
+          "hi_res_codec_support": {
+            "name": "Bluetooth Audio Codec Tier",
+            "unit": "codec",
+            "curve": "discrete",
+            "options": {
+              "ldac_lhdc_lossless": 10.0,
+              "aptx_adaptive": 8.5,
+              "aac_sbc_only": 6.0
+            },
+            "weight": 0.3,
+            "description": "High-bandwidth Bluetooth audio transmission codecs"
+          },
+          "thd_distortion_pct": {
+            "name": "Total Harmonic Distortion (THD)",
+            "unit": "%",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                0.1,
+                10.0
+              ],
+              [
+                0.3,
+                8.5
+              ],
+              [
+                0.8,
+                6.5
+              ],
+              [
+                1.5,
+                3.5
+              ],
+              [
+                3.0,
+                1.0
+              ]
+            ],
+            "weight": 0.25,
+            "description": "THD at 94 dB SPL across audio spectrum (lower is better)"
+          }
+        },
+        "anc_transparency": {
+          "anc_noise_attenuation_db": {
+            "name": "Active Noise Cancellation Attenuation",
+            "unit": "dB",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                15.0,
+                3.0
+              ],
+              [
+                25.0,
+                6.0
+              ],
+              [
+                35.0,
+                8.5
+              ],
+              [
+                44.0,
+                10.0
+              ]
+            ],
+            "weight": 0.6,
+            "description": "Acoustic decibels attenuated across low-frequency engine and ambient rumble"
+          },
+          "transparency_mode_naturalness": {
+            "name": "Transparency Audio Naturalness",
+            "unit": "score_10",
+            "curve": "direct_score",
+            "weight": 0.4,
+            "description": "Transparent awareness mode fidelity without occlusion hiss or artificial boost (1-10)"
+          }
+        },
+        "mic_clarity": {
+          "mic_noise_suppression_snr_db": {
+            "name": "Call Speech-to-Noise Ratio (70 dBA ambient)",
+            "unit": "dB",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                10.0,
+                3.0
+              ],
+              [
+                18.0,
+                6.0
+              ],
+              [
+                25.0,
+                8.5
+              ],
+              [
+                32.0,
+                10.0
+              ]
+            ],
+            "weight": 0.6,
+            "description": "Intelligibility and environmental noise isolation during calls in loud traffic"
+          },
+          "wind_noise_resistance": {
+            "name": "Wind Noise Cut Algorithm & Baffle",
+            "unit": "score_10",
+            "curve": "direct_score",
+            "weight": 0.4,
+            "description": "Physical mic chamber mesh and DSP wind turbulence suppression (1-10)"
+          }
+        },
+        "battery_charging": {
+          "single_charge_anc_hours": {
+            "name": "Earbud Playtime with ANC Active",
+            "unit": "hours",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                4.0,
+                3.5
+              ],
+              [
+                6.0,
+                6.5
+              ],
+              [
+                8.5,
+                9.0
+              ],
+              [
+                11.0,
+                10.0
+              ]
+            ],
+            "weight": 0.5,
+            "description": "Continuous music playback runtime per earbud charge with ANC active"
+          },
+          "total_case_hours": {
+            "name": "Total Case Battery Reserve",
+            "unit": "hours",
+            "curve": "piecewise_linear",
+            "points": [
+              [
+                18.0,
+                4.0
+              ],
+              [
+                26.0,
+                7.0
+              ],
+              [
+                34.0,
+                9.0
+              ],
+              [
+                42.0,
+                10.0
+              ]
+            ],
+            "weight": 0.3,
+            "description": "Total combined playback hours with charging case"
+          },
+          "wireless_charging": {
+            "name": "Qi Wireless Charging Support",
+            "unit": "boolean",
+            "curve": "discrete",
+            "options": {
+              "true": 10.0,
+              "false": 4.0,
+              "yes": 10.0,
+              "no": 4.0,
+              "1": 10.0,
+              "0": 4.0
+            },
+            "weight": 0.2,
+            "description": "Wireless induction charging pad compatibility"
+          }
+        },
+        "comfort_ip_rating": {
+          "ip_water_rating": {
+            "name": "Ingress Protection against Sweat & Rain",
+            "unit": "rating",
+            "curve": "discrete",
+            "options": {
+              "ip68": 10.0,
+              "ip57": 9.5,
+              "ipx7": 9.0,
+              "ip55": 8.0,
+              "ip54": 7.0,
+              "ipx4": 5.5,
+              "none": 2.0
+            },
+            "weight": 0.5,
+            "description": "Water immersion and heavy exercise sweat protection"
+          },
+          "ergonomic_comfort_score": {
+            "name": "Ergonomic Fit & Long-Session Comfort",
+            "unit": "score_10",
+            "curve": "direct_score",
+            "weight": 0.5,
+            "description": "Ear canal pressure relief, secure retention during running, lightweight fit (1-10)"
+          }
+        }
+      }
+    }
+  },
+  "irf_scoring": {
+    "description": "Deterministic Local Environmental & Service Readiness Factor (IRF) Engine (Scale: 0.80 to 1.00)",
+    "weights": {
+      "service_tat": 0.35,
+      "statutory_certification": 0.25,
+      "environmental_resilience": 0.25,
+      "authorized_seller": 0.15
+    },
+    "service_tat": {
+      "description": "Authorized brand service center reach and repair turnaround time",
+      "thresholds": [
+        {
+          "max_hours": 48,
+          "score": 1.0,
+          "label": "Rapid turnaround (<48 hrs) with ubiquitous regional service hubs"
+        },
+        {
+          "max_hours": 120,
+          "score": 0.75,
+          "label": "Standard turnaround (3-5 days) across major cities"
+        },
+        {
+          "max_hours": 240,
+          "score": 0.4,
+          "label": "Extended turnaround (7-10 days) or regional mail-in service"
+        },
+        {
+          "max_hours": 9999,
+          "score": 0.1,
+          "label": "Severe turnaround (>10 days) or outsourced third-party service"
+        }
+      ]
+    },
+    "statutory_certification": {
+      "description": "Statutory registrations (BIS CRS, BEE Star ISEER, FSSAI, CE, FCC, RoHS)",
+      "options": {
+        "all_verified": 1.0,
+        "partial_pending": 0.5,
+        "unlicensed_grey": 0.0
+      }
+    },
+    "environmental_resilience": {
+      "description": "Protection against 50°C tropical ambient, coastal fin corrosion, voltage spikes, hard water",
+      "options": {
+        "tropical_resilient": 1.0,
+        "standard_resilience": 0.6,
+        "unprotected_vulnerable": 0.1
+      }
+    },
+    "authorized_seller": {
+      "description": "Direct official brand store or platform-authorized dealer with valid tax invoice and warranty",
+      "options": {
+        "brand_authorized": 1.0,
+        "reputable_merchant": 0.75,
+        "unverified_third_party": 0.0
+      }
+    }
+  },
+  "defect_penalties": {
+    "critical": {
+      "penalty_points": 4.0,
+      "max_parameter_ceiling": 3.0,
+      "description": "Catastrophic hardware/safety defect rendering product unviable long-term",
+      "patterns": [
+        "motherboard dead boot",
+        "motherboard failure",
+        "vertical green line",
+        "green line after update",
+        "refrigerant gas leak",
+        "compressor leak",
+        "drum spider arm fracture",
+        "spider corrosion",
+        "amino spiking",
+        "heavy metal contamination",
+        "battery swelling",
+        "thermal runaway"
+      ]
+    },
+    "severe": {
+      "penalty_points": 2.5,
+      "max_parameter_ceiling": 5.0,
+      "description": "Severe operational regression requiring major hardware intervention or severely impacting core function",
+      "patterns": [
+        "severe thermal throttling",
+        "hinge cracking",
+        "chassis separation",
+        "liquid metal pump-out",
+        "outer tub bearing seal destruction",
+        "bearing leakage",
+        "active rapid oxidation",
+        "anc feedback squeal",
+        "charging pin corrosion"
+      ]
+    },
+    "moderate": {
+      "penalty_points": 1.2,
+      "max_parameter_ceiling": 7.0,
+      "description": "Noticeable defect or annoyance causing intermittent degradation",
+      "patterns": [
+        "fan bearing coil whine",
+        "camera lens fogging in humidity",
+        "inconsistent fingerprint sensor",
+        "intermittent bluetooth dropouts",
+        "stiff buttons",
+        "chassis creaking",
+        "bloatware notifications"
+      ]
+    },
+    "minor": {
+      "penalty_points": 0.5,
+      "max_parameter_ceiling": 8.5,
+      "description": "Cosmetic imperfection or minor software inconvenience",
+      "patterns": [
+        "cosmetic paint wear",
+        "fingerprint smudge magnet",
+        "launcher micro-stutters",
+        "slow animation"
+      ]
+    }
+  }
+}

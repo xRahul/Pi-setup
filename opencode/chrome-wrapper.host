@@ -1,0 +1,7 @@
+#!/bin/sh
+exec /usr/bin/chromium \
+  --use-gl=angle \
+  --use-angle=swiftshader-webgl \
+  --enable-unsafe-swiftshader \
+  --disable-dev-shm-usage \
+  "$@"
