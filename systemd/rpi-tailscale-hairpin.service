@@ -1,13 +1,17 @@
 [Unit]
 Description=Route Tailscale CGNAT subnet (100.64.0.0/10) to Docker Tailscale Gateway
 After=docker.service
+Wants=docker-compose-restart.service
 BindsTo=docker.service
+PartOf=docker-compose-restart.service
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
+ExecStartPre=/bin/bash -c 'for i in $(seq 1 60); do ip -4 -o addr show | grep -q "inet 10.8.1.1/24" && exit 0; sleep 2; done; echo "Docker gateway 10.8.1.1/24 not ready" >&2; exit 1'
 ExecStart=/sbin/ip route replace 100.64.0.0/10 via 10.8.1.48
 ExecStop=/sbin/ip route del 100.64.0.0/10 via 10.8.1.48 || true
+TimeoutStartSec=180
 
 [Install]
 WantedBy=multi-user.target
