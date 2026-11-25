@@ -32,6 +32,11 @@ systemctl daemon-reload
 systemctl enable --now rpi-tailscale-hairpin.service
 systemctl enable --now rpi5-udp-gro.service
 
+echo "=== 2b. Preparing homepage rootfs mountpoints ==="
+# homepage binds this empty dir at /host (disk widget); nested /host/proc and
+# /host/sys need their mountpoints inside the read-only bind.
+mkdir -p /srv/homepage-rootfs/proc /srv/homepage-rootfs/sys
+chmod 755 /srv/homepage-rootfs
 echo "=== 3. Verifying Hairpin Route ==="
 if ip route show 100.64.0.0/10 | grep -q "10.8.1.48"; then
   echo "SUCCESS: Hairpin route active: $(ip route show 100.64.0.0/10)"
