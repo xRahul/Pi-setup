@@ -5,8 +5,8 @@ After=network.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/sbin/ethtool -K eth0 rx-udp-gro-forwarding on rx-gro-list off || true
-ExecStart=/sbin/ethtool -K wlan0 rx-udp-gro-forwarding on rx-gro-list off || true
+ExecStart=-/sbin/ethtool -K eth0 rx-udp-gro-forwarding on rx-gro-list off
+ExecStart=-/sbin/ethtool -K wlan0 rx-udp-gro-forwarding on rx-gro-list off
 
 [Install]
 WantedBy=multi-user.target
