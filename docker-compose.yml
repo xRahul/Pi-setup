@@ -2205,6 +2205,8 @@ services:
         DONSETCH_VERSION: ${DONSETCH_VERSION:-5.5.7}
         CAVEMAN_VERSION: ${CAVEMAN_VERSION:-4.1.0}
     image: rahul/opencode:${OPENCODE_VERSION:-2.3.2}-rpi
+    profiles:
+      - lazy
     cap_drop:
       - ALL
     user: "1000:1000"
