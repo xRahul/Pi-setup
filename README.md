@@ -188,6 +188,13 @@ All containers communicate over the `wg-easy` bridge (`10.8.1.0/24`) using Pi-ho
 | **Portainer** | `10.8.1.59` | `portainer.pi.rahulja.in`| Sablier | Container Management Web UI |
 | **Jellyfin** | Host Mode | `jellyfin.pi.rahulja.in` | Sablier | Media Server (Host Mode for DLNA) |
 
+**Antigravity terminal login.** ttyd requires a login (`-c`) and rejects cross-origin WebSockets (`-O`). The credential lives in `secrets/agy_ttyd_credential` as `user:password` (mode 600, git-ignored). The container refuses to start without it. Create it with:
+
+```bash
+umask 077; mkdir -p secrets
+printf 'rahul:%s\n' "$(openssl rand -base64 32 | tr -dc A-Za-z0-9 | head -c 24)" > secrets/agy_ttyd_credential
+```
+
 *Full IP allocations and auxiliary backend IPs (Postgres, Valkey, Celery, Tika, Gotenberg) are tracked in `docker-compose.yml`.*
 
 ---

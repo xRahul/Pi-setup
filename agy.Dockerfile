@@ -71,10 +71,29 @@ RUN echo 'echo -e "\033[1;34m╭────────────────
 USER rahul
 WORKDIR /home/rahul
 
+# Login wrapper: ttyd -c needs user:password on its command line. Read it from
+# a compose secret at start so it is not baked into the image or env, and
+# refuse to start without one (fail closed).
+COPY --chmod=755 <<'EOF' /usr/local/bin/ttyd-auth.sh
+#!/bin/bash
+set -euo pipefail
+cred_file=/run/secrets/agy_ttyd_credential
+if [ ! -s "$cred_file" ]; then
+    echo "ttyd-auth: $cred_file missing or empty; refusing to start without a login" >&2
+    exit 1
+fi
+cred=$(tr -d '\r\n' < "$cred_file")
+case "$cred" in
+    ?*:?*) ;;
+    *) echo "ttyd-auth: credential must be user:password" >&2; exit 1 ;;
+esac
+exec ttyd -c "$cred" "$@"
+EOF
 EXPOSE 7681
 
 # ttyd client settings: canvas renderer, Cascadia Mono font, full Catppuccin palette
-ENTRYPOINT ["ttyd", \
+# -O rejects WebSocket connections whose Origin differs from Host (cross-site hijacking)
+ENTRYPOINT ["/usr/local/bin/ttyd-auth.sh", "-O", \
     "-p", "7681", \
     "-W", \
     "-I", "/usr/local/share/ttyd/index.html", \

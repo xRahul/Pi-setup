@@ -2304,7 +2304,10 @@ services:
     build:
       context: .
       dockerfile: agy.Dockerfile
-    image: rahul/antigravity-web:1.5.1
+    image: rahul/antigravity-web:1.5.2
+    # ttyd login (user:password), read by ttyd-auth.sh; file is git-ignored
+    secrets:
+      - agy_ttyd_credential
     container_name: antigravity
     restart: unless-stopped
     user: "1000:1000"
@@ -2346,7 +2349,7 @@ services:
       wg-easy:
         ipv4_address: 10.8.1.71
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:7681/ || exit 1"]
+      test: ["CMD-SHELL", "curl -sf -o /dev/null -u \"$$(cat /run/secrets/agy_ttyd_credential)\" http://localhost:7681/ || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -2359,6 +2362,10 @@ services:
 # Reserved, not free: 10.8.1.1 Jellyfin host route; 10.8.1.53 n8n; 10.8.1.254 Caddy sink
 
 
+
+secrets:
+  agy_ttyd_credential:
+    file: ./secrets/agy_ttyd_credential
 
 networks:
   wg-easy:
