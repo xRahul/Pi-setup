@@ -93,7 +93,7 @@ def sablier_groups(service):
 compose_text = read_text("docker-compose.yml")
 compose = yaml.safe_load(compose_text)
 services = compose.get("services") or {}
-compose_vars = set(re.findall(r"\$\{([A-Za-z_][A-Za-z0-9_]*)(?::[-?][^}]*)?\}", compose_text))
+compose_vars = set(re.findall(r"(?<!\$)\$\{([A-Za-z_][A-Za-z0-9_]*)(?::[-?][^}]*)?\}", compose_text))
 
 for env_file in [".env", "example.env"]:
     missing = sorted(compose_vars - env_keys(env_file))
@@ -150,6 +150,45 @@ public_helper_groups = {"firefly-cron", "miniflux-cron"}
 missing_caddy_groups = sorted(label_groups - caddy_groups - public_helper_groups)
 if missing_caddy_groups:
     warnings.append("Sablier label groups not found in Caddy routes: " + ", ".join(missing_caddy_groups))
+
+group_to_ips = {}
+for service in services.values():
+    ip = service_ip(service)
+    if ip:
+        for group in sablier_groups(service):
+            group_to_ips.setdefault(group, set()).add(ip)
+
+homepage_ip = service_ip(services.get("homepage", {}))
+for block in caddy_blocks:
+    domain = block["domain"]
+    if domain.startswith("*."):
+        continue
+    for upstream in block["upstreams"]:
+        host = upstream.split(":", 1)[0]
+        if host in ("localhost", "127.0.0.1"):
+            if domain != "pihole.pi.rahulja.in":
+                errors.append(f"Caddy {domain} targets {upstream}, expected pihole only")
+            continue
+        if host == "10.8.1.1":
+            if "jellyfin" not in block["groups"]:
+                errors.append(f"Caddy {domain} targets host gateway {upstream} without jellyfin group")
+            continue
+        if host not in ip_to_services:
+            errors.append(f"Caddy {domain} targets unknown Compose IP {upstream}")
+            continue
+        if block["groups"]:
+            allowed_ips = set()
+            for group in block["groups"]:
+                allowed_ips.update(group_to_ips.get(group, set()))
+            if host not in allowed_ips:
+                errors.append(
+                    f"Caddy {domain} targets {upstream} ({', '.join(ip_to_services[host])}), "
+                    f"which is not in Sablier group(s) {', '.join(block['groups'])}"
+                )
+        elif host != homepage_ip:
+            errors.append(
+                f"Caddy {domain} targets non-Sablier IP {upstream} ({', '.join(ip_to_services[host])})"
+            )
 
 tracked = subprocess.run(["git", "ls-files"], check=True, text=True, capture_output=True).stdout.splitlines()
 tracked_sensitive = [

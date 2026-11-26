@@ -127,7 +127,7 @@ wg.pi.rahulja.in {
 - `antigravity` mounts this repo read-write so the agent can edit it. `.env`, `pihole.env`, the `.bak-*` files and `secrets/` are masked inside the container (empty file from `secrets-mask/empty`, tmpfs over `secrets/`). Review `git diff` before running `docker compose up` after agent edits.
 - Accepted risks, kept on purpose:
   - The `10.8.1.0/24` subnet route is advertised to the tailnet. Tailnet devices can reach container IPs directly, including Postgres, Valkey (no password) and the Sablier API on `10.8.1.60:10000`.
-  - `socket-proxy-read` runs with `POST=1`, which Sablier needs for Docker's wait call (no `ALLOW_*` flag covers it). It is only on the internal `read-proxy-net`. Its `TIMEOUT_CLIENT`/`TIMEOUT_SERVER` are 1440 min so Sablier's `/events` stream is not cut every 10 min.
+  - `socket-proxy-read` runs with `POST=1`, which Sablier needs for Docker's wait call (no `ALLOW_*` flag covers it). It is only on the internal `read-proxy-net`. Its entrypoint patches `/templates/haproxy.cfg` so `timeout client` and `timeout server` are `1440m` instead of the default `10m` (which otherwise cuts Sablier's `/events` stream).
   - SSH allows password login; fail2ban is active.
 - Host: `unattended-upgrades` installs Debian security updates only, without rebooting (`host/apt/`). The 06:00 `rpi-daily-reboot.timer` picks up kernels.
 

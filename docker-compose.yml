@@ -86,10 +86,10 @@ services:
       - FTLCONF_ntp_sync_active=false
       - FTLCONF_ntp_ipv4_active=false
       - FTLCONF_ntp_ipv6_active=false
+      # Disable nice=-10 adjustment (ineffective under no-new-privileges)
+      - FTLCONF_misc_nice=-999
     security_opt:
       - no-new-privileges=true
-    cap_add:
-      - SYS_NICE
     volumes:
       - ${PIHOLE_ETC_PATH}:/etc/pihole
       - ${PIHOLE_ETC_DNSMASQ_PATH}:/etc/dnsmasq.d
@@ -305,19 +305,13 @@ services:
       - no-new-privileges=true
     environment:
       - PUID=1000
-      - PGID=985
+      - PGID=1000
       - HOMEPAGE_ALLOWED_HOSTS=homepage.pi.rahulja.in,dash.pi.rahulja.in
       - TZ=${DEFAULT_TZ}
       # Only the widget secrets homepage needs (not the whole .env)
-      - HOMEPAGE_VAR_PORTAINER_API_KEY=${HOMEPAGE_VAR_PORTAINER_API_KEY}
-      - HOMEPAGE_VAR_PAPERLESS_API_KEY=${HOMEPAGE_VAR_PAPERLESS_API_KEY}
-      - HOMEPAGE_VAR_IMMICH_API_KEY=${HOMEPAGE_VAR_IMMICH_API_KEY}
       - HOMEPAGE_VAR_PIHOLE_API_TOKEN=${HOMEPAGE_VAR_PIHOLE_API_TOKEN}
       - HOMEPAGE_VAR_TAILSCALE_API_KEY=${HOMEPAGE_VAR_TAILSCALE_API_KEY}
       - HOMEPAGE_VAR_TAILSCALE_DEVICE_ID=${HOMEPAGE_VAR_TAILSCALE_DEVICE_ID}
-      - HOMEPAGE_VAR_FIREFLY_API_KEY=${HOMEPAGE_VAR_FIREFLY_API_KEY}
-      - HOMEPAGE_VAR_FILEBROWSER_USERNAME=${HOMEPAGE_VAR_FILEBROWSER_USERNAME}
-      - HOMEPAGE_VAR_FILEBROWSER_PASSWORD=${HOMEPAGE_VAR_FILEBROWSER_PASSWORD}
       - HOMEPAGE_VAR_TRANSMISSION_USERNAME=${HOMEPAGE_VAR_TRANSMISSION_USERNAME}
       - HOMEPAGE_VAR_TRANSMISSION_PASSWORD=${HOMEPAGE_VAR_TRANSMISSION_PASSWORD}
     volumes:
@@ -966,6 +960,23 @@ services:
       - /run
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    # LSIO socket-proxy hardcodes 10m timeouts in /templates/haproxy.cfg, cutting Sablier's /events stream
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -e
+        mkdir -p /run/haproxy
+        if [ "$$DISABLE_IPV6" = "1" ]; then
+          BIND_PROTO=":2375"
+        else
+          BIND_PROTO="[::]:2375 v4v6"
+        fi
+        sed -e "s/@@BIND_PROTO@@/$$BIND_PROTO/g" \
+            -e 's/timeout client 10m/timeout client 1440m/' \
+            -e 's/timeout server 10m/timeout server 1440m/' \
+            /templates/haproxy.cfg > /run/haproxy/haproxy.cfg
+        exec /usr/sbin/haproxy -f /run/haproxy/haproxy.cfg -W -db
     environment:
       - TZ=${DEFAULT_TZ}
       - POST=1
@@ -974,9 +985,6 @@ services:
       - ALLOW_STOP=1
       - PING=1
       - VERSION=1
-      # Default 10 min cut Sablier's long-lived /events stream (unexpected EOF)
-      - TIMEOUT_CLIENT=1440
-      - TIMEOUT_SERVER=1440
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:2375/_ping || exit 1"]
       interval: 30s
@@ -2252,6 +2260,7 @@ services:
         DONSETCH_VERSION: ${DONSETCH_VERSION:-5.5.7}
         CAVEMAN_VERSION: ${CAVEMAN_VERSION:-4.1.0}
     image: rahul/opencode:${OPENCODE_VERSION:-2.3.2}-rpi
+    pull_policy: never
     profiles:
       - lazy
     cap_drop:
@@ -2306,6 +2315,7 @@ services:
       context: .
       dockerfile: agy.Dockerfile
     image: rahul/antigravity-web:1.5.2
+    pull_policy: never
     # ttyd login (user:password), read by ttyd-auth.sh; file is git-ignored
     secrets:
       - agy_ttyd_credential

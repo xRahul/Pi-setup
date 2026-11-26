@@ -91,12 +91,6 @@
       description: Virtual Browser (Sablier)
       server: my-docker
       container: firefox
-  - OpenCode:
-      icon: vscode.png
-      href: https://opencode.pi.rahulja.in
-      description: AI code server and web IDE (Sablier)
-      server: my-docker
-      container: opencode
 
 - Documents:
   - Paperless-ngx:
@@ -135,6 +129,12 @@
       description: Resume builder (Sablier)
       server: my-docker
       container: resume
+  - Draw.io:
+      icon: drawio.png
+      href: https://drawio.pi.rahulja.in
+      description: Diagramming and flowcharts (Sablier)
+      server: my-docker
+      container: drawio
 
 - Document Backends:
   - Paperless-DB:
@@ -418,9 +418,15 @@
 - Docker Access:
   - Socket Proxy Read:
       icon: haproxy.png
-      description: Read-only Docker API for Homepage and Sablier
+      description: Read-only Docker API for Sablier
       server: my-docker
       container: socket-proxy-read
+      showStats: true
+  - Socket Proxy Homepage:
+      icon: haproxy.png
+      description: Read-only Docker API for Homepage
+      server: my-docker
+      container: socket-proxy-homepage
       showStats: true
   - Socket Proxy Admin:
       icon: haproxy.png

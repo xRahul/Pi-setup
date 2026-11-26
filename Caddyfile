@@ -26,6 +26,7 @@
 
 pihole.pi.rahulja.in {
 	reverse_proxy * localhost:8080
+	import security_headers
 	import cloudflare
 }
 
@@ -61,6 +62,7 @@ immich.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.6:2283
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -76,6 +78,7 @@ pngx.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.32:8000
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -119,6 +122,7 @@ jellyfin.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.1:8096
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -134,6 +138,7 @@ archivebox.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.17:8000
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -177,11 +182,12 @@ trans.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.23:9091
 	}
+	import security_headers
 	import cloudflare
 }
 
 prowlarr.pi.rahulja.in {
-	reverse_proxy * 10.8.1.23:9696
+	respond "Service decommissioned" 410
 	import cloudflare
 }
 
@@ -222,6 +228,7 @@ ntfy.pi.rahulja.in {
 		reverse_proxy * 10.8.1.26:8000
 	}
 
+	import security_headers
 	import cloudflare
 }
 
@@ -255,6 +262,7 @@ miniflux.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.28:8080
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -270,6 +278,7 @@ drawio.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.24:8080
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -293,6 +302,7 @@ filebrowser.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.34:80
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -322,6 +332,7 @@ memos.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.41:5230
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -329,6 +340,7 @@ dash.pi.rahulja.in {
 	route {
 		reverse_proxy * 10.8.1.57:3000
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -344,6 +356,7 @@ cyberchef.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.36:8080
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -359,11 +372,12 @@ actual.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.3:5006
 	}
+	import security_headers
 	import cloudflare
 }
 
 minio.pi.rahulja.in {
-	reverse_proxy * 10.8.1.37:35507
+	respond "Service decommissioned" 410
 	import cloudflare
 }
 
@@ -393,6 +407,7 @@ resume.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.39:3000
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -422,6 +437,7 @@ sure.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.2:3000
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -453,6 +469,7 @@ ezbookkeeping.pi.rahulja.in {
 		reverse_proxy * 10.8.1.19:8080
 	}
 
+	import security_headers
 	import cloudflare
 }
 
@@ -492,6 +509,7 @@ firefly.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.43:8080
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -522,6 +540,7 @@ ghostfolio.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.4:3333
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -537,11 +556,12 @@ fireflyimporter.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.44:8080
 	}
+	import security_headers
 	import cloudflare
 }
 
 vikunja.pi.rahulja.in {
-	reverse_proxy * 10.8.1.46:3456
+	respond "Service decommissioned" 410
 	import cloudflare
 }
 
@@ -571,6 +591,7 @@ gramps.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.61:5000
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -618,6 +639,7 @@ n8n.pi.rahulja.in {
 			flush_interval -1
 		}
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -637,6 +659,7 @@ homepage.pi.rahulja.in {
 	route {
 		reverse_proxy * 10.8.1.57:3000
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -668,6 +691,7 @@ pdf.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.58:8080
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -699,6 +723,7 @@ portainer.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.59:9000
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -730,6 +755,7 @@ burnrate.pi.rahulja.in {
 		}
 		reverse_proxy * 10.8.1.69:8000
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -763,6 +789,7 @@ firefox.pi.rahulja.in {
 			flush_interval -1
 		}
 	}
+	import security_headers
 	import cloudflare
 }
 
@@ -801,6 +828,7 @@ opencode.pi.rahulja.in {
 		}
 	}
 
+	import security_headers
 	import cloudflare
 }
 
@@ -818,5 +846,6 @@ agy.pi.rahulja.in {
 			flush_interval -1
 		}
 	}
+	import security_headers
 	import cloudflare
 }
