@@ -121,6 +121,28 @@ wg.pi.rahulja.in {
 
 ---
 
+### Security Model & Accepted Risks
+- Access is tailnet-only. No host ports are published; Caddy, Pi-hole and dnscrypt-proxy share the `tailscale` network namespace. Funnel and Serve are off.
+- Secrets live in `.env` (mode 600, git-ignored). Pass each container only the variables it needs. `scripts/audit-config.sh` fails if a service uses `env_file: .env`.
+- `antigravity` mounts this repo read-write so the agent can edit it. `.env`, `pihole.env`, the `.bak-*` files and `secrets/` are masked inside the container (empty file from `secrets-mask/empty`, tmpfs over `secrets/`). Review `git diff` before running `docker compose up` after agent edits.
+- Accepted risks, kept on purpose:
+  - The `10.8.1.0/24` subnet route is advertised to the tailnet. Tailnet devices can reach container IPs directly, including Postgres, Valkey (no password) and the Sablier API on `10.8.1.60:10000`.
+  - `socket-proxy-read` runs with `POST=1`, which Sablier needs for Docker's wait call (no `ALLOW_*` flag covers it). It is only on the internal `read-proxy-net`. Its `TIMEOUT_CLIENT`/`TIMEOUT_SERVER` are 1440 min so Sablier's `/events` stream is not cut every 10 min.
+  - SSH allows password login; fail2ban is active.
+- Host: `unattended-upgrades` installs Debian security updates only, without rebooting (`host/apt/`). The 06:00 `rpi-daily-reboot.timer` picks up kernels.
+
+### Deploying Image Updates
+Renovate (GitHub App) opens PRs on Monday mornings IST, configured in `renovate.json`. Majors wait for approval on the Dependency Dashboard issue; Postgres majors and the Immich Postgres image are disabled. Nothing automerges. After merging:
+```bash
+git pull
+docker compose --profile lazy pull <service>
+docker compose --profile lazy up --no-start <service>   # lazy (Sablier) service
+docker compose up -d <service>                          # core service
+```
+`docker-prune.timer` (Sun 03:00) removes unused images and build cache older than 7 days.
+
+---
+
 ## 💾 Memory Budget & Resource Hardening (8GB RAM)
 
 ### Overcommit & Sizing Strategy

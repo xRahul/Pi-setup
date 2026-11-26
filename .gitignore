@@ -51,3 +51,4 @@ opencode/config/**/__pycache__/
 !secrets-mask/empty
 !host
 !host/**
+!renovate.json

@@ -113,6 +113,16 @@ missing_hc = [
 ]
 if missing_hc:
     errors.append("Services missing healthcheck: " + ", ".join(sorted(missing_hc)))
+shared_env = []
+for name, svc in services.items():
+    ef = svc.get("env_file") or []
+    if isinstance(ef, (str, dict)):
+        ef = [ef]
+    paths = [e if isinstance(e, str) else e.get("path", "") for e in ef]
+    if any(p.strip().removeprefix("./") == ".env" for p in paths):
+        shared_env.append(name)
+if shared_env:
+    errors.append("Services load the whole shared .env via env_file (leaks every secret): " + ", ".join(sorted(shared_env)))
 
 for service_specific in ["example_immich.env", "example_pihole.env"]:
     if Path(service_specific).exists():
