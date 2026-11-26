@@ -139,7 +139,7 @@ docker compose --profile lazy pull <service>
 docker compose --profile lazy up --no-start <service>   # lazy (Sablier) service
 docker compose up -d <service>                          # core service
 ```
-`docker-prune.timer` (Sun 03:00) removes unused images and build cache older than 7 days.
+Prune by hand when needed: `docker image prune -af --filter until=168h && docker builder prune -f --filter until=168h`. Images of created (Sablier-stopped) containers are kept.
 
 ---
 

@@ -31,10 +31,6 @@ chmod 644 /etc/systemd/system/rpi-tailscale-hairpin.service /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable --now rpi-tailscale-hairpin.service
 systemctl enable --now rpi5-udp-gro.service
-cp "$SCRIPT_DIR/systemd/docker-prune.service" "$SCRIPT_DIR/systemd/docker-prune.timer" /etc/systemd/system/
-chmod 644 /etc/systemd/system/docker-prune.service /etc/systemd/system/docker-prune.timer
-systemctl daemon-reload
-systemctl enable --now docker-prune.timer
 
 echo "=== 2a. Security-only unattended upgrades ==="
 if ! dpkg -s unattended-upgrades >/dev/null 2>&1; then

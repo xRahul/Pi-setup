@@ -47,3 +47,4 @@ sshd hardening; health alerts; offsite and all backup work; subnet grants; unuse
 - Mode-777 dirs firefly-db/, firefly-upload/, stirling-pdf-data/ in ~/docker are unused (.env points to ~/docker_data); left for leftover cleanup.
 - Prune run freed images 53.5 GB -> 25.6 GB.
 - Immich/Sure not started for testing (Immich data issue above). Manual: check memos/ghostfolio signup settings.
+- 2026-11-26: user prefers manual prunes. docker-prune timer disabled and removed from repo and setup-host.sh.
