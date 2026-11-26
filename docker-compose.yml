@@ -82,11 +82,14 @@ services:
       - FTLCONF_webserver_port=8080
       - FTLCONF_files_database=/pihole-db/pihole-FTL.db
       - FTLCONF_misc_check_disk=0
+      # No NTP: host keeps time; avoids CAP_SYS_TIME
+      - FTLCONF_ntp_sync_active=false
+      - FTLCONF_ntp_ipv4_active=false
+      - FTLCONF_ntp_ipv6_active=false
     security_opt:
       - no-new-privileges=true
     cap_add:
       - SYS_NICE
-      - SYS_TIME
     volumes:
       - ${PIHOLE_ETC_PATH}:/etc/pihole
       - ${PIHOLE_ETC_DNSMASQ_PATH}:/etc/dnsmasq.d
@@ -696,7 +699,7 @@ services:
       - STATIC_CRON_TOKEN=${FIREFLY_STATIC_CRON_TOKEN}
     command: ["sh", "-c", "apk add --no-cache tzdata && \
       (ln -s /usr/share/zoneinfo/$$TZ /etc/localtime || true) && \
-      echo \"0 3 * * * wget -qO- --no-check-certificate https://firefly.pi.rahulja.in/api/v1/cron/$$STATIC_CRON_TOKEN;echo\" \
+      echo \"0 3 * * * wget -qO- http://firefly:8080/api/v1/cron/$$STATIC_CRON_TOKEN;echo\" \
       | crontab - && \
       crond -f -L /dev/stdout"]
     dns:
@@ -767,8 +770,6 @@ services:
       - ${UPLOAD_LOCATION}:/data
       - ${EXTERNAL_LIBRARY_LOCATION}:/usr/src/app/external:ro
       - /etc/localtime:/etc/localtime:ro
-    env_file:
-      - .env
     environment:
       - TZ=${DEFAULT_TZ}
       - DB_HOSTNAME=immich-database
@@ -808,15 +809,12 @@ services:
       - "sablier.enable=true"
       - "sablier.group=immich"
       - "sablier.ready-on-start=true"
-      - "sablier.ready-on-start=true"
     logging: *default-logging
     security_opt:
       - no-new-privileges=true
     volumes:
       - ${IMMICH_ML_MODEL_CACHE_LOCATION}:/cache
       - ${EXTERNAL_LIBRARY_LOCATION}:/usr/src/app/external:ro
-    env_file:
-      - .env
     environment:
       - TZ=${DEFAULT_TZ}
       - DB_HOSTNAME=immich-database
@@ -976,6 +974,9 @@ services:
       - ALLOW_STOP=1
       - PING=1
       - VERSION=1
+      # Default 10 min cut Sablier's long-lived /events stream (unexpected EOF)
+      - TIMEOUT_CLIENT=1440
+      - TIMEOUT_SERVER=1440
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:2375/_ping || exit 1"]
       interval: 30s
@@ -1647,7 +1648,7 @@ services:
       - ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=${ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY}
       - ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=${ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT}
       - SELF_HOSTED=true
-      - ONBOARDING_STATE=open
+      - ONBOARDING_STATE=closed
       - RAILS_ASSUME_SSL=true
       - RAILS_FORCE_SSL=false
       - APP_DOMAIN=sure.pi.rahulja.in
@@ -1719,7 +1720,7 @@ services:
       - ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=${ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY}
       - ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=${ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT}
       - SELF_HOSTED=true
-      - ONBOARDING_STATE=open
+      - ONBOARDING_STATE=closed
       - RAILS_ASSUME_SSL=true
       - RAILS_FORCE_SSL=false
       - APP_DOMAIN=sure.pi.rahulja.in
@@ -2341,6 +2342,15 @@ services:
       - /home/rahul/.gitconfig:/home/rahul/.gitconfig:ro
       # Available project workspaces
       - /home/rahul/docker:/home/rahul/docker
+      # Hide secrets inside the rw repo mount (ttyd credential comes via /run/secrets)
+      - ./secrets-mask/empty:/home/rahul/docker/.env:ro
+      - ./secrets-mask/empty:/home/rahul/docker/pihole.env:ro
+      - ./secrets-mask/empty:/home/rahul/docker/.env.bak-20261121071817:ro
+      - ./secrets-mask/empty:/home/rahul/docker/docker-compose.yml.bak-20261121071817:ro
+      - type: tmpfs
+        target: /home/rahul/docker/secrets
+        tmpfs:
+          size: 4096
       - ${PROJECTS_PATH:-/home/rahul/projects}:/home/rahul/projects
     dns:
       - 10.8.1.48

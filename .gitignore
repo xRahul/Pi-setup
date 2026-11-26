@@ -47,3 +47,5 @@ opencode/config/.caveman-mode-log.jsonl
 opencode/config/.caveman-opencode-ownership.json
 opencode/config/*.bak*
 opencode/config/**/__pycache__/
+!secrets-mask
+!secrets-mask/empty
