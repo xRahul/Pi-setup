@@ -335,7 +335,7 @@ services:
       - lazy
     cap_drop:
       - ALL
-    image: n8nio/n8n:2.49.3
+    image: n8nio/n8n:3.4.0
     container_name: n8n
     labels:
       - "sablier.enable=true"
