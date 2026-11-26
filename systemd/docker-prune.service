@@ -1,0 +1,10 @@
+[Unit]
+Description=Weekly Docker prune of unused images and build cache older than 7 days
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+# -a removes tagged images no container uses; images of created (Sablier-stopped) containers are kept
+ExecStart=/usr/bin/docker image prune -af --filter "until=168h"
+ExecStart=/usr/bin/docker builder prune -f --filter "until=168h"

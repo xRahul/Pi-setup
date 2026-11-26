@@ -31,6 +31,17 @@ chmod 644 /etc/systemd/system/rpi-tailscale-hairpin.service /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable --now rpi-tailscale-hairpin.service
 systemctl enable --now rpi5-udp-gro.service
+cp "$SCRIPT_DIR/systemd/docker-prune.service" "$SCRIPT_DIR/systemd/docker-prune.timer" /etc/systemd/system/
+chmod 644 /etc/systemd/system/docker-prune.service /etc/systemd/system/docker-prune.timer
+systemctl daemon-reload
+systemctl enable --now docker-prune.timer
+
+echo "=== 2a. Security-only unattended upgrades ==="
+if ! dpkg -s unattended-upgrades >/dev/null 2>&1; then
+  apt-get install -y -qq unattended-upgrades
+fi
+install -m 644 "$SCRIPT_DIR/host/apt/52homelab-unattended" /etc/apt/apt.conf.d/52homelab-unattended
+install -m 644 "$SCRIPT_DIR/host/apt/20auto-upgrades" /etc/apt/apt.conf.d/20auto-upgrades
 
 echo "=== 2b. Preparing homepage rootfs mountpoints ==="
 # homepage binds this empty dir at /host (disk widget); nested /host/proc and

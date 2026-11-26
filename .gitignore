@@ -49,3 +49,5 @@ opencode/config/*.bak*
 opencode/config/**/__pycache__/
 !secrets-mask
 !secrets-mask/empty
+!host
+!host/**
